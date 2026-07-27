@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    {% set title = "일시적인 오류가 발생했습니다" %}
+    {% set message = "잠시 후 다시 시도해 주세요. 문제가 계속되면 관리자에게 알려주세요." %}
+    {% set action_url = url_for('home') %}
+    {% set action_label = "홈으로" %}
+    {% include "components/empty_state.html" %}
+  </div>
+</section>
+{% endblock %}

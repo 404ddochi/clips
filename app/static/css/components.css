@@ -1,0 +1,114 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, var(--color-accent-hover), var(--color-accent));
+  color: #1a1408;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-secondary {
+  border: 1px solid var(--color-border-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-text-primary);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.info-card {
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color var(--transition-base),
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.info-card:hover {
+  border-color: var(--color-border-accent);
+  transform: translateY(-3px);
+}
+
+.info-card-title {
+  font-size: 1.05rem;
+  margin-bottom: 0.45rem;
+}
+
+.info-card-text {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.info-card-link {
+  display: block;
+}
+
+.info-card-cta {
+  display: inline-block;
+  margin-top: 0.85rem;
+  color: var(--color-accent);
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  max-width: 36rem;
+  margin-inline: auto;
+  text-align: center;
+  padding: 2rem 1rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(23, 29, 41, 0.55);
+}
+
+.empty-state-icon {
+  font-size: 2rem;
+  color: var(--color-accent);
+  margin-bottom: 0.75rem;
+}
+
+.empty-state-title {
+  font-size: 1.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-message {
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover,
+  .info-card:hover {
+    transform: none;
+  }
+}

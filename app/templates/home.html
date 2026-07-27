@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/home.css') }}">
+{% endblock %}
+
+{% block page_scripts %}
+<script src="{{ url_for('static', path='js/home.js') }}" defer></script>
+{% endblock %}
+
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero-inner">
+    <div class="hero-copy hero-animate">
+      <p class="hero-eyebrow">이클립스의 모든 정보를 한곳에서</p>
+      <h1 id="hero-title" class="hero-title">CLIPS</h1>
+      <p class="hero-subtitle">이클립스: 더 어웨이크닝 비공식 정보 플랫폼</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{{ url_for('news') }}">최신 소식 보기</a>
+        <a class="btn btn-secondary" href="{{ url_for('classes') }}">게임 정보 살펴보기</a>
+      </div>
+    </div>
+    <div class="hero-visual hero-animate hero-animate-delay" aria-hidden="true">
+      <div class="hero-orb"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="latest-news-heading">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="latest-news-heading" class="section-title">최신 소식</h2>
+      <p class="section-desc">공지·업데이트·이벤트 연동을 준비 중입니다.</p>
+    </div>
+    <div class="card-grid card-grid-3">
+      {% for badge, title, summary in news_cards %}
+      <article class="info-card">
+        <span class="badge">{{ badge }}</span>
+        <h3 class="info-card-title">{{ title }}</h3>
+        <p class="info-card-text">{{ summary }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-muted" aria-labelledby="info-menu-heading">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="info-menu-heading" class="section-title">주요 정보</h2>
+      <p class="section-desc">클래스, 콘텐츠, 아이템 등 핵심 정보 메뉴</p>
+    </div>
+    <div class="card-grid card-grid-3">
+      {% for title, summary, href in info_cards %}
+      <a class="info-card info-card-link" href="{{ href }}">
+        <h3 class="info-card-title">{{ title }}</h3>
+        <p class="info-card-text">{{ summary }}</p>
+        <span class="info-card-cta">준비 중 →</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="coming-soon-heading">
+  <div class="container">
+    {% set title = "더 많은 기능을 준비하고 있습니다" %}
+    {% set message = "크롤링, 검색, 관리자 도구, SEO 고도화를 로드맵에 따라 순차적으로 제공합니다." %}
+    {% set action_url = url_for('home') %}
+    {% set action_label = "홈으로" %}
+    <div id="coming-soon-heading">
+      {% include "components/empty_state.html" %}
+    </div>
+  </div>
+</section>
+{% endblock %}

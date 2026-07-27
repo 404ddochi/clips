@@ -1,0 +1,31 @@
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="logo" href="{{ url_for('home') }}" aria-label="CLIPS 홈">
+      <span class="logo-mark" aria-hidden="true">◈</span>
+      <span class="logo-text">CLIPS</span>
+    </a>
+    <button
+      type="button"
+      class="nav-toggle"
+      aria-expanded="false"
+      aria-controls="primary-navigation"
+      data-nav-toggle
+    >
+      <span class="nav-toggle-label">메뉴</span>
+      <span class="nav-toggle-icon" aria-hidden="true"></span>
+    </button>
+    <nav id="primary-navigation" class="primary-nav" data-primary-nav aria-label="주요 메뉴">
+      <ul class="nav-list">
+        {% for item in nav_items %}
+        <li>
+          <a
+            class="nav-link{% if active_nav == item.key %} is-active{% endif %}"
+            href="{{ item.path }}"
+            {% if active_nav == item.key %}aria-current="page"{% endif %}
+          >{{ item.label }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</header>

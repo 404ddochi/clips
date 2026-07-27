@@ -1,0 +1,10 @@
+<div class="empty-state">
+  <div class="empty-state-icon" aria-hidden="true">⧖</div>
+  <h2 class="empty-state-title">{{ title }}</h2>
+  {% if message %}
+  <p class="empty-state-message">{{ message }}</p>
+  {% endif %}
+  {% if action_url and action_label %}
+  <a class="btn btn-secondary" href="{{ action_url }}">{{ action_label }}</a>
+  {% endif %}
+</div>
