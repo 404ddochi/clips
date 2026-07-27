@@ -1,6 +1,6 @@
 # 12. 개발 로드맵
 
-CLIPS는 **10단계**로 기능을 확장한다. 각 단계는 **완료 조건(Definition of Done)** 을 만족해야 다음 단계로 넘어간다. 현재 저장소 상태는 **1단계 진행 중·부분 완료**로 본다.
+CLIPS는 **10단계**로 기능을 확장한다. **1단계·2단계·메인 UX·Phase 3.7 CDL·Phase 3.8 Dual Theme**까지 완료로 본다(2026-07-28 기준).
 
 **범례:** **확정** / **향후 결정**
 
@@ -12,6 +12,8 @@ CLIPS는 **10단계**로 기능을 확장한다. 각 단계는 **완료 조건(D
 |------|------|-----------|
 | 1 | 프로젝트 생성 및 문서 | 실행 가능 스켈레톤 + docs |
 | 2 | 공통 레이아웃·디자인 | UI 시스템·페이지 골격 |
+| 3.7 | CLIPS Design Language | 토큰·컴포넌트 규격·쇼케이스·CDL 문서 |
+| 3.8 | Dual Theme System | Eclipse/Dawn · system/light/dark |
 | 3 | DB·관리자 인증 | PostgreSQL/SQLite, admin login |
 | 4 | 공지·이벤트·업데이트 | boards SSR + admin CRUD |
 | 5 | 크롤러 | 자동/수동 수집 + 검수 |
@@ -39,13 +41,13 @@ CLIPS는 **10단계**로 기능을 확장한다. 각 단계는 **완료 조건(D
 
 ### 완료 조건
 
-- [ ] `pip install -e ".[dev]"` 성공
-- [ ] `pytest` 전부 통과 (`test_health`, `test_home` + SEO 라우트)
-- [ ] `ruff check` / `mypy app` 통과
-- [ ] `uvicorn app.main:app` 로 `/` 200, H1 1개, meta description 존재
-- [ ] `docs/` 13개 파일(00~12) 비어 있지 않음
-- [ ] README에 설치·실행·문서 링크
-- [ ] Git 저장소 초기화 가능 상태 (원격 push는 선택)
+- [x] `pip install -e ".[dev]"` 성공
+- [x] `pytest` 전부 통과 (`test_health`, `test_home` + SEO 라우트)
+- [x] `ruff check` / `mypy app` 통과
+- [x] `uvicorn app.main:app` 로 `/` 200, H1 1개, meta description 존재
+- [x] `docs/` 13개 파일(00~12) 비어 있지 않음
+- [x] README에 설치·실행·문서 링크
+- [x] Git 저장소 초기화 가능 상태 (원격 push는 선택)
 
 ### 향후 결정
 
@@ -63,22 +65,78 @@ CLIPS는 **10단계**로 기능을 확장한다. 각 단계는 **완료 조건(D
 
 - [05-ui-design-system.md](05-ui-design-system.md) 토큰·컴포넌트 적용
 - `base.html`, header 햄버거, footer 비공식 고지
-- `preparing.html` 및 준비 중 라우트 패턴 ( `#` 링크 금지)
+- `coming_soon.html` 및 준비 중 라우트 패턴 ( `#` 링크 금지)
 - 페이지별 CSS split (`pages/*.css`)
 - `prefers-reduced-motion` 대응
 
 ### 완료 조건
 
-- [ ] 9개 주 메뉴가 준비 중 또는 실제 경로로 연결 (깨진 `#` 없음)
-- [ ] 모바일·데스크톱 레이아웃 QA (320px~1280px)
+- [x] 9개 주 메뉴가 준비 중 또는 실제 경로로 연결 (깨진 `#` 없음)
+- [ ] 모바일·데스크톱 레이아웃 QA (320px~1280px) — **브라우저 수동 QA 권장**
 - [ ] Lighthouse 접근성·SEO **기본** 점수 기록 (baseline)
-- [ ] 404/500이 base 레이아웃·토큰 사용
-- [ ] 컴포넌트: card, button, badge, empty_state 문서와 일치
+- [x] 404/500이 base 레이아웃·토큰 사용
+- [x] 컴포넌트: card, button, badge, empty_state 문서와 일치
+- [x] 메인 6섹션(히어로·빠른 메뉴·소식·플랫폼·아카이브·CTA) SSR
+- [x] `pytest` UI/SEO 확장 테스트 통과
 
 ### 향후 결정
 
 - 다크/라이트 토글
 - 공식 에셋 적용 여부
+
+---
+
+## Phase 3.7: CLIPS Design Language (CDL)
+
+### 목표
+
+앞으로의 모든 화면이 공유할 **토큰·타이포·아이콘·컴포넌트 규격**을 확정하고, 개발용 쇼케이스로 검증한다. **기능(DB/검색/CRUD)은 포함하지 않는다.**
+
+### 확정 범위
+
+- [x] `tokens.css` CDL 토큰 체계
+- [x] 타이포 역할 클래스, utilities, 레이아웃 패턴
+- [x] 버튼·카드·배지·태그·상태·폼·테이블·탭·페이지네이션·아티클 CSS
+- [x] Icon Language 레지스트리 정리
+- [x] `/dev/design-system` (local/development만, noindex, sitemap 제외)
+- [x] [13-clips-design-language.md](13-clips-design-language.md) 단일 기준 문서
+- [x] [05-ui-design-system.md](05-ui-design-system.md) 개요·링크 정리
+
+### 완료 조건
+
+- [x] 기존 메인 UX 유지 (대규모 재설계 없음)
+- [x] 쇼케이스 local 200 / production 404 테스트
+- [x] pytest / ruff / mypy 통과
+
+### 다음 제안
+
+실제 DB 전에 **정보 페이지 UI 골격 + Mock 데이터 구조** 단계를 진행한다.
+
+---
+
+## Phase 3.8: Dual Theme System (Eclipse / Dawn)
+
+### 목표
+
+기존 Eclipse 다크를 유지하고, CDL을 계승한 Dawn 라이트 테마와 system/light/dark 설정을 제공한다.
+
+### 확정 범위
+
+- [x] 토큰 기반 light/dark (`tokens.css`)
+- [x] FOUC 방지 head 스크립트 + `theme.js`
+- [x] 헤더 테마 팝오버 (시스템/라이트/다크)
+- [x] CLIPS 테마 아이콘
+- [x] [14-theme-system.md](14-theme-system.md)
+
+### 완료 조건
+
+- [x] localStorage `clips-theme`, 기본 system
+- [x] 전 페이지·CDL 컴포넌트 토큰 전환
+- [x] pytest / ruff / mypy 통과
+
+### 다음 제안
+
+테마가 확정된 CDL 위에서 **정보 페이지 UI 골격 + Mock 데이터 구조**를 설계한다.
 
 ---
 

@@ -40,6 +40,10 @@ class Settings(BaseSettings):
     def is_production(self) -> bool:
         return self.app_env in ("production", "prod")
 
+    def is_design_system_enabled(self) -> bool:
+        """Dev-only CDL showcase: local / development."""
+        return self.app_env in ("local", "development")
+
     def is_debug_enabled(self) -> bool:
         if self.is_production():
             return self.app_debug

@@ -1,0 +1,15 @@
+<aside class="info-strip" aria-label="주요 정보 바로가기">
+  <div class="container info-strip__inner">
+    {% from "components/icons.html" import icon %}
+    {% for item in info_strip %}
+    <a class="info-strip__item" href="{{ url_for(item.route_name) }}">
+      <span class="info-strip__icon">{{ icon(item.icon) }}</span>
+      <span class="info-strip__copy">
+        <span class="info-strip__label">{{ item.label }}</span>
+        <span class="info-strip__text">{{ item.text }}</span>
+      </span>
+      <span class="info-strip__arrow" aria-hidden="true">{{ icon("arrow", size=14) }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</aside>

@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/design-system.css') }}">
+{% endblock %}
+
+{% block body_class %}page-design-system{% endblock %}
+
+{% block content %}
+{% from "components/icons.html" import icon %}
+
+<aside class="ds-banner" aria-label="개발용 안내">
+  <div class="container ds-banner__inner">
+    <div>
+      <p class="text-eyebrow">CLIPS Design Language · Sample</p>
+      <h1 class="text-page-title">디자인 시스템 쇼케이스</h1>
+      <p class="ds-banner__note">
+        이 페이지는 개발 환경 전용 CDL 검증 화면입니다. 표시된 내용은 모두
+        <strong>예시 / 샘플 / 준비 중</strong>이며 실제 게임 데이터가 아닙니다.
+        헤더 테마 버튼으로 <strong>Eclipse(다크)</strong> · <strong>Dawn(라이트)</strong> ·
+        <strong>System(OS)</strong> 전환을 검수하세요.
+      </p>
+    </div>
+    <a class="button button--secondary button--sm" href="{{ url_for('home') }}">홈으로</a>
+  </div>
+</aside>
+
+<nav class="ds-nav" aria-label="CDL 섹션">
+  <div class="container">
+    <ul class="ds-nav__list">
+      <li><a href="#colors">색상</a></li>
+      <li><a href="#typography">타이포</a></li>
+      <li><a href="#icons">아이콘</a></li>
+      <li><a href="#buttons">버튼</a></li>
+      <li><a href="#cards">카드</a></li>
+      <li><a href="#badges">배지</a></li>
+      <li><a href="#forms">폼</a></li>
+      <li><a href="#tables">테이블</a></li>
+      <li><a href="#tabs">탭</a></li>
+      <li><a href="#pagination">페이지</a></li>
+      <li><a href="#states">상태</a></li>
+      <li><a href="#overlays">오버레이</a></li>
+      <li><a href="#article">본문</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="ds-section" id="colors">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">색상 토큰</h2>
+    <p class="ds-section__desc">다크 아카이브 배경 + Eclipse 골드 액센트. 상태색은 텍스트 라벨과 함께 사용합니다.</p>
+    <div class="ds-swatch-grid">
+      {% for name, var in [
+        ("bg-root", "--color-bg-root"),
+        ("bg-primary", "--color-bg-primary"),
+        ("surface", "--color-surface"),
+        ("accent", "--color-accent"),
+        ("accent-hover", "--color-accent-hover"),
+        ("text-primary", "--color-text-primary"),
+        ("text-secondary", "--color-text-secondary"),
+        ("border", "--color-border"),
+        ("success", "--color-success"),
+        ("warning", "--color-warning"),
+        ("danger", "--color-danger"),
+        ("info", "--color-info"),
+      ] %}
+      <div class="ds-swatch">
+        <div class="ds-swatch__chip" style="background: var({{ var }});"></div>
+        <div class="ds-swatch__meta">{{ name }}<br>{{ var }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="typography">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">타이포그래피</h2>
+    <p class="ds-section__desc">역할 기반 클래스. 한글은 keep-all / pretty·balance를 상황별로 사용합니다.</p>
+    <div class="ds-type-sample">
+      <p class="text-display">Display · 이클립스 아카이브</p>
+      <p class="text-page-title">Page Title · 페이지 제목</p>
+      <p class="text-section-title">Section Title · 섹션 제목</p>
+      <p class="text-card-title">Card Title · 카드 제목</p>
+      <p class="text-body">Body · 공지·이벤트·패치노트 정보를 한곳에서 확인합니다.</p>
+      <p class="text-supporting">Supporting · 보조 설명 텍스트 샘플입니다.</p>
+      <p class="text-caption">Caption · 캡션 / 보조 메모</p>
+      <p class="text-eyebrow">Eyebrow Label</p>
+      <p class="text-meta">Metadata · 2026-07-28 · 샘플</p>
+      <p class="text-label">Label · 필드 라벨</p>
+      <p class="text-code">Code / Numeric · patch-2026.07</p>
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="icons">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">아이콘</h2>
+    <p class="ds-section__desc">Inline SVG · viewBox 0 0 24 24 · stroke 1.8 · 기본 20px. 이모지·유니코드 기호 대체 금지.</p>
+    <div class="ds-icon-grid">
+      {% for name in cdl_icons %}
+      <div class="ds-icon-card">
+        {{ icon(name) }}
+        <span class="ds-icon-card__name">{{ name }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="buttons">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">버튼</h2>
+    <p class="ds-section__desc">이동은 a, 동작은 button. 최소 터치 영역 44px.</p>
+    <div class="ds-row">
+      <a class="button button--primary" href="{{ url_for('home') }}">Primary</a>
+      <button type="button" class="button button--secondary">Secondary</button>
+      <button type="button" class="button button--ghost">Ghost</button>
+      <button type="button" class="button button--text">Text</button>
+      <button type="button" class="button button--danger">Danger</button>
+      <button type="button" class="button button--icon" aria-label="닫기 예시">{{ icon("close") }}</button>
+    </div>
+    <div class="ds-row">
+      <button type="button" class="button button--primary button--sm">Small</button>
+      <button type="button" class="button button--primary button--md">Medium</button>
+      <button type="button" class="button button--primary button--lg">Large</button>
+      <button type="button" class="button button--secondary is-loading" aria-busy="true">Loading</button>
+      <button type="button" class="button button--secondary" disabled>Disabled</button>
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="cards">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">카드</h2>
+    <p class="ds-section__desc">카드 전체가 링크일 때 중첩 링크 금지. hover는 translateY -3px 이하.</p>
+    <div class="card-grid card-grid--features">
+      <article class="card">
+        <div class="card__icon">{{ icon("notice") }}</div>
+        <h3 class="card__title">기본 카드</h3>
+        <p class="card__description">샘플 설명입니다. 실제 공지 내용이 아닙니다.</p>
+      </article>
+      <a class="card card--interactive card--compact" href="{{ url_for('news') }}">
+        <span class="card__icon">{{ icon("event") }}</span>
+        <span class="card__title">인터랙티브 카드</span>
+        <span class="card__description">클릭 가능한 카드 예시</span>
+      </a>
+      <article class="card card--featured">
+        <h3 class="card__title">Featured</h3>
+        <p class="card__description">강조 카드 샘플</p>
+      </article>
+      <article class="card card--empty">
+        <h3 class="card__title">Empty card</h3>
+        <p class="card__description">비어 있는 상태 샘플</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="badges">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">배지 · 태그 · 상태</h2>
+    <p class="ds-section__desc">색만으로 의미를 전달하지 않습니다. 항상 텍스트를 포함합니다.</p>
+    <div class="ds-row">
+      <span class="badge badge--notice">공지</span>
+      <span class="badge badge--event">이벤트</span>
+      <span class="badge badge--update">업데이트</span>
+      <span class="badge badge--new">신규</span>
+      <span class="badge badge--soon">준비 중</span>
+    </div>
+    <div class="ds-row">
+      <span class="tag">샘플 태그</span>
+      <a class="tag tag--interactive" href="{{ url_for('guides') }}">인터랙티브</a>
+      <span class="tag tag--selected">선택됨</span>
+    </div>
+    <div class="ds-row">
+      <span class="status status--success"><span class="status__dot" aria-hidden="true"></span>성공</span>
+      <span class="status status--warning"><span class="status__dot" aria-hidden="true"></span>경고</span>
+      <span class="status status--danger"><span class="status__dot" aria-hidden="true"></span>오류</span>
+      <span class="status status--info"><span class="status__dot" aria-hidden="true"></span>정보</span>
+      <span class="status status--neutral"><span class="status__dot" aria-hidden="true"></span>대기</span>
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="forms">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">입력 요소</h2>
+    <p class="ds-section__desc">구조·스타일만 준비. 실제 검색/제출 기능은 없습니다.</p>
+    <div class="ds-demo-panel" style="max-width: 28rem;">
+      <div class="form-field">
+        <label class="form-label" for="ds-sample-input">샘플 입력</label>
+        <input class="form-input" id="ds-sample-input" type="text" placeholder="예시 텍스트" aria-describedby="ds-sample-help">
+        <p class="form-help" id="ds-sample-help">도움말 예시입니다.</p>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="ds-sample-select">샘플 선택</label>
+        <select class="form-select" id="ds-sample-select">
+          <option>준비 중 옵션 A</option>
+          <option>준비 중 옵션 B</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="ds-sample-textarea">샘플 텍스트영역</label>
+        <textarea class="form-textarea" id="ds-sample-textarea" rows="3" placeholder="예시 내용"></textarea>
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="ds-sample-invalid">오류 상태 예시</label>
+        <input class="form-input is-invalid" id="ds-sample-invalid" type="text" value="잘못된 값" aria-invalid="true" aria-describedby="ds-sample-error">
+        <p class="form-error" id="ds-sample-error">에러 메시지 예시</p>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="button button--primary">확인 (샘플)</button>
+        <button type="button" class="button button--ghost">취소</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="tables">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">테이블</h2>
+    <p class="ds-section__desc">샘플 행입니다. 정렬·필터 동작은 구현하지 않았습니다.</p>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">항목</th>
+            <th scope="col">상태</th>
+            <th scope="col" class="table__cell--numeric">순서</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>클래스 정보</td>
+            <td>준비 중</td>
+            <td class="table__cell--numeric">1</td>
+          </tr>
+          <tr>
+            <td>보스 정보</td>
+            <td>준비 중</td>
+            <td class="table__cell--numeric">2</td>
+          </tr>
+          <tr>
+            <td>아이템 정보</td>
+            <td>준비 중</td>
+            <td class="table__cell--numeric">3</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="tabs">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">탭 · 필터 · 페이지네이션</h2>
+    <p class="ds-section__desc">정적 마크업 예시. 실제 패널 전환·필터·페이지 로직은 없습니다.</p>
+    <div class="tabs" style="margin-bottom: var(--space-5);">
+      <ul class="tabs__list" role="tablist" aria-label="샘플 탭">
+        <li class="tabs__item" role="presentation">
+          <button type="button" class="tabs__button is-active" role="tab" aria-selected="true">공지</button>
+        </li>
+        <li class="tabs__item" role="presentation">
+          <button type="button" class="tabs__button" role="tab" aria-selected="false">이벤트</button>
+        </li>
+        <li class="tabs__item" role="presentation">
+          <button type="button" class="tabs__button" role="tab" aria-selected="false">패치</button>
+        </li>
+      </ul>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-group">
+        <button type="button" class="filter-chip is-active" aria-pressed="true">전체</button>
+        <button type="button" class="filter-chip" aria-pressed="false">공지</button>
+        <button type="button" class="filter-chip" aria-pressed="false">이벤트</button>
+      </div>
+      <button type="button" class="filter-reset">초기화</button>
+    </div>
+    <nav class="pagination" aria-label="샘플 페이지네이션" id="pagination">
+      <ul class="pagination__list">
+        <li><a class="pagination__link" href="{{ url_for('design_system') }}#pagination">이전</a></li>
+        <li><a class="pagination__link pagination__link--current" href="{{ url_for('design_system') }}#pagination" aria-current="page">1</a></li>
+        <li><a class="pagination__link" href="{{ url_for('design_system') }}#pagination">2</a></li>
+        <li><span class="pagination__ellipsis" aria-hidden="true">…</span></li>
+        <li><a class="pagination__link" href="{{ url_for('design_system') }}#pagination">다음</a></li>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<section class="ds-section" id="states">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">상태 화면</h2>
+    <p class="ds-section__desc">Empty / Coming Soon / Error 계열. 이모지 없이 CLIPS 아이콘만 사용합니다.</p>
+    <div class="empty-layout">
+      {% with
+        icon=icon("search", size=24),
+        title="검색 결과 없음 (샘플)",
+        message="조건에 맞는 항목이 없습니다. 이 문구는 예시입니다.",
+        action_url=url_for('home'),
+        action_label="홈으로"
+      %}
+        {% include "components/empty_state.html" %}
+      {% endwith %}
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="overlays">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">모달 · 드로어 · 토스트</h2>
+    <p class="ds-section__desc">정적 시각 예시만 제공합니다. focus trap / ESC / live region 동작은 이후 단계에서 구현합니다.</p>
+    <div class="ds-modal-static" style="margin-bottom: var(--space-6);">
+      <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="ds-modal-title">
+        <div class="modal__header">
+          <h3 id="ds-modal-title" class="text-card-title">모달 샘플</h3>
+          <button type="button" class="button button--icon button--sm" aria-label="닫기 예시">{{ icon("close", size=16) }}</button>
+        </div>
+        <div class="modal__body">
+          <p>정적 다이얼로그 예시입니다. 실제 기능이 연결되어 있지 않습니다.</p>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="button button--ghost">취소</button>
+          <button type="button" class="button button--primary">확인</button>
+        </div>
+      </div>
+    </div>
+    <div class="drawer__panel" style="margin-bottom: var(--space-6);">
+      <p class="text-eyebrow">Drawer</p>
+      <p class="text-supporting">드로어 패널 샘플</p>
+    </div>
+    <div class="toast-region" aria-live="polite">
+      <div class="toast toast--success">{{ icon("check", size=16) }}<span>저장 완료 (샘플)</span></div>
+      <div class="toast toast--error">{{ icon("warning", size=16) }}<span>오류 발생 (샘플)</span></div>
+      <div class="toast toast--info">{{ icon("info", size=16) }}<span>안내 메시지 (샘플)</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-section" id="article">
+  <div class="container">
+    <h2 class="text-section-title ds-section__title">상세 콘텐츠 스타일</h2>
+    <p class="ds-section__desc">공지·이벤트·패치·공략 상세에 재사용할 본문 스타일 샘플입니다.</p>
+    <article class="article">
+      <header class="article__header">
+        <div class="article__category"><span class="badge badge--notice">공지</span></div>
+        <h3 class="article__title">샘플 상세 제목</h3>
+        <p class="article__summary">이 요약은 예시입니다. 실제 공식 공지 내용이 아닙니다.</p>
+        <div class="article__meta">
+          <span>작성일 샘플</span>
+          <span>출처 표시 예정</span>
+        </div>
+      </header>
+      <div class="article__body">
+        <p>본문 단락 샘플입니다. 한글 가독성을 위해 keep-all과 적절한 줄 길이를 유지합니다.</p>
+        <h2>소제목 예시</h2>
+        <p>목록과 인용, 코드 스타일을 확인합니다.</p>
+        <ul>
+          <li>첫 번째 항목 (샘플)</li>
+          <li>두 번째 항목 (샘플)</li>
+        </ul>
+        <blockquote>인용문 스타일 샘플입니다.</blockquote>
+        <p>인라인 <code>code</code>와 링크
+          <a href="{{ url_for('home') }}">홈으로</a> 예시입니다.
+        </p>
+        <pre><code>patch.sample = "준비 중"</code></pre>
+        <hr>
+        <p>구분선 아래 단락입니다.</p>
+      </div>
+      <div class="article__source">
+        출처: 샘플 표기 · 공식 원문 링크는 향후 제공 예정입니다.
+      </div>
+    </article>
+  </div>
+</section>
+{% endblock %}

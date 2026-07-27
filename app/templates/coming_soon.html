@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-coming-soon{% endblock %}
+
+{% block content %}
+<section class="section page-intro">
+  <div class="container container--narrow">
+    {% include "components/breadcrumb.html" %}
+    {% from "components/icons.html" import icon %}
+    <div class="coming-soon">
+      <div class="coming-soon__icon">{{ icon(page.icon) }}</div>
+      <p class="coming-soon__eyebrow">준비 중</p>
+      <h1 class="coming-soon__title">{{ page.page_title }}</h1>
+      <p class="coming-soon__desc">{{ page.page_description }}</p>
+      <ul class="coming-soon__features">
+        {% for feature in page.future_features %}
+        <li>{{ feature }}</li>
+        {% endfor %}
+      </ul>
+      <p class="coming-soon__actions">
+        <a class="button button--secondary" href="{{ url_for('home') }}">홈으로 돌아가기</a>
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

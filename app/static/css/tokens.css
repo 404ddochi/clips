@@ -1,23 +1,228 @@
+/* CLIPS Design Language — Dual Theme Tokens
+   Eclipse (dark) · Dawn (light)
+   Source: docs/14-theme-system.md */
+
 :root {
-  --color-bg-primary: #080b12;
-  --color-bg-secondary: #10151f;
-  --color-bg-elevated: #171d29;
-  --color-text-primary: #f4f1e8;
-  --color-text-secondary: #a9adba;
-  --color-text-muted: #717786;
-  --color-accent: #c6a15b;
-  --color-accent-hover: #dfbd73;
-  --color-accent-soft: rgba(198, 161, 91, 0.14);
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-border-accent: rgba(198, 161, 91, 0.45);
+  /* —— Shared (non-color) —— */
+  --font-family-base: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  --font-family-display: var(--font-family-base);
+  --font-family-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-sans: var(--font-family-base);
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: clamp(1.85rem, 3.2vw, 2.4rem);
+  --font-size-4xl: clamp(2.15rem, 4.2vw, 2.95rem);
+  --font-size-display: clamp(2.4rem, 5vw, 3.4rem);
+  --font-size-hero: var(--font-size-display);
+
+  --line-height-tight: 1.2;
+  --line-height-heading: 1.3;
+  --line-height-base: 1.6;
+  --line-height-relaxed: 1.75;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
   --container-width: 1280px;
-  --header-height: 72px;
+  --container-narrow-width: 720px;
+  --content-readable-width: 42rem;
+  --container-gutter: 1.25rem;
+  --header-height: 3.75rem;
+  --header-height-mobile: 3.5rem;
+  --content-min-height: calc(100vh - var(--header-height) - 16rem);
+  --control-height-sm: 2.25rem;
+  --control-height-md: 2.75rem;
+  --control-height-lg: 3rem;
+  --touch-target-min: 2.75rem;
+
+  --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
-  --shadow-card: 0 18px 50px rgba(0, 0, 0, 0.28);
-  --transition-fast: 160ms ease;
-  --transition-base: 280ms ease;
-  --transition-slow: 600ms cubic-bezier(0.22, 1, 0.36, 1);
-  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  --border-width-thin: 1px;
+  --border-width-default: 1px;
+  --border-width-strong: 2px;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-fast: 160ms var(--ease-standard);
+  --transition-base: 280ms var(--ease-standard);
+  --transition-slow: 600ms var(--ease-emphasized);
+
+  --z-header: 60;
+  --z-dropdown: 70;
+  --z-overlay: 80;
+  --z-modal: 90;
+  --z-toast: 100;
+}
+
+/* —— Eclipse (Dark) — default before script / FOUC-safe —— */
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg-root: #05070d;
+  --color-bg-primary: #080b12;
+  --color-bg-secondary: #10151f;
+  --color-bg-elevated: #171d29;
+  --color-bg-overlay: rgba(5, 7, 13, 0.72);
+
+  --color-surface: #121824;
+  --color-surface-subtle: #0e1420;
+  --color-surface-hover: #1a2230;
+  --color-surface-active: #222b3a;
+  --color-surface-selected: rgba(198, 161, 91, 0.12);
+
+  --color-text-primary: #f4f1e8;
+  --color-text-secondary: #a9adba;
+  --color-text-muted: #717786;
+  --color-text-disabled: #525866;
+  --color-text-inverse: #1a1408;
+
+  --color-accent: #c6a15b;
+  --color-accent-hover: #dfbd73;
+  --color-accent-active: #b8924f;
+  --color-accent-soft: rgba(198, 161, 91, 0.14);
+  --color-accent-glow: rgba(198, 161, 91, 0.35);
+
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
+  --color-border-accent: rgba(198, 161, 91, 0.45);
+  --color-divider: rgba(255, 255, 255, 0.08);
+
+  --color-success: #6ecf8a;
+  --color-warning: #e8b86d;
+  --color-danger: #e07a7a;
+  --color-info: #7eb8e8;
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.22);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.28);
+  --shadow-card: var(--shadow-lg);
+  --shadow-card-hover: 0 14px 36px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(198, 161, 91, 0.12);
+  --shadow-focus: 0 0 0 3px var(--color-accent-glow);
+  --shadow-accent: 0 0 24px var(--color-accent-glow);
+
+  --theme-color: #080b12;
+
+  /* Atmosphere (body / hero / strip) */
+  --atmosphere-glow-gold: rgba(198, 161, 91, 0.08);
+  --atmosphere-glow-blue: rgba(70, 110, 180, 0.1);
+  --atmosphere-veil: rgba(26, 34, 51, 0.85);
+  --section-muted-fill: rgba(16, 21, 31, 0.55);
+  --nav-backdrop-fill: rgba(0, 0, 0, 0.45);
+  --hero-brand-highlight: #fff8ea;
+  --hero-grid-line: rgba(255, 255, 255, 0.025);
+  --hero-veil-start: rgba(8, 11, 18, 0.15);
+  --hero-veil-end: rgba(5, 7, 13, 0.3);
+  --hero-glow-gold: rgba(198, 161, 91, 0.12);
+  --hero-glow-blue: rgba(70, 110, 180, 0.12);
+  --eclipse-ring: rgba(198, 161, 91, 0.3);
+  --eclipse-ring-strong: rgba(198, 161, 91, 0.55);
+  --eclipse-disc-a: #141a28;
+  --eclipse-disc-b: #090c14;
+  --eclipse-disc-c: #0c1018;
+  --eclipse-shadow: rgba(5, 7, 13, 0.75);
+  --eclipse-glow: rgba(198, 161, 91, 0.08);
+  --info-strip-surface: rgba(16, 21, 31, 0.92);
+  --cta-panel-a: rgba(23, 29, 41, 0.95);
+  --cta-panel-b: rgba(16, 21, 31, 0.98);
+  --empty-state-fill: rgba(23, 29, 41, 0.45);
+  --quick-hover-fill: rgba(26, 34, 48, 0.95);
+}
+
+/* —— Dawn (Light) — ivory archive —— */
+html[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg-root: #f3efe6;
+  --color-bg-primary: #f8f5ee;
+  --color-bg-secondary: #eee8dc;
+  --color-bg-elevated: #fffdf8;
+  --color-bg-overlay: rgba(248, 245, 238, 0.86);
+
+  --color-surface: #fffdf8;
+  --color-surface-subtle: #f4efe5;
+  --color-surface-hover: #faf4e8;
+  --color-surface-active: #efe5d4;
+  --color-surface-selected: #f5ead5;
+
+  --color-text-primary: #202530;
+  --color-text-secondary: #505765;
+  --color-text-muted: #6b7280;
+  --color-text-disabled: #9aa0a8;
+  --color-text-inverse: #fffdf8;
+
+  --color-accent: #9a7028;
+  --color-accent-hover: #825d1f;
+  --color-accent-active: #6c4d18;
+  --color-accent-soft: rgba(154, 112, 40, 0.12);
+  --color-accent-glow: rgba(154, 112, 40, 0.22);
+
+  --color-border: rgba(43, 48, 58, 0.13);
+  --color-border-strong: rgba(43, 48, 58, 0.22);
+  --color-border-accent: rgba(154, 112, 40, 0.42);
+  --color-divider: rgba(43, 48, 58, 0.1);
+
+  --color-success: #2f8a4e;
+  --color-warning: #a06b1f;
+  --color-danger: #b24545;
+  --color-info: #2f6f9e;
+
+  --shadow-sm: 0 4px 14px rgba(32, 37, 48, 0.08);
+  --shadow-md: 0 12px 28px rgba(32, 37, 48, 0.1);
+  --shadow-lg: 0 18px 40px rgba(32, 37, 48, 0.12);
+  --shadow-card: var(--shadow-lg);
+  --shadow-card-hover: 0 12px 28px rgba(32, 37, 48, 0.12), 0 0 0 1px rgba(154, 112, 40, 0.16);
+  --shadow-focus: 0 0 0 3px var(--color-accent-glow);
+  --shadow-accent: 0 0 18px var(--color-accent-glow);
+
+  --theme-color: #f3efe6;
+
+  --atmosphere-glow-gold: rgba(154, 112, 40, 0.08);
+  --atmosphere-glow-blue: rgba(70, 95, 130, 0.06);
+  --atmosphere-veil: rgba(243, 239, 230, 0.92);
+  --section-muted-fill: rgba(238, 232, 220, 0.65);
+  --nav-backdrop-fill: rgba(27, 31, 41, 0.35);
+  --hero-brand-highlight: #6c4d18;
+  --hero-grid-line: rgba(43, 48, 58, 0.05);
+  --hero-veil-start: rgba(248, 245, 238, 0.35);
+  --hero-veil-end: rgba(238, 232, 220, 0.55);
+  --hero-glow-gold: rgba(154, 112, 40, 0.1);
+  --hero-glow-blue: rgba(70, 95, 130, 0.08);
+  --eclipse-ring: rgba(154, 112, 40, 0.5);
+  --eclipse-ring-strong: rgba(146, 98, 32, 0.68);
+  --eclipse-disc-a: rgba(118, 124, 136, 0.14);
+  --eclipse-disc-b: rgba(92, 102, 118, 0.18);
+  --eclipse-disc-c: rgba(72, 84, 104, 0.22);
+  --eclipse-shadow: rgba(70, 82, 102, 0.08);
+  --eclipse-glow: rgba(154, 112, 40, 0.08);
+  --info-strip-surface: rgba(255, 253, 248, 0.92);
+  --cta-panel-a: rgba(255, 253, 248, 0.98);
+  --cta-panel-b: rgba(244, 239, 229, 0.96);
+  --empty-state-fill: rgba(255, 253, 248, 0.72);
+  --quick-hover-fill: rgba(250, 244, 232, 0.98);
 }

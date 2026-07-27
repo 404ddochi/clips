@@ -20,6 +20,8 @@ app/routers/seo.py
 app/routers/web.py
 app/schemas/__init__.py
 app/services/__init__.py
+app/services/coming_soon_data.py
+app/services/home_page_data.py
 app/services/seo.py
 clips.egg-info/PKG-INFO
 clips.egg-info/SOURCES.txt

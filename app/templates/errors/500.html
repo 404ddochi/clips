@@ -3,6 +3,8 @@
 {% block content %}
 <section class="section">
   <div class="container">
+    {% from "components/icons.html" import icon as clips_icon %}
+    {% set icon = clips_icon("update") %}
     {% set title = "일시적인 오류가 발생했습니다" %}
     {% set message = "잠시 후 다시 시도해 주세요. 문제가 계속되면 관리자에게 알려주세요." %}
     {% set action_url = url_for('home') %}

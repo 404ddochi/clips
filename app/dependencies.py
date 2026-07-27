@@ -2,22 +2,32 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from fastapi.templating import Jinja2Templates
+from markupsafe import Markup
 
 from app.config import Settings, get_settings
+from app.core.constants import FOOTER_DISCLAIMER, GAME_TITLE, GAME_TITLE_EN
 
 APP_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = APP_DIR / "templates"
 
 
-def _json_script(value: object) -> str:
+def _json_script(value: object) -> Markup:
     import json
 
-    return json.dumps(value, ensure_ascii=False)
+    return Markup(json.dumps(value, ensure_ascii=False))
+
+
+def current_year_kst() -> int:
+    settings = get_settings()
+    tz = ZoneInfo(settings.timezone)
+    return datetime.now(tz).year
 
 
 @lru_cache
@@ -29,6 +39,10 @@ def get_templates() -> Jinja2Templates:
     templates.env.globals["app_name"] = settings.app_name
     templates.env.globals["site_name"] = "클립스"
     templates.env.globals["default_locale"] = settings.default_locale
+    templates.env.globals["current_year"] = current_year_kst()
+    templates.env.globals["game_title"] = GAME_TITLE
+    templates.env.globals["game_title_en"] = GAME_TITLE_EN
+    templates.env.globals["footer_disclaimer"] = FOOTER_DISCLAIMER
     templates.env.filters["tojson"] = _json_script
     return templates
 
@@ -49,15 +63,13 @@ def seo_context(
     structured_data: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Build template context keys consumed by `components/seo_meta.html`."""
-    settings = get_settings()
-    og_image_url = og_image or settings.absolute_url("/static/images/placeholders/og-default.svg")
     return {
         "seo_title": title,
         "seo_description": description,
         "seo_canonical_url": canonical_url,
         "seo_og_title": og_title or title,
         "seo_og_description": og_description or description,
-        "seo_og_image": og_image_url,
+        "seo_og_image": og_image,
         "seo_robots": robots,
         "seo_structured_data": structured_data or [],
     }

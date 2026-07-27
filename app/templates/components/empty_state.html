@@ -1,10 +1,12 @@
-<div class="empty-state">
-  <div class="empty-state-icon" aria-hidden="true">⧖</div>
-  <h2 class="empty-state-title">{{ title }}</h2>
+<div class="empty-state empty-state--{{ variant | default('default') }}">
+  {% if icon %}
+  <div class="empty-state__icon" aria-hidden="true">{{ icon }}</div>
+  {% endif %}
+  <h2 class="empty-state__title">{{ title }}</h2>
   {% if message %}
-  <p class="empty-state-message">{{ message }}</p>
+  <p class="empty-state__message">{{ message }}</p>
   {% endif %}
   {% if action_url and action_label %}
-  <a class="btn btn-secondary" href="{{ action_url }}">{{ action_label }}</a>
+  <a class="button button--secondary" href="{{ action_url }}">{{ action_label }}</a>
   {% endif %}
 </div>

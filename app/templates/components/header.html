@@ -1,31 +1,78 @@
 <header class="site-header" data-header>
   <div class="container header-inner">
-    <a class="logo" href="{{ url_for('home') }}" aria-label="CLIPS 홈">
-      <span class="logo-mark" aria-hidden="true">◈</span>
-      <span class="logo-text">CLIPS</span>
+    {% from "components/icons.html" import icon %}
+    <a class="logo" href="{{ url_for('home') }}" aria-label="CLIPS 홈 — {{ game_title }} 비공식 정보 플랫폼">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <span class="logo-copy">
+        <span class="logo-text">CLIPS</span>
+        <span class="logo-sub">{{ game_title_en }}</span>
+      </span>
     </a>
-    <button
-      type="button"
-      class="nav-toggle"
-      aria-expanded="false"
-      aria-controls="primary-navigation"
-      data-nav-toggle
-    >
-      <span class="nav-toggle-label">메뉴</span>
-      <span class="nav-toggle-icon" aria-hidden="true"></span>
-    </button>
     <nav id="primary-navigation" class="primary-nav" data-primary-nav aria-label="주요 메뉴">
       <ul class="nav-list">
         {% for item in nav_items %}
         <li>
           <a
-            class="nav-link{% if active_nav == item.key %} is-active{% endif %}"
-            href="{{ item.path }}"
-            {% if active_nav == item.key %}aria-current="page"{% endif %}
+            class="nav-link{% if active_menu == item.key %} is-active{% endif %}"
+            href="{{ url_for(item.route_name) }}"
+            {% if active_menu == item.key %}aria-current="page"{% endif %}
           >{{ item.label }}</a>
         </li>
         {% endfor %}
       </ul>
     </nav>
+    <div class="header-tools">
+      <div class="theme-control" data-theme-control>
+        <button
+          type="button"
+          class="theme-toggle"
+          data-theme-toggle
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-controls="theme-menu"
+          aria-label="테마 설정, 현재 시스템 설정"
+        >
+          <span class="visually-hidden" data-theme-label>테마 설정, 현재 시스템 설정</span>
+          <span data-theme-icon="system" aria-hidden="true">{{ icon("theme-system") }}</span>
+          <span class="is-hidden" data-theme-icon="light" hidden aria-hidden="true">{{ icon("theme-light") }}</span>
+          <span class="is-hidden" data-theme-icon="dark" hidden aria-hidden="true">{{ icon("theme-dark") }}</span>
+        </button>
+        <div
+          id="theme-menu"
+          class="theme-menu"
+          data-theme-menu
+          role="menu"
+          aria-label="테마 선택"
+          hidden
+        >
+          <button type="button" class="theme-menu__item" role="menuitemradio" aria-checked="true" data-theme-option="system">
+            <span class="theme-menu__icon" aria-hidden="true">{{ icon("theme-system", size=16) }}</span>
+            <span class="theme-menu__text">시스템 설정</span>
+            <span class="theme-menu__check" data-theme-check aria-hidden="true">{{ icon("check", size=14) }}</span>
+          </button>
+          <button type="button" class="theme-menu__item" role="menuitemradio" aria-checked="false" data-theme-option="light">
+            <span class="theme-menu__icon" aria-hidden="true">{{ icon("theme-light", size=16) }}</span>
+            <span class="theme-menu__text">라이트 모드</span>
+            <span class="theme-menu__check" data-theme-check hidden aria-hidden="true">{{ icon("check", size=14) }}</span>
+          </button>
+          <button type="button" class="theme-menu__item" role="menuitemradio" aria-checked="false" data-theme-option="dark">
+            <span class="theme-menu__icon" aria-hidden="true">{{ icon("theme-dark", size=16) }}</span>
+            <span class="theme-menu__text">다크 모드</span>
+            <span class="theme-menu__check" data-theme-check hidden aria-hidden="true">{{ icon("check", size=14) }}</span>
+          </button>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        data-nav-toggle
+      >
+        <span class="nav-toggle-label">메뉴 열기</span>
+        <span class="nav-toggle-glyph" data-nav-icon-open aria-hidden="true">{{ icon("menu", size=20) }}</span>
+        <span class="nav-toggle-glyph is-hidden" data-nav-icon-close aria-hidden="true">{{ icon("close", size=20) }}</span>
+      </button>
+    </div>
   </div>
 </header>

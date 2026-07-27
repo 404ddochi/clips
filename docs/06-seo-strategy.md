@@ -121,16 +121,29 @@ Disallow: /api/
 
 | 필드 | 규칙 |
 |------|------|
-| title | `{주제} - 클립스` 또는 `{주제} \| 이클립스 정보 - 클립스`; **50~60자 권장** |
+| title | 아래 **페이지별 title 규칙** 참고; **50~60자 권장** |
 | description | 120~160자, 핵심 키워드 자연스럽게; 중복 title 금지 |
 | robots | default `index, follow`; 404/500/preparing 예외 |
 | og:locale | `ko_KR` |
+| og:title | HTML `<title>`과 동일 |
 | twitter:card | `summary_large_image` |
+
+#### 페이지별 title 규칙
+
+| 페이지 | 형식 | 예 |
+|--------|------|----|
+| 메인 | `CLIPS - 이클립스: 더 어웨이크닝 정보 사이트` | `DEFAULT_HOME_TITLE` |
+| 목록/상세 | `{페이지 핵심 제목} \| CLIPS - 이클립스: 더 어웨이크닝` | `클래스 \| CLIPS - 이클립스: 더 어웨이크닝` |
+
+JSON-LD:
+
+- 사이트명(`WebSite.name` / `isPartOf.name`): **CLIPS**
+- 게임명: **이클립스: 더 어웨이크닝** / **Eclipse: The Awakening**
 
 **홈 확정 예**
 
-- title: `클립스 - 이클립스: 더 어웨이크닝 정보 사이트` (`DEFAULT_HOME_TITLE`)
-- description: `DEFAULT_HOME_DESCRIPTION`
+- title / og:title: `CLIPS - 이클립스: 더 어웨이크닝 정보 사이트` (`DEFAULT_HOME_TITLE`)
+- description: `DEFAULT_HOME_DESCRIPTION` (변경 없음)
 
 ### hreflang
 

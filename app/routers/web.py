@@ -2,22 +2,31 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
-from app.core.constants import (
-    DEFAULT_HOME_DESCRIPTION,
-    DEFAULT_HOME_TITLE,
-    INFO_MENU_CARDS,
-    MAIN_NAV,
-    PLACEHOLDER_NEWS,
-    PREPARING_SECTIONS,
-)
+from app.core.constants import DEFAULT_HOME_DESCRIPTION, DEFAULT_HOME_TITLE, MAIN_NAV
 from app.dependencies import get_templates, seo_context
+from app.services.coming_soon_data import get_coming_soon_page
+from app.services.home_page_data import (
+    ARCHIVE_TEASERS,
+    INFO_STRIP_ITEMS,
+    NEWS_PLACEHOLDERS,
+    PLATFORM_FEATURES,
+    QUICK_LINKS,
+)
 from app.services.seo import build_home_json_ld, build_website_json_ld
 
 router = APIRouter(tags=["web"])
+
+
+def _base_layout_context(request: Request, active_menu: str) -> dict[str, object]:
+    return {
+        "request": request,
+        "nav_items": MAIN_NAV,
+        "active_menu": active_menu,
+    }
 
 
 @router.get("/", response_class=HTMLResponse, name="home")
@@ -28,11 +37,12 @@ def home(request: Request) -> HTMLResponse:
         build_home_json_ld(settings),
     ]
     context = {
-        "request": request,
-        "nav_items": MAIN_NAV,
-        "news_cards": PLACEHOLDER_NEWS,
-        "info_cards": INFO_MENU_CARDS,
-        "active_nav": "home",
+        **_base_layout_context(request, "home"),
+        "quick_links": QUICK_LINKS,
+        "news_items": NEWS_PLACEHOLDERS,
+        "platform_features": PLATFORM_FEATURES,
+        "archive_teasers": ARCHIVE_TEASERS,
+        "info_strip": INFO_STRIP_ITEMS,
         **seo_context(
             title=DEFAULT_HOME_TITLE,
             description=DEFAULT_HOME_DESCRIPTION,
@@ -43,66 +53,66 @@ def home(request: Request) -> HTMLResponse:
     return get_templates().TemplateResponse(request, "home.html", context)
 
 
-def _preparing_page(request: Request, section_key: str) -> HTMLResponse:
-    settings = get_settings()
-    label = PREPARING_SECTIONS.get(section_key, "페이지")
-    title = f"{label} - 클립스"
-    description = (
-        f"클립스 {label} 페이지는 준비 중입니다. "
-        "이클립스: 더 어웨이크닝 비공식 정보를 순차적으로 제공할 예정입니다."
-    )
-    path = next((item.path for item in MAIN_NAV if item.key == section_key), f"/{section_key}")
+def _render_coming_soon(request: Request, section_key: str) -> HTMLResponse:
+    page = get_coming_soon_page(section_key)
+    if page is None:
+        raise HTTPException(status_code=404)
 
+    settings = get_settings()
+    seo_title = f"{page.page_title} - 클립스"
+    seo_description = f"클립스 {page.label} 페이지는 준비 중입니다. {page.page_description}"
     context = {
-        "request": request,
-        "nav_items": MAIN_NAV,
-        "section_label": label,
-        "active_nav": section_key,
+        **_base_layout_context(request, section_key),
+        "page": page,
+        "breadcrumbs": (
+            {"label": "홈", "route_name": "home", "current": False},
+            {"label": page.label, "route_name": page.route_name, "current": True},
+        ),
         **seo_context(
-            title=title,
-            description=description,
-            canonical_url=settings.absolute_url(path),
+            title=seo_title,
+            description=seo_description,
+            canonical_url=settings.absolute_url(request.url.path),
             robots="noindex, follow",
         ),
     }
-    return get_templates().TemplateResponse(request, "preparing.html", context)
+    return get_templates().TemplateResponse(request, "coming_soon.html", context)
 
 
 @router.get("/news", response_class=HTMLResponse, name="news")
 def news_preparing(request: Request) -> HTMLResponse:
-    return _preparing_page(request, "news")
+    return _render_coming_soon(request, "news")
 
 
 @router.get("/classes", response_class=HTMLResponse, name="classes")
 def classes_preparing(request: Request) -> HTMLResponse:
-    return _preparing_page(request, "classes")
+    return _render_coming_soon(request, "classes")
 
 
 @router.get("/contents", response_class=HTMLResponse, name="contents")
 def contents_preparing(request: Request) -> HTMLResponse:
-    return _preparing_page(request, "contents")
+    return _render_coming_soon(request, "contents")
 
 
 @router.get("/items", response_class=HTMLResponse, name="items")
 def items_preparing(request: Request) -> HTMLResponse:
-    return _preparing_page(request, "items")
+    return _render_coming_soon(request, "items")
 
 
 @router.get("/bosses", response_class=HTMLResponse, name="bosses")
 def bosses_preparing(request: Request) -> HTMLResponse:
-    return _preparing_page(request, "bosses")
+    return _render_coming_soon(request, "bosses")
 
 
 @router.get("/maps", response_class=HTMLResponse, name="maps")
 def maps_preparing(request: Request) -> HTMLResponse:
-    return _preparing_page(request, "maps")
+    return _render_coming_soon(request, "maps")
 
 
 @router.get("/guides", response_class=HTMLResponse, name="guides")
 def guides_preparing(request: Request) -> HTMLResponse:
-    return _preparing_page(request, "guides")
+    return _render_coming_soon(request, "guides")
 
 
 @router.get("/coupons", response_class=HTMLResponse, name="coupons")
 def coupons_preparing(request: Request) -> HTMLResponse:
-    return _preparing_page(request, "coupons")
+    return _render_coming_soon(request, "coupons")

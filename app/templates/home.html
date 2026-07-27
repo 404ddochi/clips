@@ -4,74 +4,168 @@
 <link rel="stylesheet" href="{{ url_for('static', path='css/pages/home.css') }}">
 {% endblock %}
 
-{% block page_scripts %}
-<script src="{{ url_for('static', path='js/home.js') }}" defer></script>
-{% endblock %}
-
 {% block body_class %}page-home{% endblock %}
 
 {% block content %}
+{% from "components/icons.html" import icon %}
+
 <section class="hero" aria-labelledby="hero-title">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="hero-bg__glow hero-bg__glow--tl"></div>
+    <div class="hero-bg__glow hero-bg__glow--br"></div>
+    <div class="hero-bg__grid"></div>
+    <div class="hero-bg__gradient"></div>
+  </div>
   <div class="container hero-inner">
     <div class="hero-copy hero-animate">
-      <p class="hero-eyebrow">이클립스의 모든 정보를 한곳에서</p>
-      <h1 id="hero-title" class="hero-title">CLIPS</h1>
-      <p class="hero-subtitle">이클립스: 더 어웨이크닝 비공식 정보 플랫폼</p>
+      <p class="hero-game-en">{{ game_title_en }}</p>
+      <p class="hero-brand">CLIPS</p>
+      <h1 id="hero-title" class="hero-title"><span class="hero-title__line">이클립스: 더</span> <span class="hero-title__line">어웨이크닝</span></h1>
+      <p class="hero-platform">비공식 정보 플랫폼</p>
+      <p class="hero-lead">
+        공지·이벤트·클래스·아이템·보스·공략까지 {{ game_title }} 정보를 한곳에서 빠르게 확인합니다.
+      </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="{{ url_for('news') }}">최신 소식 보기</a>
-        <a class="btn btn-secondary" href="{{ url_for('classes') }}">게임 정보 살펴보기</a>
+        <a class="button button--primary" href="{{ url_for('news') }}">최신 소식</a>
+        <a class="button button--secondary" href="{{ url_for('classes') }}">게임 정보</a>
       </div>
     </div>
-    <div class="hero-visual hero-animate hero-animate-delay" aria-hidden="true">
-      <div class="hero-orb"></div>
+    <div class="hero-visual hero-animate hero-animate--delay" aria-hidden="true">
+      <div class="eclipse">
+        <div class="eclipse__glow"></div>
+        <div class="eclipse__hex"></div>
+        <div class="eclipse__ring eclipse__ring--outer"></div>
+        <div class="eclipse__ring eclipse__ring--mid"></div>
+        <div class="eclipse__ring eclipse__ring--inner"></div>
+        <div class="eclipse__disc">
+          <div class="eclipse__shadow"></div>
+          <div class="eclipse__core"></div>
+        </div>
+        <div class="eclipse__rune"></div>
+        <div class="eclipse__lines"></div>
+        <span class="eclipse__particle eclipse__particle--1"></span>
+        <span class="eclipse__particle eclipse__particle--2"></span>
+        <span class="eclipse__particle eclipse__particle--3"></span>
+        <span class="eclipse__particle eclipse__particle--4"></span>
+        <span class="eclipse__particle eclipse__particle--5"></span>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section" aria-labelledby="latest-news-heading">
+{% include "components/info_strip.html" %}
+
+<section class="section section-news" aria-labelledby="latest-news-heading">
   <div class="container">
-    <div class="section-head">
-      <h2 id="latest-news-heading" class="section-title">최신 소식</h2>
-      <p class="section-desc">공지·업데이트·이벤트 연동을 준비 중입니다.</p>
-    </div>
-    <div class="card-grid card-grid-3">
-      {% for badge, title, summary in news_cards %}
-      <article class="info-card">
-        <span class="badge">{{ badge }}</span>
-        <h3 class="info-card-title">{{ title }}</h3>
-        <p class="info-card-text">{{ summary }}</p>
+    {% set eyebrow = "News" %}
+    {% set title = "최신 소식" %}
+    {% set description = "공지·이벤트·업데이트를 한곳에서 확인합니다." %}
+    {% set title_id = "latest-news-heading" %}
+    {% set more_url = url_for('news') %}
+    {% set more_label = "전체보기" %}
+    {% include "components/section_header.html" %}
+    <div class="card-grid card-grid--news">
+      {% for item in news_items %}
+      <article class="card card--featured news-card">
+        <div class="news-card__head">
+          <span class="badge badge--{{ item.badge_variant }}">{{ item.badge }}</span>
+          <span class="content-meta">
+            <span class="content-meta__icon">{{ icon("time", size=14) }}</span>
+            {{ item.status_text }}
+          </span>
+        </div>
+        <h3 class="news-card__title">
+          <a href="{{ url_for(item.route_name) }}">{{ item.title }}</a>
+        </h3>
+        <p class="news-card__summary">{{ item.summary }}</p>
+        <a class="news-card__link" href="{{ url_for(item.route_name) }}">
+          자세히 보기
+          <span aria-hidden="true">{{ icon("arrow", size=14) }}</span>
+        </a>
       </article>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<section class="section section-muted" aria-labelledby="info-menu-heading">
+<section class="section section-muted section-quick" aria-labelledby="quick-menu-heading">
   <div class="container">
-    <div class="section-head">
-      <h2 id="info-menu-heading" class="section-title">주요 정보</h2>
-      <p class="section-desc">클래스, 콘텐츠, 아이템 등 핵심 정보 메뉴</p>
-    </div>
-    <div class="card-grid card-grid-3">
-      {% for title, summary, href in info_cards %}
-      <a class="info-card info-card-link" href="{{ href }}">
-        <h3 class="info-card-title">{{ title }}</h3>
-        <p class="info-card-text">{{ summary }}</p>
-        <span class="info-card-cta">준비 중 →</span>
-      </a>
+    {% set eyebrow = "Quick Menu" %}
+    {% set title = "빠른 메뉴" %}
+    {% set description = "자주 찾는 정보로 바로 이동합니다." %}
+    {% set title_id = "quick-menu-heading" %}
+    {% set more_url = "" %}
+    {% set more_label = "" %}
+    {% include "components/section_header.html" %}
+    <ul class="quick-menu-grid">
+      {% for link in quick_links %}
+      <li>
+        <a class="card card--interactive quick-menu-card" href="{{ url_for(link.route_name) }}">
+          <span class="quick-menu-card__icon">{{ icon(link.icon) }}</span>
+          <span class="quick-menu-card__title">{{ link.title }}</span>
+          <span class="quick-menu-card__desc">{{ link.description }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="features-heading">
+  <div class="container">
+    {% set eyebrow = "Platform" %}
+    {% set title = "CLIPS가 제공할 정보" %}
+    {% set description = game_title ~ " 정보를 읽기 쉽게 정리합니다." %}
+    {% set title_id = "features-heading" %}
+    {% set more_url = "" %}
+    {% set more_label = "" %}
+    {% include "components/section_header.html" %}
+    <div class="card-grid card-grid--features">
+      {% for feature in platform_features %}
+      <article class="card card--compact feature-card">
+        <h3 class="feature-card__title">{{ feature.title }}</h3>
+        <p class="feature-card__desc">{{ feature.description }}</p>
+      </article>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<section class="section" aria-labelledby="coming-soon-heading">
+<section class="section section-muted" aria-labelledby="archive-heading">
   <div class="container">
-    {% set title = "더 많은 기능을 준비하고 있습니다" %}
-    {% set message = "크롤링, 검색, 관리자 도구, SEO 고도화를 로드맵에 따라 순차적으로 제공합니다." %}
-    {% set action_url = url_for('home') %}
-    {% set action_label = "홈으로" %}
-    <div id="coming-soon-heading">
-      {% include "components/empty_state.html" %}
+    {% set eyebrow = "Archive" %}
+    {% set title = "데이터 아카이브" %}
+    {% set description = "향후 제공할 데이터형 콘텐츠입니다." %}
+    {% set title_id = "archive-heading" %}
+    {% set more_url = "" %}
+    {% set more_label = "" %}
+    {% include "components/section_header.html" %}
+    <ul class="archive-grid">
+      {% for teaser in archive_teasers %}
+      <li>
+        <a class="card card--interactive archive-card" href="{{ url_for(teaser.route_name) }}">
+          <h3 class="archive-card__title">{{ teaser.title }}</h3>
+          <p class="archive-card__status">{{ teaser.status_text }}</p>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section section-cta" aria-labelledby="cta-heading">
+  <div class="container">
+    <div class="cta-panel">
+      <p class="cta-panel__eyebrow">{{ game_title_en }}</p>
+      <h2 id="cta-heading" class="cta-panel__title">이클립스가 시작되면, CLIPS도 함께 깨어납니다</h2>
+      <p class="cta-panel__desc">
+        CLIPS는 {{ game_title }}의 비공식 정보 플랫폼입니다.
+        지금은 기반을 다지는 단계이며, 콘텐츠는 로드맵에 따라 공개됩니다.
+      </p>
+      <div class="cta-panel__actions">
+        <a class="button button--primary" href="{{ url_for('news') }}">소식 보기</a>
+        <a class="button button--ghost" href="{{ url_for('guides') }}">공략 준비 현황</a>
+      </div>
     </div>
   </div>
 </section>

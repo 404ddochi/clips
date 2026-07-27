@@ -1,25 +1,49 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark" data-theme-preference="system">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <script>
+    (function () {
+      try {
+        var key = "clips-theme";
+        var pref = localStorage.getItem(key) || "system";
+        if (pref !== "light" && pref !== "dark" && pref !== "system") pref = "system";
+        var theme = pref === "system"
+          ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+          : pref;
+        var root = document.documentElement;
+        root.setAttribute("data-theme", theme);
+        root.setAttribute("data-theme-preference", pref);
+        root.style.colorScheme = theme;
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute("data-theme-preference", "system");
+        document.documentElement.style.colorScheme = "dark";
+      }
+    })();
+  </script>
   {% include "components/seo_meta.html" %}
-  <link rel="icon" href="{{ absolute_url('/static/favicon/favicon.svg') }}" type="image/svg+xml">
+  <link rel="icon" href="{{ url_for('static', path='favicon/favicon.svg') }}" type="image/svg+xml">
   <link rel="stylesheet" href="{{ url_for('static', path='css/reset.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', path='css/tokens.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', path='css/base.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', path='css/layout.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', path='css/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='css/utilities.css') }}">
   {% block page_styles %}{% endblock %}
-  <script src="{{ url_for('static', path='js/common.js') }}" defer></script>
-  {% block page_scripts %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
-  <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+  <a class="skip-link" href="#main-content">본문 바로가기</a>
   {% include "components/header.html" %}
+  <div class="nav-backdrop" data-nav-backdrop hidden></div>
   <main id="main-content" class="site-main">
     {% block content %}{% endblock %}
   </main>
   {% include "components/footer.html" %}
+  <script src="{{ url_for('static', path='js/theme.js') }}" defer></script>
+  <script src="{{ url_for('static', path='js/common.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

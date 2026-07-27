@@ -1,14 +1,24 @@
 <footer class="site-footer">
-  <div class="container footer-inner">
+  <div class="container footer-grid">
     <div class="footer-brand">
-      <p class="footer-logo">CLIPS · 클립스</p>
-      <p class="footer-tagline">이클립스: 더 어웨이크닝 비공식 정보 플랫폼</p>
+      <p class="footer-logo">CLIPS</p>
+      <p class="footer-game-en">{{ game_title_en }}</p>
+      <p class="footer-tagline">{{ game_title }} · Information Platform</p>
+      <p class="footer-desc">공지·이벤트부터 클래스, 콘텐츠, 아이템, 보스, 지도, 공략, 쿠폰까지 필요한 정보를 정리합니다.</p>
     </div>
-    <p class="footer-disclaimer">
-      본 사이트는 게임 공식 서비스가 아닌 <strong>비공식 팬 정보 사이트</strong>입니다.
-      공식 홈페이지·퍼블리셔와 제휴·승인 관계가 없으며, 제공 정보는 참고용입니다.
-      게임명, 로고, 이미지 등은 각 권리자에게 귀속됩니다.
-    </p>
-    <p class="footer-copy">&copy; {{ request.url.hostname or "clips" }} · CLIPS</p>
+    <nav class="footer-nav" aria-label="푸터 메뉴">
+      <p class="footer-nav-title">바로가기</p>
+      <ul class="footer-nav-list">
+        {% for item in nav_items %}
+        {% if item.key != 'home' %}
+        <li><a href="{{ url_for(item.route_name) }}">{{ item.label }}</a></li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+    </nav>
+    <div class="footer-legal">
+      <p class="footer-disclaimer">{{ footer_disclaimer }}</p>
+      <p class="footer-copy">&copy; {{ current_year }} CLIPS. All rights reserved.</p>
+    </div>
   </div>
 </footer>

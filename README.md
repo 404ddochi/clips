@@ -12,7 +12,17 @@
 | 템플릿 | Jinja2 (SSR) |
 | DB (로컬) | SQLite |
 | DB (운영 예정) | PostgreSQL |
-| 테스트/품질 | pytest, httpx, Ruff, mypy, pre-commit |
+| 테스트/품질 | pytest, httpx, BeautifulSoup4, Ruff, mypy, pre-commit |
+
+## 현재 UI
+
+- **메인 (`/`):** Information First — 히어로, Information Strip, 최신 소식, 빠른 메뉴, 플랫폼, 아카이브, CTA
+- **준비 중:** `/news`, `/classes`, `/contents`, `/items`, `/bosses`, `/maps`, `/guides`, `/coupons`
+- **디자인 시스템:** `/dev/design-system` — local/development 전용 CDL 쇼케이스 (`noindex`)
+- **테마:** Eclipse(다크) / Dawn(라이트) / System — 헤더에서 전환, `localStorage`
+- **API/SEO:** `/health`, `/robots.txt`, `/sitemap.xml`
+- **CDL 문서:** [docs/13-clips-design-language.md](docs/13-clips-design-language.md)
+- **테마 문서:** [docs/14-theme-system.md](docs/14-theme-system.md)
 
 ## 요구 환경
 
@@ -122,6 +132,9 @@ clips/
 |------|------|
 | [00-project-overview.md](docs/00-project-overview.md) | 프로젝트 개요 |
 | [01-architecture.md](docs/01-architecture.md) | 아키텍처 |
+| [05-ui-design-system.md](docs/05-ui-design-system.md) | UI 시스템 개요 |
+| [13-clips-design-language.md](docs/13-clips-design-language.md) | **CDL 단일 기준** |
+| [14-theme-system.md](docs/14-theme-system.md) | Dual Theme (Eclipse/Dawn) |
 | [06-seo-strategy.md](docs/06-seo-strategy.md) | SEO 전략 |
 | [12-development-roadmap.md](docs/12-development-roadmap.md) | 로드맵 |
 

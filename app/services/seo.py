@@ -7,7 +7,12 @@ from datetime import UTC, datetime
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from app.config import Settings
-from app.core.constants import DEFAULT_HOME_DESCRIPTION, DEFAULT_HOME_TITLE, SITEMAP_PUBLIC_PATHS
+from app.core.constants import (
+    DEFAULT_HOME_DESCRIPTION,
+    DEFAULT_HOME_TITLE,
+    SERVICE_NAME,
+    SITEMAP_PUBLIC_PATHS,
+)
 
 
 def current_sitemap_lastmod() -> str:
@@ -39,11 +44,16 @@ def build_website_json_ld(settings: Settings) -> dict[str, object]:
     return {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "name": "클립스",
-        "alternateName": "CLIPS",
+        "name": SERVICE_NAME,
+        "alternateName": ["클립스", "CLIPS", "Eclipse: The Awakening Info"],
         "url": settings.app_base_url,
         "description": DEFAULT_HOME_DESCRIPTION,
         "inLanguage": settings.default_locale,
+        "about": {
+            "@type": "VideoGame",
+            "name": "이클립스: 더 어웨이크닝",
+            "alternateName": "Eclipse: The Awakening",
+        },
     }
 
 
@@ -54,7 +64,16 @@ def build_home_json_ld(settings: Settings) -> dict[str, object]:
         "name": DEFAULT_HOME_TITLE,
         "description": DEFAULT_HOME_DESCRIPTION,
         "url": settings.absolute_url("/"),
-        "isPartOf": {"@type": "WebSite", "url": settings.app_base_url, "name": "CLIPS"},
+        "isPartOf": {
+            "@type": "WebSite",
+            "url": settings.app_base_url,
+            "name": "CLIPS",
+        },
+        "about": {
+            "@type": "VideoGame",
+            "name": "이클립스: 더 어웨이크닝",
+            "alternateName": "Eclipse: The Awakening",
+        },
     }
 
 

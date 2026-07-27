@@ -18,6 +18,7 @@ from app.core.logging import configure_logging
 from app.core.middleware import RequestLoggingMiddleware, SecurityHeadersMiddleware
 from app.core.security import apply_startup_security_checks
 from app.dependencies import get_templates, seo_context
+from app.routers import dev as dev_router
 from app.routers import health, seo, web
 
 logger = logging.getLogger(__name__)
@@ -53,6 +54,7 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(seo.router)
     app.include_router(web.router)
+    app.include_router(dev_router.router)
 
     register_exception_handlers(app)
     return app
@@ -75,7 +77,7 @@ def register_exception_handlers(app: FastAPI) -> None:
                     "request": request,
                     "status_code": 404,
                     "nav_items": MAIN_NAV,
-                    "active_nav": "",
+                    "active_menu": "",
                     **seo_context(
                         title="페이지를 찾을 수 없습니다 - 클립스",
                         description="요청하신 페이지를 찾을 수 없습니다.",
@@ -87,6 +89,11 @@ def register_exception_handlers(app: FastAPI) -> None:
             )
         if exc.status_code == 404:
             return HTMLResponse(content="Not Found", status_code=404)
+        if _wants_html(request):
+            return HTMLResponse(
+                content=str(exc.detail),
+                status_code=exc.status_code,
+            )
         raise exc
 
     @app.exception_handler(Exception)
@@ -104,7 +111,7 @@ def register_exception_handlers(app: FastAPI) -> None:
                     "request": request,
                     "status_code": 500,
                     "nav_items": MAIN_NAV,
-                    "active_nav": "",
+                    "active_menu": "",
                     **seo_context(
                         title="오류 - 클립스",
                         description="일시적인 오류가 발생했습니다.",
