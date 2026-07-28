@@ -17,19 +17,6 @@ class ComingSoonPage:
 
 
 COMING_SOON_PAGES: dict[str, ComingSoonPage] = {
-    "news": ComingSoonPage(
-        section_key="news",
-        label="소식",
-        route_name="news",
-        page_title="소식",
-        page_description="공지, 이벤트, 업데이트 소식을 한곳에서 확인할 수 있도록 준비 중입니다.",
-        icon="news",
-        future_features=(
-            "공식 공지·이벤트 요약과 원문 링크",
-            "업데이트·패치 노트 정리",
-            "출처 표기와 중복 방지",
-        ),
-    ),
     "classes": ComingSoonPage(
         section_key="classes",
         label="클래스",
@@ -83,15 +70,6 @@ COMING_SOON_PAGES: dict[str, ComingSoonPage] = {
         page_description="초보·성장·엔드 콘텐츠 공략을 모아 제공할 예정입니다.",
         icon="guide",
         future_features=("주제별 공략 목록", "단계별 가이드", "관련 데이터 링크"),
-    ),
-    "coupons": ComingSoonPage(
-        section_key="coupons",
-        label="쿠폰",
-        route_name="coupons",
-        page_title="쿠폰",
-        page_description="쿠폰 코드와 사용 방법, 유효 기간을 정리할 예정입니다.",
-        icon="coupon",
-        future_features=("쿠폰 코드 목록", "사용 방법·주의사항", "만료·갱신 상태 표시"),
     ),
 }
 

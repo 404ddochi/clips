@@ -4,6 +4,8 @@
     <li class="breadcrumb-item">
       {% if crumb.current %}
       <span aria-current="page">{{ crumb.label }}</span>
+      {% elif crumb.href is defined and crumb.href %}
+      <a href="{{ crumb.href }}">{{ crumb.label }}</a>
       {% else %}
       <a href="{{ url_for(crumb.route_name) }}">{{ crumb.label }}</a>
       {% endif %}

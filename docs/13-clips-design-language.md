@@ -5,7 +5,8 @@
 **쇼케이스:** `/dev/design-system` (local / development만)
 
 이 문서는 CLIPS UI의 **단일 기준**입니다. 개요·링크는 [05-ui-design-system.md](05-ui-design-system.md)를 참고하세요.  
-테마(Eclipse/Dawn/System)는 [14-theme-system.md](14-theme-system.md)를 따릅니다.
+테마(Eclipse/Dawn/System)는 [14-theme-system.md](14-theme-system.md)를 따릅니다.  
+UX·정보 우선 원칙은 [design-philosophy.md](design-philosophy.md)를 따릅니다.
 
 ---
 

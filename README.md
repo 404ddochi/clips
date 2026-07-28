@@ -17,12 +17,16 @@
 ## 현재 UI
 
 - **메인 (`/`):** Information First — 히어로, Information Strip, 최신 소식, 빠른 메뉴, 플랫폼, 아카이브, CTA
-- **준비 중:** `/news`, `/classes`, `/contents`, `/items`, `/bosses`, `/maps`, `/guides`, `/coupons`
+- **소식 (Mock):** `/news`, `/news/notices`, `/news/events`, `/news/patch-notes` (+ 상세 slug)
+- **쿠폰 (Mock):** `/coupons`, `/coupons/{slug}` — SAMPLE/CLIPS-DEMO 데모 코드만
+- **준비 중:** `/classes`, `/contents`, `/items`, `/bosses`, `/maps`, `/guides`
 - **디자인 시스템:** `/dev/design-system` — local/development 전용 CDL 쇼케이스 (`noindex`)
 - **테마:** Eclipse(다크) / Dawn(라이트) / System — 헤더에서 전환, `localStorage`
-- **API/SEO:** `/health`, `/robots.txt`, `/sitemap.xml`
+- **API/SEO:** `/health`, `/robots.txt`, `/sitemap.xml` (Mock 정보 페이지는 noindex, sitemap 제외)
 - **CDL 문서:** [docs/13-clips-design-language.md](docs/13-clips-design-language.md)
 - **테마 문서:** [docs/14-theme-system.md](docs/14-theme-system.md)
+- **정보 페이지:** [docs/15-information-pages.md](docs/15-information-pages.md)
+- **디자인 철학:** [docs/design-philosophy.md](docs/design-philosophy.md) — Find Faster. Read Less. Play More.
 
 ## 요구 환경
 
@@ -135,6 +139,8 @@ clips/
 | [05-ui-design-system.md](docs/05-ui-design-system.md) | UI 시스템 개요 |
 | [13-clips-design-language.md](docs/13-clips-design-language.md) | **CDL 단일 기준** |
 | [14-theme-system.md](docs/14-theme-system.md) | Dual Theme (Eclipse/Dawn) |
+| [15-information-pages.md](docs/15-information-pages.md) | 소식·쿠폰 Mock 정보 페이지 |
+| [design-philosophy.md](docs/design-philosophy.md) | CLIPS Design Philosophy |
 | [06-seo-strategy.md](docs/06-seo-strategy.md) | SEO 전략 |
 | [12-development-roadmap.md](docs/12-development-roadmap.md) | 로드맵 |
 

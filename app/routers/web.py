@@ -11,10 +11,10 @@ from app.dependencies import get_templates, seo_context
 from app.services.coming_soon_data import get_coming_soon_page
 from app.services.home_page_data import (
     ARCHIVE_TEASERS,
-    INFO_STRIP_ITEMS,
-    NEWS_PLACEHOLDERS,
     PLATFORM_FEATURES,
     QUICK_LINKS,
+    build_home_info_strip,
+    build_home_news_items,
 )
 from app.services.seo import build_home_json_ld, build_website_json_ld
 
@@ -39,10 +39,10 @@ def home(request: Request) -> HTMLResponse:
     context = {
         **_base_layout_context(request, "home"),
         "quick_links": QUICK_LINKS,
-        "news_items": NEWS_PLACEHOLDERS,
+        "news_items": build_home_news_items(),
         "platform_features": PLATFORM_FEATURES,
         "archive_teasers": ARCHIVE_TEASERS,
-        "info_strip": INFO_STRIP_ITEMS,
+        "info_strip": build_home_info_strip(),
         **seo_context(
             title=DEFAULT_HOME_TITLE,
             description=DEFAULT_HOME_DESCRIPTION,
@@ -78,11 +78,6 @@ def _render_coming_soon(request: Request, section_key: str) -> HTMLResponse:
     return get_templates().TemplateResponse(request, "coming_soon.html", context)
 
 
-@router.get("/news", response_class=HTMLResponse, name="news")
-def news_preparing(request: Request) -> HTMLResponse:
-    return _render_coming_soon(request, "news")
-
-
 @router.get("/classes", response_class=HTMLResponse, name="classes")
 def classes_preparing(request: Request) -> HTMLResponse:
     return _render_coming_soon(request, "classes")
@@ -111,8 +106,3 @@ def maps_preparing(request: Request) -> HTMLResponse:
 @router.get("/guides", response_class=HTMLResponse, name="guides")
 def guides_preparing(request: Request) -> HTMLResponse:
     return _render_coming_soon(request, "guides")
-
-
-@router.get("/coupons", response_class=HTMLResponse, name="coupons")
-def coupons_preparing(request: Request) -> HTMLResponse:
-    return _render_coming_soon(request, "coupons")

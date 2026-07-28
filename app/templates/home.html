@@ -75,10 +75,10 @@
           </span>
         </div>
         <h3 class="news-card__title">
-          <a href="{{ url_for(item.route_name) }}">{{ item.title }}</a>
+          <a href="{{ url_for(item.detail_route, slug=item.slug) }}">{{ item.title }}</a>
         </h3>
         <p class="news-card__summary">{{ item.summary }}</p>
-        <a class="news-card__link" href="{{ url_for(item.route_name) }}">
+        <a class="news-card__link" href="{{ url_for(item.detail_route, slug=item.slug) }}">
           자세히 보기
           <span aria-hidden="true">{{ icon("arrow", size=14) }}</span>
         </a>

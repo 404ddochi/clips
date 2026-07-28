@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+{% from "components/article_body.html" import render_blocks %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/news.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/article.css') }}">
+{% endblock %}
+
+{% block body_class %}page-article{% endblock %}
+
+{% block content %}
+<article class="section page-intro">
+  <div class="container container--narrow">
+    {% include "components/breadcrumb.html" %}
+    <header class="article__header">
+      <div class="article__category">
+        <span class="badge badge--{{ item.badge_variant }}">{{ item.badge_label }}</span>
+      </div>
+      <h1 class="article__title">{{ item.title }}</h1>
+      <p class="article__summary">{{ item.summary }}</p>
+      {% include "components/article_meta.html" %}
+    </header>
+
+    <div class="article article__body">
+      {{ render_blocks(item.body) }}
+    </div>
+
+    <div class="article__source">
+      <p>
+        <span aria-hidden="true">{{ icon("source", size=16) }}</span>
+        출처: {{ item.source_name }}
+      </p>
+      {% if item.source_url %}
+      <p>
+        <a href="{{ item.source_url }}" rel="noopener noreferrer" target="_blank">
+          원문 보기
+          <span class="visually-hidden">(새 창)</span>
+          <span aria-hidden="true">{{ icon("external", size=14) }}</span>
+        </a>
+      </p>
+      {% else %}
+      <p class="form-help">원문 URL이 없는 Mock 문서입니다. 깨진 링크를 제공하지 않습니다.</p>
+      {% endif %}
+    </div>
+
+    <nav class="article-nav" aria-label="이전·다음 글">
+      <div class="article-nav__item">
+        {% if prev_item %}
+        <a class="article-nav__link" href="{{ url_for(detail_route, slug=prev_item.slug) }}">
+          <span class="article-nav__label">
+            <span aria-hidden="true">{{ icon("arrow-left", size=14) }}</span>
+            이전 글
+          </span>
+          <span class="article-nav__title">{{ prev_item.title }}</span>
+        </a>
+        {% else %}
+        <span class="article-nav__empty">이전 글 없음</span>
+        {% endif %}
+      </div>
+      <div class="article-nav__item article-nav__item--next">
+        {% if next_item %}
+        <a class="article-nav__link" href="{{ url_for(detail_route, slug=next_item.slug) }}">
+          <span class="article-nav__label">
+            다음 글
+            <span aria-hidden="true">{{ icon("arrow-right", size=14) }}</span>
+          </span>
+          <span class="article-nav__title">{{ next_item.title }}</span>
+        </a>
+        {% else %}
+        <span class="article-nav__empty">다음 글 없음</span>
+        {% endif %}
+      </div>
+    </nav>
+
+    <p class="article__actions">
+      <a class="button button--secondary" href="{{ url_for(list_route) }}">{{ list_label }} 목록으로</a>
+    </p>
+
+    {% if related_items %}
+    <section class="article__related" aria-labelledby="related-heading">
+      <h2 id="related-heading" class="section-title">관련 콘텐츠</h2>
+      <ul class="related-list">
+        {% for related in related_items %}
+        <li>
+          <a href="{{ url_for(detail_route, slug=related.slug) }}">{{ related.title }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    {% include "components/source_notice.html" %}
+  </div>
+</article>
+{% endblock %}

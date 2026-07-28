@@ -1,0 +1,16 @@
+{% from "components/icons.html" import icon %}
+<nav class="content-tabs" aria-label="소식 카테고리">
+  <ul class="content-tabs__list">
+    {% for tab in category_tabs %}
+    <li class="content-tabs__item">
+      <a
+        class="content-tabs__link{% if active_tab == tab.key %} is-active{% endif %}"
+        href="{{ url_for(tab.route_name) }}"
+        {% if active_tab == tab.key %}aria-current="page"{% endif %}
+      >
+        {{ tab.label }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</nav>

@@ -1,6 +1,6 @@
 # 12. 개발 로드맵
 
-CLIPS는 **10단계**로 기능을 확장한다. **1단계·2단계·메인 UX·Phase 3.7 CDL·Phase 3.8 Dual Theme**까지 완료로 본다(2026-07-28 기준).
+CLIPS는 **10단계**로 기능을 확장한다. **1단계·2단계·메인 UX·Phase 3.7 CDL·Phase 3.8 Dual Theme·Phase 4 Information Pages(Mock)**까지 완료로 본다(2026-07-28 기준).
 
 **범례:** **확정** / **향후 결정**
 
@@ -14,6 +14,7 @@ CLIPS는 **10단계**로 기능을 확장한다. **1단계·2단계·메인 UX·
 | 2 | 공통 레이아웃·디자인 | UI 시스템·페이지 골격 |
 | 3.7 | CLIPS Design Language | 토큰·컴포넌트 규격·쇼케이스·CDL 문서 |
 | 3.8 | Dual Theme System | Eclipse/Dawn · system/light/dark |
+| 4-UI | Information Pages (Mock) | 소식·쿠폰 목록/상세 UI + Mock 데이터 |
 | 3 | DB·관리자 인증 | PostgreSQL/SQLite, admin login |
 | 4 | 공지·이벤트·업데이트 | boards SSR + admin CRUD |
 | 5 | 크롤러 | 자동/수동 수집 + 검수 |
@@ -137,6 +138,33 @@ CLIPS는 **10단계**로 기능을 확장한다. **1단계·2단계·메인 UX·
 ### 다음 제안
 
 테마가 확정된 CDL 위에서 **정보 페이지 UI 골격 + Mock 데이터 구조**를 설계한다.
+
+---
+
+## Phase 4: Information Pages UI & Mock Data
+
+### 목표
+
+DB 없이 소식·쿠폰 정보 사이트가 **완성된 UI**처럼 보이도록 목록·상세·Mock 데이터 구조를 제공한다.
+
+### 확정 범위
+
+- [x] `/news` 허브 + notices/events/patch-notes 목록·상세
+- [x] `/coupons` 목록·상세 (SAMPLE 데모 코드만)
+- [x] Mock 모듈·타입 (`content_types`, `news_mock_data`, `coupon_mock_data`)
+- [x] 메인 Information Strip·최신 소식 동일 소스 연계
+- [x] SEO `noindex, follow` · sitemap 미포함
+- [x] [15-information-pages.md](15-information-pages.md)
+
+### 완료 조건
+
+- [x] pytest / ruff / mypy 통과
+- [x] 준비 중 유지: classes/contents/items/bosses/maps/guides
+- [x] 검색·필터·정렬·복사는 disabled Mock만
+
+### 다음 제안
+
+SQLAlchemy 기본 모델과 Alembic 초기 마이그레이션으로 Mock 필드를 DB 구조에 매핑한다.
 
 ---
 

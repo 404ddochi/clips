@@ -1,0 +1,13 @@
+{% from "components/icons.html" import icon %}
+<header class="page-header">
+  {% if page_eyebrow %}
+  <p class="page-header__eyebrow">{{ page_eyebrow }}</p>
+  {% endif %}
+  <h1 class="page-header__title"{% if page_title_id %} id="{{ page_title_id }}"{% endif %}>{{ page_title }}</h1>
+  {% if page_description %}
+  <p class="page-header__desc">{{ page_description }}</p>
+  {% endif %}
+  {% if page_meta %}
+  <div class="page-header__meta">{{ page_meta }}</div>
+  {% endif %}
+</header>

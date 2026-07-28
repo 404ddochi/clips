@@ -1,0 +1,74 @@
+{% from "components/icons.html" import icon %}
+{#
+  Coupon Row — expects `coupon` in scope (from {% for coupon in coupons %}).
+  Expired copy control stays visible but disabled (see coupons router policy).
+  Desktop label: 코드 복사 / 복사 완료 · Mobile label: 복사 / 완료
+#}
+<article
+  class="coupon-row coupon-row--{{ coupon.status }}{% if not coupon.source_name %} coupon-row--no-source{% endif %}"
+  data-coupon-row
+  data-coupon-slug="{{ coupon.slug }}"
+  data-coupon-status="{{ coupon.status }}"
+>
+  <div class="coupon-row__status">
+    <span class="coupon-status coupon-status--{{ coupon.status }}">{{ coupon.status_label }}</span>
+  </div>
+
+  <div class="coupon-row__code">
+    <span class="coupon-row__label">코드</span>
+    <code class="coupon-row__code-value" id="coupon-code-{{ coupon.slug }}">{{ coupon.code }}</code>
+  </div>
+
+  <div class="coupon-row__reward">
+    <span class="coupon-row__label">보상</span>
+    <p class="coupon-row__reward-text">{{ coupon.reward_summary }}</p>
+  </div>
+
+  <div class="coupon-row__period">
+    <span class="coupon-row__label">기간</span>
+    <p class="coupon-row__period-text">
+      <time datetime="{{ coupon.valid_from.date().isoformat() }}">{{ coupon.valid_from.strftime('%Y-%m-%d') }}</time>
+      <span aria-hidden="true">–</span>
+      <time datetime="{{ coupon.valid_until.date().isoformat() }}">{{ coupon.valid_until.strftime('%Y-%m-%d') }}</time>
+    </p>
+  </div>
+
+  {% if coupon.source_name %}
+  <div class="coupon-row__source">
+    <span class="coupon-row__label">출처</span>
+    <p class="coupon-row__source-text">{{ coupon.source_name }}</p>
+  </div>
+  {% endif %}
+
+  <div class="coupon-row__action">
+    {% if coupon.status == "expired" %}
+    <button
+      type="button"
+      class="button button--secondary button--sm coupon-row__copy"
+      disabled
+      aria-disabled="true"
+      aria-label="쿠폰 코드 {{ coupon.code }} 복사 불가, 종료된 쿠폰"
+    >
+      <span aria-hidden="true">{{ icon("copy", size=14) }}</span>
+      <span class="coupon-row__copy-label coupon-row__copy-label--full">코드 복사</span>
+      <span class="coupon-row__copy-label coupon-row__copy-label--short">복사</span>
+    </button>
+    {% else %}
+    <button
+      type="button"
+      class="button button--secondary button--sm coupon-row__copy"
+      data-copy-text="{{ coupon.code }}"
+      data-copy-label-default="코드 복사"
+      data-copy-label-success="복사 완료"
+      data-copy-label-default-short="복사"
+      data-copy-label-success-short="완료"
+      aria-label="쿠폰 코드 {{ coupon.code }} 복사"
+      aria-describedby="coupon-code-{{ coupon.slug }}"
+    >
+      <span aria-hidden="true">{{ icon("copy", size=14) }}</span>
+      <span class="coupon-row__copy-label coupon-row__copy-label--full" data-copy-label>코드 복사</span>
+      <span class="coupon-row__copy-label coupon-row__copy-label--short" data-copy-label-short>복사</span>
+    </button>
+    {% endif %}
+  </div>
+</article>

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+{% from "components/article_body.html" import render_blocks %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/coupons.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/article.css') }}">
+{% endblock %}
+
+{% block body_class %}page-coupon-detail{% endblock %}
+
+{% block content %}
+<article class="section page-intro">
+  <div class="container container--narrow">
+    {% include "components/breadcrumb.html" %}
+    <header class="article__header">
+      <div class="article__category">
+        <span class="coupon-status coupon-status--{{ item.status }}">{{ item.status_label }}</span>
+      </div>
+      <h1 class="article__title">{{ item.title }}</h1>
+      <p class="article__summary">{{ item.reward_summary }}</p>
+      <div class="article-meta">
+        <span class="article-meta__item">
+          <span aria-hidden="true">{{ icon("calendar", size=14) }}</span>
+          <time datetime="{{ item.valid_from.date().isoformat() }}">{{ item.valid_from.strftime('%Y-%m-%d') }}</time>
+          ~
+          <time datetime="{{ item.valid_until.date().isoformat() }}">{{ item.valid_until.strftime('%Y-%m-%d') }}</time>
+        </span>
+        {% if item.source_name %}
+        <span class="article-meta__item">
+          <span aria-hidden="true">{{ icon("source", size=14) }}</span>
+          {{ item.source_name }}
+        </span>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="coupon-detail__code-panel">
+      <p class="coupon-detail__label">데모 코드</p>
+      <code class="coupon-row__code-value coupon-row__code-value--lg" id="coupon-code-{{ item.slug }}">{{ item.code }}</code>
+      {% if item.status == "expired" %}
+      <button
+        type="button"
+        class="button button--secondary"
+        disabled
+        aria-disabled="true"
+        aria-label="쿠폰 코드 {{ item.code }} 복사 불가, 종료된 쿠폰"
+      >
+        <span aria-hidden="true">{{ icon("copy", size=16) }}</span>
+        <span data-copy-label>코드 복사</span>
+      </button>
+      <p class="form-help">종료된 쿠폰은 복사할 수 없습니다. 코드는 화면에서 직접 확인할 수 있습니다.</p>
+      {% else %}
+      <button
+        type="button"
+        class="button button--secondary"
+        data-copy-text="{{ item.code }}"
+        data-copy-label-default="코드 복사"
+        data-copy-label-success="복사 완료"
+        aria-label="쿠폰 코드 {{ item.code }} 복사"
+        aria-describedby="coupon-code-{{ item.slug }}"
+      >
+        <span aria-hidden="true">{{ icon("copy", size=16) }}</span>
+        <span data-copy-label>코드 복사</span>
+      </button>
+      <p class="form-help">Mock 데모 코드입니다. 실제 교환 가능 여부는 공식 채널을 확인하세요.</p>
+      {% endif %}
+    </div>
+
+    <div class="article article__body">
+      {{ render_blocks(item.body) }}
+      {% if item.usage_notes %}
+      <h2>사용 시 참고</h2>
+      <ul>
+        {% for note in item.usage_notes %}
+        <li>{{ note }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+    {% if item.source_url %}
+    <div class="article__source">
+      <a href="{{ item.source_url }}" rel="noopener noreferrer" target="_blank">
+        원문 보기
+        <span class="visually-hidden">(새 창)</span>
+        <span aria-hidden="true">{{ icon("external", size=14) }}</span>
+      </a>
+    </div>
+    {% else %}
+    <p class="form-help">원문 URL이 없는 Mock 쿠폰입니다.</p>
+    {% endif %}
+
+    <p class="article__actions">
+      <a class="button button--secondary" href="{{ url_for('coupons') }}">쿠폰 목록으로</a>
+    </p>
+
+    {% if related_coupons %}
+    <section class="article__related" aria-labelledby="related-coupons-heading">
+      <h2 id="related-coupons-heading" class="section-title">다른 샘플 쿠폰</h2>
+      <ul class="related-list">
+        {% for related in related_coupons %}
+        <li>
+          <a href="{{ url_for('coupon_detail', slug=related.slug) }}">{{ related.title }}</a>
+          <code>{{ related.code }}</code>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    {% include "components/source_notice.html" %}
+  </div>
+</article>
+{% endblock %}

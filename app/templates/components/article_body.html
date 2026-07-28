@@ -1,0 +1,29 @@
+{% macro render_blocks(blocks) -%}
+  {% for block in blocks %}
+    {% if block.kind == "paragraph" %}
+      <p>{{ block.text }}</p>
+    {% elif block.kind == "heading2" %}
+      <h2>{{ block.text }}</h2>
+    {% elif block.kind == "heading3" %}
+      <h3>{{ block.text }}</h3>
+    {% elif block.kind == "list" %}
+      <ul>
+        {% for entry in block.items %}
+        <li>{{ entry }}</li>
+        {% endfor %}
+      </ul>
+    {% elif block.kind == "olist" %}
+      <ol>
+        {% for entry in block.items %}
+        <li>{{ entry }}</li>
+        {% endfor %}
+      </ol>
+    {% elif block.kind == "quote" %}
+      <blockquote>{{ block.text }}</blockquote>
+    {% elif block.kind == "callout" %}
+      <div class="callout callout--info" role="note">{{ block.text }}</div>
+    {% elif block.kind == "note" %}
+      <p class="article-note">{{ block.text }}</p>
+    {% endif %}
+  {% endfor %}
+{%- endmacro %}

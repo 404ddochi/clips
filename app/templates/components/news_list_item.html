@@ -1,0 +1,22 @@
+{% from "components/icons.html" import icon %}
+<a class="news-row" href="{{ url_for(detail_route, slug=item.slug) }}">
+  <div class="news-row__main">
+    <div class="news-row__meta">
+      <span class="badge badge--{{ item.badge_variant }}">{{ item.badge_label }}</span>
+      <span class="news-row__status">{{ item.status_label }}</span>
+    </div>
+    <h2 class="news-row__title">{{ item.title }}</h2>
+    <p class="news-row__summary">{{ item.summary }}</p>
+    <div class="news-row__foot">
+      <span class="news-row__date">
+        <span class="news-row__icon" aria-hidden="true">{{ icon("calendar", size=14) }}</span>
+        <time datetime="{{ item.published_at.date().isoformat() }}">{{ item.published_at.strftime('%Y-%m-%d') }}</time>
+      </span>
+      <span class="news-row__source">
+        <span class="news-row__icon" aria-hidden="true">{{ icon("source", size=14) }}</span>
+        {{ item.source_name }}
+      </span>
+    </div>
+  </div>
+  <span class="news-row__arrow" aria-hidden="true">{{ icon("arrow", size=18) }}</span>
+</a>

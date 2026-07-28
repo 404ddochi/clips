@@ -18,8 +18,10 @@ from app.core.logging import configure_logging
 from app.core.middleware import RequestLoggingMiddleware, SecurityHeadersMiddleware
 from app.core.security import apply_startup_security_checks
 from app.dependencies import get_templates, seo_context
+from app.routers import coupons as coupons_router
 from app.routers import dev as dev_router
 from app.routers import health, seo, web
+from app.routers import news as news_router
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +56,8 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(seo.router)
     app.include_router(web.router)
+    app.include_router(news_router.router)
+    app.include_router(coupons_router.router)
     app.include_router(dev_router.router)
 
     register_exception_handlers(app)

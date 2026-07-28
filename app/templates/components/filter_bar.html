@@ -1,0 +1,31 @@
+{% from "components/icons.html" import icon %}
+<aside class="filter-bar filter-bar--mock" aria-label="검색·필터·정렬 (준비 중)">
+  <div class="form-field filter-bar__search">
+    <label class="form-label" for="{{ filter_id|default('mock-search') }}">검색</label>
+    <input
+      class="form-input"
+      type="search"
+      id="{{ filter_id|default('mock-search') }}"
+      name="q"
+      placeholder="검색 기능 준비 중"
+      disabled
+      aria-disabled="true"
+    >
+    <p class="form-help">검색 기능 준비 중</p>
+  </div>
+  <div class="filter-group" role="group" aria-label="필터 (준비 중)">
+    <span class="filter-chip" aria-disabled="true">전체</span>
+    <span class="filter-chip" aria-disabled="true">최근</span>
+    <button type="button" class="button button--ghost button--sm" disabled aria-disabled="true">
+      <span aria-hidden="true">{{ icon("filter", size=14) }}</span>
+      필터
+    </button>
+  </div>
+  <div class="filter-bar__sort">
+    <label class="form-label" for="{{ sort_id|default('mock-sort') }}">정렬</label>
+    <select class="form-select" id="{{ sort_id|default('mock-sort') }}" disabled aria-disabled="true">
+      <option>최신순 (준비 중)</option>
+    </select>
+    <p class="form-help">정렬 기능 준비 중</p>
+  </div>
+</aside>

@@ -84,13 +84,107 @@
     });
   }
 
+  function fallbackCopyText(text) {
+    return new Promise(function (resolve, reject) {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.setAttribute("aria-hidden", "true");
+      area.style.position = "fixed";
+      area.style.top = "-9999px";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      area.setSelectionRange(0, area.value.length);
+      try {
+        const ok = document.execCommand("copy");
+        document.body.removeChild(area);
+        if (ok) {
+          resolve();
+        } else {
+          reject(new Error("copy failed"));
+        }
+      } catch (error) {
+        document.body.removeChild(area);
+        reject(error);
+      }
+    });
+  }
+
+  function copyTextToClipboard(text) {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      return navigator.clipboard.writeText(text).catch(function () {
+        return fallbackCopyText(text);
+      });
+    }
+    return fallbackCopyText(text);
+  }
+
+  function initCopyButtons() {
+    const buttons = document.querySelectorAll("[data-copy-text]");
+    if (!buttons.length) return;
+
+    buttons.forEach(function (button) {
+      if (!(button instanceof HTMLButtonElement)) return;
+
+      button.addEventListener("click", function () {
+        if (button.disabled) return;
+        const text = button.getAttribute("data-copy-text");
+        if (!text) return;
+
+        const labelEl = button.querySelector("[data-copy-label]");
+        const labelShortEl = button.querySelector("[data-copy-label-short]");
+        const defaultLabel =
+          button.getAttribute("data-copy-label-default") || "코드 복사";
+        const successLabel =
+          button.getAttribute("data-copy-label-success") || "복사 완료";
+        const defaultShort =
+          button.getAttribute("data-copy-label-default-short") || defaultLabel;
+        const successShort =
+          button.getAttribute("data-copy-label-success-short") || successLabel;
+
+        function setCopyLabels(fullText, shortText) {
+          if (labelEl) {
+            labelEl.textContent = fullText;
+          }
+          if (labelShortEl) {
+            labelShortEl.textContent = shortText;
+          }
+        }
+
+        copyTextToClipboard(text)
+          .then(function () {
+            button.classList.add("is-copied");
+            setCopyLabels(successLabel, successShort);
+            const previousTimer = button.dataset.copyTimerId;
+            if (previousTimer) {
+              window.clearTimeout(Number(previousTimer));
+            }
+            const timerId = window.setTimeout(function () {
+              button.classList.remove("is-copied");
+              setCopyLabels(defaultLabel, defaultShort);
+              delete button.dataset.copyTimerId;
+            }, 1800);
+            button.dataset.copyTimerId = String(timerId);
+          })
+          .catch(function () {
+            button.classList.remove("is-copied");
+            setCopyLabels(defaultLabel, defaultShort);
+          });
+      });
+    });
+  }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
       initHeader();
       initMobileNav();
+      initCopyButtons();
     });
   } else {
     initHeader();
     initMobileNav();
+    initCopyButtons();
   }
 })();

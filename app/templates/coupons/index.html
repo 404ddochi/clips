@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/coupons.css') }}">
+{% endblock %}
+
+{% block body_class %}page-coupons{% endblock %}
+
+{% block content %}
+<section class="section page-intro coupons-page">
+  <div class="container">
+    {% include "components/breadcrumb.html" %}
+    {% set page_eyebrow = "COUPONS" %}
+    {% set page_title = "쿠폰" %}
+    {% set page_description = "사용 가능한 이클립스: 더 어웨이크닝 쿠폰을 빠르게 확인하고 복사하세요." %}
+    {% include "components/page_header.html" %}
+
+    {# status_filters / current_status / coupons / coupon_count — must match coupons_index context #}
+    <nav class="coupon-filters" aria-label="쿠폰 상태 필터">
+      <ul class="coupon-filters__list" role="list">
+        {% for tab in status_filters %}
+        <li class="coupon-filters__item">
+          <a
+            class="coupon-filters__link{% if current_status == tab.key %} is-active{% endif %}"
+            href="{{ tab.href }}"
+            {% if current_status == tab.key %}aria-current="page"{% endif %}
+          >{{ tab.label }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <p class="coupon-summary" aria-live="polite">
+      <span class="coupon-summary__count">{{ coupon_count }}개</span>
+      {% if is_mock %}
+      <span class="coupon-summary__note">· Mock 데모 코드</span>
+      {% endif %}
+    </p>
+
+    {% if coupons %}
+    <ul class="coupon-list" role="list">
+      {% for coupon in coupons %}
+      <li class="coupon-list__item">
+        {% include "components/coupon_row.html" %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state empty-state--compact">
+      <h2 class="empty-state__title">조건에 맞는 쿠폰이 없습니다.</h2>
+      <p class="empty-state__message">다른 상태를 선택하거나 새로운 쿠폰 등록을 기다려 주세요.</p>
+      <a class="button button--secondary button--sm" href="{{ url_for('coupons') }}">전체 보기</a>
+    </div>
+    {% endif %}
+
+    <details class="coupon-notes">
+      <summary>사용 안내 · 주의사항</summary>
+      <ol class="coupon-guide">
+        {% for step in usage_steps %}
+        <li>{{ step }}</li>
+        {% endfor %}
+      </ol>
+      <ul class="coupon-guide">
+        {% for warning in warnings %}
+        <li>{{ warning }}</li>
+        {% endfor %}
+      </ul>
+    </details>
+
+    {% include "components/source_notice.html" %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% from "components/icons.html" import icon %}
+<div class="article-meta">
+  <span class="article-meta__item">
+    <span class="article-meta__icon" aria-hidden="true">{{ icon("calendar", size=14) }}</span>
+    <span class="visually-hidden">게시일</span>
+    <time datetime="{{ item.published_at.date().isoformat() }}">{{ item.published_at.strftime('%Y-%m-%d') }}</time>
+  </span>
+  {% if item.updated_at %}
+  <span class="article-meta__item">
+    <span class="article-meta__icon" aria-hidden="true">{{ icon("clock", size=14) }}</span>
+    <span class="visually-hidden">수정일</span>
+    <time datetime="{{ item.updated_at.date().isoformat() }}">수정 {{ item.updated_at.strftime('%Y-%m-%d') }}</time>
+  </span>
+  {% endif %}
+  <span class="article-meta__item">
+    <span class="article-meta__icon" aria-hidden="true">{{ icon("source", size=14) }}</span>
+    출처 {{ item.source_name }}
+  </span>
+  <span class="article-meta__item">{{ item.status_label }}</span>
+</div>

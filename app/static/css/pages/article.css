@@ -1,0 +1,10 @@
+/* Article detail page refinements */
+
+.page-article .article__title {
+  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+}
+
+.page-article .container--narrow,
+.page-coupon-detail .container--narrow {
+  max-width: var(--content-readable-width, 42rem);
+}

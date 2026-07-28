@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/news.css') }}">
+{% endblock %}
+
+{% block body_class %}page-news{% endblock %}
+
+{% block content %}
+<section class="section page-intro">
+  <div class="container">
+    {% include "components/breadcrumb.html" %}
+    {% set page_eyebrow = "News" %}
+    {% set page_title = list_title %}
+    {% set page_description = list_description %}
+    {% include "components/page_header.html" %}
+    {% include "components/content_tabs.html" %}
+    {% set filter_id = "news-list-search" %}
+    {% set sort_id = "news-list-sort" %}
+    {% include "components/filter_bar.html" %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="news-list" role="list">
+      {% for item in items %}
+      <div role="listitem">
+        {% include "components/news_list_item.html" %}
+      </div>
+      {% else %}
+      <p class="form-help">표시할 Mock 항목이 없습니다.</p>
+      {% endfor %}
+    </div>
+    {% if items %}
+    {% set pagination_label = list_title ~ " 페이지네이션" %}
+    {% include "components/pagination.html" %}
+    {% endif %}
+    {% include "components/source_notice.html" %}
+  </div>
+</section>
+{% endblock %}
