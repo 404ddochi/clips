@@ -14,12 +14,10 @@ def _assert_single_h1(soup: BeautifulSoup) -> None:
     assert len(soup.find_all("h1")) == 1
 
 
-def _assert_noindex_follow(soup: BeautifulSoup) -> None:
+def _assert_index_follow(soup: BeautifulSoup) -> None:
     robots = soup.find("meta", attrs={"name": "robots"})
     assert robots is not None
-    content = robots.get("content", "")
-    assert "noindex" in content
-    assert "follow" in content
+    assert robots.get("content", "") == "index, follow"
 
 
 def _assert_no_hash_href(soup: BeautifulSoup) -> None:
@@ -41,7 +39,7 @@ def test_news_list_pages_ok(client: TestClient) -> None:
         assert response.status_code == 200, path
         soup = _soup(response.text)
         _assert_single_h1(soup)
-        _assert_noindex_follow(soup)
+        _assert_index_follow(soup)
         _assert_no_hash_href(soup)
         nav = soup.find("nav", attrs={"aria-label": "소식 카테고리"})
         assert nav is not None
@@ -51,11 +49,11 @@ def test_news_list_pages_ok(client: TestClient) -> None:
 
 def test_news_titles(client: TestClient) -> None:
     cases = {
-        "/news": "소식 | CLIPS - 이클립스: 더 어웨이크닝",
-        "/news/notices": "공지 | CLIPS - 이클립스: 더 어웨이크닝",
-        "/news/events": "이벤트 | CLIPS - 이클립스: 더 어웨이크닝",
-        "/news/patch-notes": "패치노트 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트",
-        "/coupons": "쿠폰 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트",
+        "/news": "소식 - CLIPS",
+        "/news/notices": "공지 - CLIPS",
+        "/news/events": "이벤트 - CLIPS",
+        "/news/patch-notes": "패치노트 - CLIPS",
+        "/coupons": "쿠폰 - CLIPS",
     }
     for path, expected in cases.items():
         soup = _soup(client.get(path).text)
@@ -70,7 +68,7 @@ def test_news_detail_ok(client: TestClient) -> None:
     soup = _soup(response.text)
     _assert_single_h1(soup)
     assert "소식 데이터 구조 검증용 샘플 공지" in soup.find("h1").get_text()
-    _assert_noindex_follow(soup)
+    _assert_index_follow(soup)
     breadcrumb = soup.find("nav", attrs={"aria-label": "breadcrumb"})
     assert breadcrumb is not None
     assert soup.find("time", attrs={"datetime": True}) is not None
@@ -100,7 +98,7 @@ def test_coupons_index(client: TestClient) -> None:
     assert response.status_code == 200
     soup = _soup(response.text)
     _assert_single_h1(soup)
-    _assert_noindex_follow(soup)
+    _assert_index_follow(soup)
     assert "SAMPLE-COUPON" in response.text
     assert "CLIPS-DEMO" in response.text
     assert response.text.count("data-coupon-row") >= 5
@@ -190,11 +188,14 @@ def test_bosses_is_waiting_catalogue(client: TestClient) -> None:
     assert "준비 중" not in _soup(response.text).find("h1").get_text()
 
 
-def test_sitemap_excludes_mock_info_pages(client: TestClient) -> None:
+def test_sitemap_includes_public_info_pages(client: TestClient) -> None:
     body = client.get("/sitemap.xml").text
     assert "<loc>http://testserver/</loc>" in body
-    assert "/news" not in body
-    assert "/coupons" not in body
+    assert "<loc>http://testserver/news</loc>" in body
+    assert "<loc>http://testserver/coupons</loc>" in body
+    assert "/admin" not in body
+    assert "/dev/" not in body
+    assert "?" not in body
 
 
 def test_filter_controls_disabled(client: TestClient) -> None:

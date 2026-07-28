@@ -63,7 +63,7 @@ def test_maps_index_waiting_ok(client: TestClient) -> None:
     ]
     assert chips == ["지역", "월드맵", "사냥터", "던전", "NPC", "성소"]
     assert "maps.css" in html
-    assert soup.find("meta", attrs={"name": "robots"})["content"].find("noindex") != -1
+    assert soup.find("meta", attrs={"name": "robots"})["content"] == "index, follow"
     nav = soup.find("nav", attrs={"aria-label": "다른 CLIPS 메뉴"})
     assert nav is not None
 
@@ -72,11 +72,11 @@ def test_maps_seo_waiting(client: TestClient) -> None:
     soup = _soup(client.get("/maps").text)
     title = soup.find("title")
     assert title is not None
-    assert title.get_text() == "지도 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
+    assert title.get_text() == "지도 - CLIPS"
     desc = soup.find("meta", attrs={"name": "description"})
     assert desc is not None
     assert "지역" in desc.get("content", "") or "지도" in desc.get("content", "")
-    assert "공개되면" in desc.get("content", "")
+    assert "월드맵" in desc.get("content", "")
 
 
 def test_map_detail_unknown_404(client: TestClient) -> None:

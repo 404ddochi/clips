@@ -110,7 +110,7 @@ def test_guides_index_desk_waiting_ok(client: TestClient) -> None:
     assert "티어표" not in html
     assert "추천 직업" not in html
     assert "guides.css" in html
-    assert soup.find("meta", attrs={"name": "robots"})["content"].find("noindex") != -1
+    assert soup.find("meta", attrs={"name": "robots"})["content"] == "index, follow"
     chips = [
         chip.get_text(strip=True)
         for chip in soup.select(".guide-desk__topics .guide-prep-chip")
@@ -122,10 +122,10 @@ def test_guides_seo_waiting(client: TestClient) -> None:
     soup = _soup(client.get("/guides").text)
     title = soup.find("title")
     assert title is not None
-    assert title.get_text() == "공략 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
+    assert title.get_text() == "공략 - CLIPS"
     desc = soup.find("meta", attrs={"name": "description"})
     assert desc is not None
-    assert "준비하고" in desc.get("content", "")
+    assert "비공식 공략" in desc.get("content", "")
     assert "필수 공략" not in desc.get("content", "")
 
 

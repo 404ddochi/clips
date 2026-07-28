@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
-from app.core.constants import MAIN_NAV
+from app.core.constants import MAIN_NAV, PAGE_DESCRIPTIONS, detail_title, page_title
 from app.dependencies import get_templates, seo_context
 from app.services.content_types import MAP_PENDING_LABEL, MAP_SHORT_PENDING, MOCK_ROBOTS
 from app.services.map_data import (
@@ -16,17 +16,14 @@ from app.services.map_data import (
     resolve_related_bosses,
     resolve_related_items,
 )
+from app.services.seo import meta_description
 from app.services.seo_content import build_breadcrumb_json_ld
 
 router = APIRouter(tags=["maps"])
 
-_MAP_PAGE_TITLE = "지도 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
-_MAP_PAGE_DESCRIPTION = (
-    "이클립스: 더 어웨이크닝 공식 지역·지도 정보가 공개되면 CLIPS 지도에서 업데이트합니다."
-)
-_MAP_WAITING_DESCRIPTION = (
-    "공식 지역·지도 정보가 공개되면 업데이트됩니다. CLIPS는 비공식 정보 플랫폼입니다."
-)
+_MAP_PAGE_TITLE = page_title("지도")
+_MAP_PAGE_DESCRIPTION = PAGE_DESCRIPTIONS["maps"]
+_MAP_WAITING_DESCRIPTION = PAGE_DESCRIPTIONS["maps"]
 
 _UPCOMING_TOPICS = ("지역", "월드맵", "사냥터", "던전", "NPC", "성소")
 
@@ -150,8 +147,8 @@ def map_detail(request: Request, slug: str) -> HTMLResponse:
         "upcoming_topics": _UPCOMING_TOPICS,
         "breadcrumbs": crumbs,
         **seo_context(
-            title=f"{region.name} - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트",
-            description=region.summary or _MAP_WAITING_DESCRIPTION,
+            title=detail_title(region.name),
+            description=meta_description(region.summary, fallback=_MAP_PAGE_DESCRIPTION),
             canonical_url=page_url,
             robots=MOCK_ROBOTS,
             structured_data=structured,

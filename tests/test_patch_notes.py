@@ -73,16 +73,14 @@ def test_patch_notes_seo(client: TestClient) -> None:
     soup = _soup(client.get("/news/patch-notes").text)
     title = soup.find("title")
     assert title is not None
-    assert title.get_text() == (
-        "패치노트 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
-    )
+    assert title.get_text() == "패치노트 - CLIPS"
     desc = soup.find("meta", attrs={"name": "description"})
     assert desc is not None
     assert "패치노트" in desc.get("content", "")
-    assert "버전별" in desc.get("content", "")
+    assert "날짜별" in desc.get("content", "")
     robots = soup.find("meta", attrs={"name": "robots"})
     assert robots is not None
-    assert "noindex" in robots.get("content", "")
+    assert robots.get("content", "") == "index, follow"
 
 
 def test_patch_notes_renders_mock_list(client: TestClient) -> None:

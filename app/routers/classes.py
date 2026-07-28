@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
-from app.core.constants import MAIN_NAV
+from app.core.constants import MAIN_NAV, PAGE_DESCRIPTIONS, detail_title, page_title
 from app.dependencies import get_templates, seo_context
 from app.services.class_data import (
     class_filter_tabs,
@@ -18,15 +18,13 @@ from app.services.class_data import (
     parse_class_filter,
 )
 from app.services.content_types import CLASS_PENDING_LABEL, CLASS_STYLE_LABELS, MOCK_ROBOTS
+from app.services.seo import meta_description
 from app.services.seo_content import build_breadcrumb_json_ld
 
 router = APIRouter(tags=["classes"])
 
-_CLASS_PAGE_TITLE = "클래스 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
-_CLASS_PAGE_DESCRIPTION = (
-    "이클립스: 더 어웨이크닝 공개 클래스를 비교하고, 무기와 전투 스타일 정보를 "
-    "빠르게 확인해 보세요."
-)
+_CLASS_PAGE_TITLE = page_title("클래스")
+_CLASS_PAGE_DESCRIPTION = PAGE_DESCRIPTIONS["classes"]
 
 _UPCOMING_TOPICS = ("스킬", "빌드", "추천 세팅", "전직")
 _SHORT_PENDING = "공개 예정"
@@ -128,8 +126,11 @@ def class_detail(request: Request, slug: str) -> HTMLResponse:
         "upcoming_topics": _UPCOMING_TOPICS,
         "breadcrumbs": crumbs,
         **seo_context(
-            title=f"{item.name} - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트",
-            description=item.summary or _CLASS_PAGE_DESCRIPTION,
+            title=detail_title(item.name),
+            description=meta_description(
+                item.summary,
+                fallback=_CLASS_PAGE_DESCRIPTION,
+            ),
             canonical_url=page_url,
             robots=MOCK_ROBOTS,
             structured_data=structured,

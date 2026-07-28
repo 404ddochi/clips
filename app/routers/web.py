@@ -6,7 +6,14 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
-from app.core.constants import DEFAULT_HOME_DESCRIPTION, DEFAULT_HOME_TITLE, MAIN_NAV
+from app.core.constants import (
+    DEFAULT_HOME_DESCRIPTION,
+    DEFAULT_HOME_TITLE,
+    MAIN_NAV,
+    NOINDEX_ROBOTS,
+    PAGE_DESCRIPTIONS,
+    page_title,
+)
 from app.dependencies import get_templates, seo_context
 from app.services.coming_soon_data import get_coming_soon_page
 from app.services.home_page_data import (
@@ -46,7 +53,7 @@ def home(request: Request) -> HTMLResponse:
         **seo_context(
             title=DEFAULT_HOME_TITLE,
             description=DEFAULT_HOME_DESCRIPTION,
-            canonical_url=settings.absolute_url("/"),
+            canonical_url=settings.canonical_url("/"),
             structured_data=structured,
         ),
     }
@@ -59,8 +66,16 @@ def _render_coming_soon(request: Request, section_key: str) -> HTMLResponse:
         raise HTTPException(status_code=404)
 
     settings = get_settings()
-    seo_title = f"{page.page_title} - 클립스"
-    seo_description = f"클립스 {page.label} 페이지는 준비 중입니다. {page.page_description}"
+    if section_key == "contents":
+        seo_title = page_title("콘텐츠")
+        seo_description = PAGE_DESCRIPTIONS["contents"]
+        robots = "index, follow"
+    else:
+        seo_title = page_title(page.page_title)
+        seo_description = (
+            f"CLIPS {page.label} 페이지는 준비 중입니다. {page.page_description}"
+        )
+        robots = NOINDEX_ROBOTS
     context = {
         **_base_layout_context(request, section_key),
         "page": page,
@@ -71,8 +86,8 @@ def _render_coming_soon(request: Request, section_key: str) -> HTMLResponse:
         **seo_context(
             title=seo_title,
             description=seo_description,
-            canonical_url=settings.absolute_url(request.url.path),
-            robots="noindex, follow",
+            canonical_url=settings.canonical_url(f"/{section_key}"),
+            robots=robots,
         ),
     }
     return get_templates().TemplateResponse(request, "coming_soon.html", context)

@@ -12,7 +12,14 @@ from fastapi.templating import Jinja2Templates
 from markupsafe import Markup
 
 from app.config import Settings, get_settings
-from app.core.constants import FOOTER_DISCLAIMER, GAME_TITLE, GAME_TITLE_EN
+from app.core.constants import (
+    DEFAULT_HOME_DESCRIPTION,
+    DEFAULT_HOME_TITLE,
+    FOOTER_DISCLAIMER,
+    GAME_TITLE,
+    GAME_TITLE_EN,
+    PUBLIC_ROBOTS,
+)
 
 APP_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = APP_DIR / "templates"
@@ -37,7 +44,7 @@ def get_templates() -> Jinja2Templates:
     templates.env.globals["settings"] = settings
     templates.env.globals["absolute_url"] = settings.absolute_url
     templates.env.globals["app_name"] = settings.app_name
-    templates.env.globals["site_name"] = "클립스"
+    templates.env.globals["site_name"] = "CLIPS"
     templates.env.globals["default_locale"] = settings.default_locale
     templates.env.globals["current_year"] = current_year_kst()
     templates.env.globals["game_title"] = GAME_TITLE
@@ -53,23 +60,48 @@ def get_app_settings() -> Settings:
 
 def seo_context(
     *,
-    title: str,
-    description: str,
+    title: str | None = None,
+    description: str | None = None,
     canonical_url: str | None = None,
     og_title: str | None = None,
     og_description: str | None = None,
     og_image: str | None = None,
-    robots: str = "index, follow",
+    og_type: str = "website",
+    og_url: str | None = None,
+    twitter_card: str = "summary_large_image",
+    twitter_title: str | None = None,
+    twitter_description: str | None = None,
+    twitter_image: str | None = None,
+    robots: str = PUBLIC_ROBOTS,
     structured_data: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Build template context keys consumed by `components/seo_meta.html`."""
+    resolved_title = (title or "").strip() or DEFAULT_HOME_TITLE
+    resolved_description = (description or "").strip() or DEFAULT_HOME_DESCRIPTION
+    resolved_og_title = (og_title or resolved_title).strip()
+    resolved_og_description = (og_description or resolved_description).strip()
+    resolved_twitter_title = (twitter_title or resolved_og_title).strip()
+    resolved_twitter_description = (
+        twitter_description or resolved_og_description
+    ).strip()
+    resolved_canonical = (canonical_url or "").strip()
+    resolved_og_url = (og_url or resolved_canonical).strip()
+    resolved_og_image = (og_image or "").strip() or None
+    resolved_twitter_image = (twitter_image or resolved_og_image or "").strip() or None
+
     return {
-        "seo_title": title,
-        "seo_description": description,
-        "seo_canonical_url": canonical_url or "",
-        "seo_og_title": og_title or title,
-        "seo_og_description": og_description or description,
-        "seo_og_image": og_image,
+        "seo_title": resolved_title,
+        "seo_description": resolved_description,
+        "seo_canonical_url": resolved_canonical,
         "seo_robots": robots,
+        "seo_og_type": og_type or "website",
+        "seo_og_title": resolved_og_title,
+        "seo_og_description": resolved_og_description,
+        "seo_og_url": resolved_og_url,
+        "seo_og_image": resolved_og_image,
+        "seo_twitter_card": twitter_card or "summary_large_image",
+        "seo_twitter_title": resolved_twitter_title,
+        "seo_twitter_description": resolved_twitter_description,
+        "seo_twitter_image": resolved_twitter_image,
         "seo_structured_data": structured_data or [],
     }

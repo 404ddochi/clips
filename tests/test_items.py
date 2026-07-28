@@ -62,7 +62,7 @@ def test_items_index_waiting_ok(client: TestClient) -> None:
     assert "제작식" not in html
     assert "등급" in html  # upcoming chip only
     assert "items.css" in html
-    assert soup.find("meta", attrs={"name": "robots"})["content"].find("noindex") != -1
+    assert soup.find("meta", attrs={"name": "robots"})["content"] == "index, follow"
     nav = soup.find("nav", attrs={"aria-label": "다른 CLIPS 메뉴"})
     assert nav is not None
 
@@ -71,10 +71,10 @@ def test_items_seo_waiting(client: TestClient) -> None:
     soup = _soup(client.get("/items").text)
     title = soup.find("title")
     assert title is not None
-    assert title.get_text() == "아이템 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
+    assert title.get_text() == "아이템 - CLIPS"
     desc = soup.find("meta", attrs={"name": "description"})
     assert desc is not None
-    assert "공개되면" in desc.get("content", "")
+    assert "아이템" in desc.get("content", "")
     assert "레전드리" not in desc.get("content", "")
 
 

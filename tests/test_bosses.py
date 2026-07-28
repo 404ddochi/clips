@@ -55,7 +55,7 @@ def test_bosses_index_waiting_ok(client: TestClient) -> None:
     assert "등장 좌표" not in html
     assert "⚔" not in html
     assert "bosses.css" in html
-    assert soup.find("meta", attrs={"name": "robots"})["content"].find("noindex") != -1
+    assert soup.find("meta", attrs={"name": "robots"})["content"] == "index, follow"
     nav = soup.find("nav", attrs={"aria-label": "다른 CLIPS 메뉴"})
     assert nav is not None
 
@@ -64,10 +64,10 @@ def test_bosses_seo_waiting(client: TestClient) -> None:
     soup = _soup(client.get("/bosses").text)
     title = soup.find("title")
     assert title is not None
-    assert title.get_text() == "보스 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
+    assert title.get_text() == "보스 - CLIPS"
     desc = soup.find("meta", attrs={"name": "description"})
     assert desc is not None
-    assert "공개되면" in desc.get("content", "")
+    assert "전투" in desc.get("content", "")
     assert "드랍 정보" not in desc.get("content", "")
 
 

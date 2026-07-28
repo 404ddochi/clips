@@ -48,7 +48,7 @@ def test_home_meta_description(client: TestClient) -> None:
 
 def test_home_title(client: TestClient) -> None:
     soup = _soup(client.get("/").text)
-    expected = "CLIPS - 이클립스: 더 어웨이크닝 정보 사이트"
+    expected = "CLIPS - 이클립스: 더 어웨이크닝 정보 플랫폼"
     title = soup.find("title")
     assert title is not None
     assert title.get_text() == expected
@@ -158,7 +158,7 @@ def test_classes_page_live(client: TestClient) -> None:
     assert "파이터" in response.text
     robots = soup.find("meta", attrs={"name": "robots"})
     assert robots is not None
-    assert "noindex" in robots.get("content", "")
+    assert robots.get("content", "") == "index, follow"
     breadcrumb = soup.find("nav", attrs={"aria-label": "breadcrumb"})
     assert breadcrumb is not None
     assert breadcrumb.find("a", string="홈") is not None
@@ -180,6 +180,10 @@ def test_robots_txt(client: TestClient) -> None:
     assert response.status_code == 200
     body = response.text
     assert "User-agent: *" in body
+    assert "Allow: /" in body
+    assert "Disallow: /admin" in body
+    assert "Disallow: /dev" in body
+    assert "Disallow: /api" in body
     assert "Sitemap: http://testserver/sitemap.xml" in body
 
 
@@ -189,6 +193,8 @@ def test_sitemap_xml(client: TestClient) -> None:
     assert response.headers["content-type"].startswith("application/xml")
     body = response.text
     assert "<loc>http://testserver/</loc>" in body
+    assert "<loc>http://testserver/news</loc>" in body
+    assert "<loc>http://testserver/coupons</loc>" in body
     assert "<lastmod>" in body
 
 

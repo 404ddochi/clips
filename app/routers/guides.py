@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
-from app.core.constants import MAIN_NAV
+from app.core.constants import MAIN_NAV, PAGE_DESCRIPTIONS, detail_title, page_title
 from app.dependencies import get_templates, seo_context
 from app.services.content_types import GUIDE_UNOFFICIAL_NOTICE, MOCK_ROBOTS
 from app.services.guide_data import (
@@ -20,18 +20,14 @@ from app.services.guide_data import (
     related_guides,
     section_anchor_id,
 )
+from app.services.seo import meta_description
 from app.services.seo_content import build_breadcrumb_json_ld
 
 router = APIRouter(tags=["guides"])
 
-_GUIDE_PAGE_TITLE = "공략 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
-_GUIDE_PAGE_DESCRIPTION = (
-    "CLIPS가 직접 정리한 이클립스: 더 어웨이크닝 비공식 가이드와 공략을 확인하세요."
-)
-_GUIDE_WAITING_DESCRIPTION = (
-    "CLIPS 공략을 준비하고 있습니다. "
-    "확인된 내용만 순차적으로 등록합니다. CLIPS는 비공식 정보 플랫폼입니다."
-)
+_GUIDE_PAGE_TITLE = page_title("공략")
+_GUIDE_PAGE_DESCRIPTION = PAGE_DESCRIPTIONS["guides"]
+_GUIDE_WAITING_DESCRIPTION = PAGE_DESCRIPTIONS["guides"]
 
 _PREP_TOPICS = ("입문", "성장", "클래스", "콘텐츠", "시스템", "탐험")
 
@@ -158,8 +154,8 @@ def guide_detail(request: Request, slug: str) -> HTMLResponse:
         "section_anchor_id": section_anchor_id,
         "breadcrumbs": crumbs,
         **seo_context(
-            title=f"{guide.title} - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트",
-            description=guide.summary or _GUIDE_WAITING_DESCRIPTION,
+            title=detail_title(guide.title),
+            description=meta_description(guide.summary, fallback=_GUIDE_PAGE_DESCRIPTION),
             canonical_url=page_url,
             robots=MOCK_ROBOTS,
             structured_data=structured,

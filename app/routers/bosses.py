@@ -6,21 +6,18 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
-from app.core.constants import MAIN_NAV
+from app.core.constants import MAIN_NAV, PAGE_DESCRIPTIONS, detail_title, page_title
 from app.dependencies import get_templates, seo_context
 from app.services.boss_data import get_boss_by_slug, has_boss_catalogue, list_bosses
 from app.services.content_types import BOSS_PENDING_LABEL, BOSS_SHORT_PENDING, MOCK_ROBOTS
+from app.services.seo import meta_description
 from app.services.seo_content import build_breadcrumb_json_ld
 
 router = APIRouter(tags=["bosses"])
 
-_BOSS_PAGE_TITLE = "보스 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
-_BOSS_PAGE_DESCRIPTION = (
-    "이클립스: 더 어웨이크닝 공식 보스 정보가 공개되면 CLIPS에서 업데이트합니다."
-)
-_BOSS_WAITING_DESCRIPTION = (
-    "공식 보스 정보가 공개되면 업데이트됩니다. CLIPS는 비공식 정보 플랫폼입니다."
-)
+_BOSS_PAGE_TITLE = page_title("보스")
+_BOSS_PAGE_DESCRIPTION = PAGE_DESCRIPTIONS["bosses"]
+_BOSS_WAITING_DESCRIPTION = PAGE_DESCRIPTIONS["bosses"]
 
 _UPCOMING_TOPICS = ("등장 시간", "위치", "드랍 아이템", "전투 정보", "공략")
 
@@ -133,8 +130,8 @@ def boss_detail(request: Request, slug: str) -> HTMLResponse:
         "upcoming_topics": _UPCOMING_TOPICS,
         "breadcrumbs": crumbs,
         **seo_context(
-            title=f"{item.name} - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트",
-            description=item.summary or _BOSS_WAITING_DESCRIPTION,
+            title=detail_title(item.name),
+            description=meta_description(item.summary, fallback=_BOSS_PAGE_DESCRIPTION),
             canonical_url=page_url,
             robots=MOCK_ROBOTS,
             structured_data=structured,

@@ -86,6 +86,6 @@ def test_theme_control_on_design_system(local_client: TestClient) -> None:
 
 def test_home_title_unchanged_with_theme(client: TestClient) -> None:
     soup = _soup(client.get("/").text)
-    assert soup.find("title").get_text() == "CLIPS - 이클립스: 더 어웨이크닝 정보 사이트"
+    assert soup.find("title").get_text() == "CLIPS - 이클립스: 더 어웨이크닝 정보 플랫폼"
     for anchor in soup.find_all("a", href=True):
         assert anchor["href"] != "#"

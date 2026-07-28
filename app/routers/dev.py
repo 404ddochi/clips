@@ -56,11 +56,11 @@ def design_system(request: Request) -> HTMLResponse:
         "active_menu": "",
         "cdl_icons": CDL_ICON_NAMES,
         **seo_context(
-            title="CLIPS Design Language (개발용) - 클립스",
+            title="CLIPS Design Language (개발용) - CLIPS",
             description=(
                 "CLIPS Design Language 컴포넌트 쇼케이스. 개발 환경 전용 샘플 페이지입니다."
             ),
-            canonical_url=settings.absolute_url("/dev/design-system"),
+            canonical_url=None,
             robots="noindex, nofollow",
         ),
     }

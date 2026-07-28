@@ -131,7 +131,6 @@ def register_exception_handlers(app: FastAPI) -> None:
     ) -> HTMLResponse:
         logger.exception("Unhandled error: %s", exc)
         if _wants_html(request):
-            settings = get_settings()
             return templates.TemplateResponse(
                 request,
                 "errors/500.html",
@@ -141,9 +140,9 @@ def register_exception_handlers(app: FastAPI) -> None:
                     "nav_items": MAIN_NAV,
                     "active_menu": "",
                     **seo_context(
-                        title="오류 - 클립스",
+                        title="오류 - CLIPS",
                         description="일시적인 오류가 발생했습니다.",
-                        canonical_url=settings.absolute_url("/"),
+                        canonical_url=None,
                         robots="noindex, nofollow",
                     ),
                 },

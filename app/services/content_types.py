@@ -114,8 +114,10 @@ CATEGORY_LIST_META: dict[NewsCategory, dict[str, str]] = {
     },
 }
 
-PAGE_TITLE_SUFFIX = "CLIPS - 이클립스: 더 어웨이크닝"
-MOCK_ROBOTS = "noindex, follow"
+PAGE_TITLE_SUFFIX = "CLIPS"
+# Prefer constants.PUBLIC_ROBOTS; kept for existing imports.
+MOCK_ROBOTS = "index, follow"
+
 
 # —— Classes ——
 ClassStyle = Literal["melee", "ranged", "magic", "support"]

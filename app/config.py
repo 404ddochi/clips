@@ -4,12 +4,34 @@ from __future__ import annotations
 
 from functools import lru_cache
 from typing import Literal
+from urllib.parse import urlsplit, urlunsplit
 
-from pydantic import Field, field_validator
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEFAULT_SECRET_KEY = "change-me"
 AppEnv = Literal["local", "development", "staging", "production", "prod", "test"]
+
+
+def normalize_site_url(value: str) -> str:
+    """Strip whitespace and trailing slashes from the site origin."""
+    return value.strip().rstrip("/")
+
+
+def normalize_canonical_path(path: str) -> str:
+    """Normalize a path for canonical/sitemap URLs (no query/fragment)."""
+    if path.startswith("http://") or path.startswith("https://"):
+        parts = urlsplit(path)
+        path = parts.path or "/"
+    path = path.split("?", 1)[0].split("#", 1)[0].strip() or "/"
+    if not path.startswith("/"):
+        path = f"/{path}"
+    if path != "/" and path.endswith("/"):
+        path = path.rstrip("/")
+    # Collapse duplicate slashes in the path portion only.
+    while "//" in path:
+        path = path.replace("//", "/")
+    return path or "/"
 
 
 class Settings(BaseSettings):
@@ -19,14 +41,20 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        populate_by_name=True,
     )
 
     app_name: str = Field(default="CLIPS", alias="APP_NAME")
     app_env: AppEnv = Field(default="local", alias="APP_ENV")
     app_debug: bool = Field(default=False, alias="APP_DEBUG")
     app_host: str = Field(default="127.0.0.1", alias="APP_HOST")
-    app_port: int = Field(default=8000, alias="APP_PORT")
-    app_base_url: str = Field(default="http://127.0.0.1:8000", alias="APP_BASE_URL")
+    app_port: int = Field(default=8001, alias="APP_PORT")
+    # Prefer SITE_URL; APP_BASE_URL remains supported for compatibility.
+    app_base_url: str = Field(
+        default="http://127.0.0.1:8001",
+        validation_alias=AliasChoices("SITE_URL", "APP_BASE_URL"),
+        serialization_alias="SITE_URL",
+    )
     secret_key: str = Field(default=DEFAULT_SECRET_KEY, alias="SECRET_KEY")
     database_url: str = Field(default="sqlite:///./clips.db", alias="DATABASE_URL")
     default_locale: str = Field(default="ko", alias="DEFAULT_LOCALE")
@@ -34,8 +62,13 @@ class Settings(BaseSettings):
 
     @field_validator("app_base_url")
     @classmethod
-    def strip_trailing_slash(cls, value: str) -> str:
-        return value.rstrip("/")
+    def normalize_base_url(cls, value: str) -> str:
+        return normalize_site_url(value)
+
+    @property
+    def site_url(self) -> str:
+        """Canonical site origin (SITE_URL / APP_BASE_URL)."""
+        return self.app_base_url
 
     def is_production(self) -> bool:
         return self.app_env in ("production", "prod")
@@ -51,10 +84,15 @@ class Settings(BaseSettings):
 
     def absolute_url(self, path: str = "/") -> str:
         if path.startswith("http://") or path.startswith("https://"):
-            return path
-        if not path.startswith("/"):
-            path = f"/{path}"
-        return f"{self.app_base_url}{path}"
+            parts = urlsplit(path)
+            normalized = normalize_canonical_path(parts.path or "/")
+            return urlunsplit((parts.scheme, parts.netloc, normalized, "", ""))
+        normalized = normalize_canonical_path(path)
+        return f"{self.app_base_url}{normalized}"
+
+    def canonical_url(self, path: str = "/") -> str:
+        """SITE_URL + normalized path (no query/fragment)."""
+        return self.absolute_url(path)
 
 
 @lru_cache

@@ -25,7 +25,7 @@ def test_classes_index_ok(client: TestClient) -> None:
     assert "준비 중" not in soup.find("h1").get_text()
     assert len(soup.find_all("h1")) == 1
     assert "클래스" in soup.find("h1").get_text()
-    assert soup.find("meta", attrs={"name": "robots"})["content"].find("noindex") != -1
+    assert soup.find("meta", attrs={"name": "robots"})["content"] == "index, follow"
     assert "classes.css" in html
     assert soup.select(".class-card")
     assert len(soup.select(".class-card")) == len(CLASS_ITEMS)
@@ -44,9 +44,7 @@ def test_classes_seo(client: TestClient) -> None:
     soup = _soup(client.get("/classes").text)
     title = soup.find("title")
     assert title is not None
-    assert title.get_text() == (
-        "클래스 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
-    )
+    assert title.get_text() == "클래스 - CLIPS"
     desc = soup.find("meta", attrs={"name": "description"})
     assert desc is not None
     assert "클래스" in desc.get("content", "")

@@ -6,13 +6,12 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
-from app.core.constants import MAIN_NAV
+from app.core.constants import MAIN_NAV, PAGE_DESCRIPTIONS, detail_title, page_title
 from app.dependencies import get_templates, seo_context
 from app.services.content_types import (
     CATEGORY_LIST_META,
     MOCK_ROBOTS,
     NEWS_CATEGORY_TABS,
-    PAGE_TITLE_SUFFIX,
     PATCH_TYPE_LABELS,
     NewsCategory,
 )
@@ -31,15 +30,14 @@ from app.services.patch_mock_data import (
     parse_patch_filter,
     patch_filter_tabs,
 )
+from app.services.seo import meta_description
 from app.services.seo_content import build_article_json_ld, build_breadcrumb_json_ld
 
 router = APIRouter(tags=["news"])
 
-_PATCH_PAGE_TITLE = "패치노트 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
-_PATCH_PAGE_DESCRIPTION = (
-    "이클립스: 더 어웨이크닝 패치노트를 버전별로 확인하고 "
-    "업데이트, 밸런스, 버그 수정 내용을 빠르게 찾아보세요."
-)
+_PATCH_PAGE_TITLE = page_title("패치노트")
+_PATCH_PAGE_DESCRIPTION = PAGE_DESCRIPTIONS["patch_notes"]
+_NEWS_PAGE_DESCRIPTION = PAGE_DESCRIPTIONS["news"]
 
 
 def _layout(request: Request) -> dict[str, object]:
@@ -52,11 +50,11 @@ def _layout(request: Request) -> dict[str, object]:
 
 
 def _list_title(label: str) -> str:
-    return f"{label} | {PAGE_TITLE_SUFFIX}"
+    return page_title(label)
 
 
-def _detail_title(document_title: str) -> str:
-    return f"{document_title} | CLIPS"
+def _detail_page_title(document_title: str) -> str:
+    return detail_title(document_title)
 
 
 @router.get("/news", response_class=HTMLResponse, name="news")
@@ -89,11 +87,8 @@ def news_index(request: Request) -> HTMLResponse:
         "detail_route_for": detail_route_for,
         **seo_context(
             title=_list_title("소식"),
-            description=(
-                "CLIPS Mock 소식 허브입니다. 공지·이벤트·패치노트 UI를 검증하며 "
-                "실제 공식 소식이 아닙니다."
-            ),
-            canonical_url=settings.absolute_url("/news"),
+            description=_NEWS_PAGE_DESCRIPTION,
+            canonical_url=settings.canonical_url("/news"),
             robots=MOCK_ROBOTS,
             structured_data=structured,
         ),
@@ -131,8 +126,8 @@ def _render_category_list(request: Request, category: NewsCategory) -> HTMLRespo
         "breadcrumbs": crumbs,
         **seo_context(
             title=_list_title(meta["title"]),
-            description=meta["description"],
-            canonical_url=settings.absolute_url(path),
+            description=_NEWS_PAGE_DESCRIPTION,
+            canonical_url=settings.canonical_url(path),
             robots=MOCK_ROBOTS,
             structured_data=structured,
         ),
@@ -192,7 +187,7 @@ def news_patch_notes(request: Request) -> HTMLResponse:
         **seo_context(
             title=_PATCH_PAGE_TITLE,
             description=_PATCH_PAGE_DESCRIPTION,
-            canonical_url=settings.absolute_url(path),
+            canonical_url=settings.canonical_url(path),
             robots=MOCK_ROBOTS,
             structured_data=structured,
         ),
@@ -239,6 +234,9 @@ def _render_detail(
         ),
         build_article_json_ld(settings, item=item, page_url=page_url),
     ]
+    fallback_desc = (
+        _PATCH_PAGE_DESCRIPTION if category == "patch" else _NEWS_PAGE_DESCRIPTION
+    )
     context = {
         **_layout(request),
         "item": item,
@@ -250,10 +248,14 @@ def _render_detail(
         "related_items": related,
         "breadcrumbs": crumbs,
         **seo_context(
-            title=_detail_title(item.title),
-            description=item.summary,
+            title=_detail_page_title(item.title),
+            description=meta_description(
+                item.summary,
+                fallback=fallback_desc,
+            ),
             canonical_url=page_url,
             robots=MOCK_ROBOTS,
+            og_type="article",
             structured_data=structured,
         ),
     }

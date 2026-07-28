@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.config import get_settings
-from app.core.constants import MAIN_NAV
+from app.core.constants import MAIN_NAV, PAGE_DESCRIPTIONS, detail_title, page_title
 from app.dependencies import get_templates, seo_context
 from app.services.content_types import COUPON_STATUS_FILTERS, MOCK_ROBOTS
 from app.services.coupon_mock_data import (
@@ -15,14 +15,13 @@ from app.services.coupon_mock_data import (
     list_coupons,
     parse_coupon_filter,
 )
+from app.services.seo import meta_description
 from app.services.seo_content import build_breadcrumb_json_ld
 
 router = APIRouter(tags=["coupons"])
 
-_COUPON_PAGE_TITLE = "쿠폰 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
-_COUPON_PAGE_DESCRIPTION = (
-    "이클립스: 더 어웨이크닝 쿠폰 코드와 보상, 사용 기간을 한눈에 확인하고 빠르게 복사하세요."
-)
+_COUPON_PAGE_TITLE = page_title("쿠폰")
+_COUPON_PAGE_DESCRIPTION = PAGE_DESCRIPTIONS["coupons"]
 
 _USAGE_STEPS = (
     "상태 필터로 원하는 쿠폰을 좁힙니다.",
@@ -137,8 +136,8 @@ def coupon_detail(request: Request, slug: str) -> HTMLResponse:
         "warnings": _WARNINGS,
         "breadcrumbs": crumbs,
         **seo_context(
-            title=f"{item.title} | CLIPS",
-            description=item.reward_summary,
+            title=detail_title(item.title),
+            description=meta_description(item.reward_summary, fallback=_COUPON_PAGE_DESCRIPTION),
             canonical_url=page_url,
             robots=MOCK_ROBOTS,
             structured_data=structured,
