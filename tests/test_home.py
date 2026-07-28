@@ -195,7 +195,8 @@ def test_sitemap_xml(client: TestClient) -> None:
 def test_not_found_page(client: TestClient) -> None:
     response = client.get("/does-not-exist", headers={"Accept": "text/html"})
     assert response.status_code == 404
-    assert "찾을 수 없습니다" in response.text
+    assert "페이지를 찾을 수 없습니다" in response.text
+    assert "not_found.css" in response.text
 
 
 def test_home_contains_clips_branding(client: TestClient) -> None:

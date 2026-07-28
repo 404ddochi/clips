@@ -55,7 +55,7 @@ def seo_context(
     *,
     title: str,
     description: str,
-    canonical_url: str,
+    canonical_url: str | None = None,
     og_title: str | None = None,
     og_description: str | None = None,
     og_image: str | None = None,
@@ -66,7 +66,7 @@ def seo_context(
     return {
         "seo_title": title,
         "seo_description": description,
-        "seo_canonical_url": canonical_url,
+        "seo_canonical_url": canonical_url or "",
         "seo_og_title": og_title or title,
         "seo_og_description": og_description or description,
         "seo_og_image": og_image,

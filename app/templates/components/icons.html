@@ -94,6 +94,12 @@
   <circle cx="10.8" cy="10.4" r="1.35" stroke="currentColor" stroke-width="1.8"/>
   <path d="M10.8 7.2v1.35" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
   <path d="M8.6 16.2h4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>
+{%- elif name == "compass-sigil" -%}
+  {# Wayfinding mark — not a map pin or stock compass #}
+  <circle cx="12" cy="12" r="7.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M12 6.2 14.6 12 12 17.8 9.4 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 4.6v1.3M12 18.1v1.3M4.6 12h1.3M18.1 12h1.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M12 8.8v2.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
 {%- elif name == "map" -%}
   <circle cx="12" cy="12" r="7.2" stroke="currentColor" stroke-width="1.8"/>
   <path d="m12 7.2 1.6 4.2L12 16.8l-1.6-5.4L12 7.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>

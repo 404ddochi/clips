@@ -77,13 +77,23 @@ def create_app() -> FastAPI:
 def register_exception_handlers(app: FastAPI) -> None:
     templates = get_templates()
 
+    _NOT_FOUND_SHORTCUTS = (
+        {"label": "홈", "route_name": "home", "icon": "home"},
+        {"label": "소식", "route_name": "news", "icon": "news"},
+        {"label": "클래스", "route_name": "classes", "icon": "class"},
+        {"label": "아이템", "route_name": "items", "icon": "item"},
+        {"label": "보스", "route_name": "bosses", "icon": "boss"},
+        {"label": "지도", "route_name": "maps", "icon": "map"},
+        {"label": "공략", "route_name": "guides", "icon": "guide"},
+        {"label": "쿠폰", "route_name": "coupons", "icon": "coupon"},
+    )
+
     @app.exception_handler(StarletteHTTPException)
     async def http_exception_handler(
         request: Request,
         exc: StarletteHTTPException,
     ) -> HTMLResponse:
         if exc.status_code == 404 and _wants_html(request):
-            settings = get_settings()
             return templates.TemplateResponse(
                 request,
                 "errors/404.html",
@@ -92,10 +102,14 @@ def register_exception_handlers(app: FastAPI) -> None:
                     "status_code": 404,
                     "nav_items": MAIN_NAV,
                     "active_menu": "",
+                    "shortcut_links": _NOT_FOUND_SHORTCUTS,
                     **seo_context(
-                        title="페이지를 찾을 수 없습니다 - 클립스",
-                        description="요청하신 페이지를 찾을 수 없습니다.",
-                        canonical_url=settings.absolute_url(str(request.url.path)),
+                        title="페이지를 찾을 수 없습니다 - CLIPS",
+                        description=(
+                            "입력한 주소가 변경되었거나 존재하지 않는 페이지입니다. "
+                            "CLIPS 메뉴에서 원하는 정보를 다시 찾아보세요."
+                        ),
+                        canonical_url=None,
                         robots="noindex, nofollow",
                     ),
                 },
