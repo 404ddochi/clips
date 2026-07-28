@@ -40,7 +40,11 @@
         </a>
       </p>
       {% else %}
+      {% if allows_demo_content() %}
       <p class="form-help">원문 URL이 없는 Mock 문서입니다. 깨진 링크를 제공하지 않습니다.</p>
+      {% else %}
+      <p class="form-help">원문 URL이 없습니다. 깨진 링크를 제공하지 않습니다.</p>
+      {% endif %}
       {% endif %}
     </div>
 

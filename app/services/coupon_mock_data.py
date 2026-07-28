@@ -141,6 +141,10 @@ COUPON_ITEMS: tuple[CouponItem, ...] = (
 
 
 def list_coupons(*, status: CouponStatus | None = None) -> tuple[CouponItem, ...]:
+    from app.services.demo_content import demo_content_enabled
+
+    if not demo_content_enabled():
+        return ()
     items = COUPON_ITEMS
     if status is not None:
         items = tuple(item for item in items if item.status == status)
@@ -166,6 +170,10 @@ def parse_coupon_filter(raw: str | None) -> CouponFilterKey:
 
 
 def get_coupon_by_slug(slug: str) -> CouponItem | None:
+    from app.services.demo_content import demo_content_enabled
+
+    if not demo_content_enabled():
+        return None
     for item in COUPON_ITEMS:
         if item.slug == slug:
             return item

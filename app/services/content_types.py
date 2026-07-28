@@ -93,21 +93,21 @@ NEWS_CATEGORY_TABS: tuple[CategoryTab, ...] = (
 CATEGORY_LIST_META: dict[NewsCategory, dict[str, str]] = {
     "notice": {
         "title": "공지",
-        "description": "CLIPS Mock 공지 목록입니다. 실제 공식 공지가 아닙니다.",
+        "description": "이클립스: 더 어웨이크닝의 최신 공지를 확인하세요.",
         "route_name": "news_notices",
         "detail_route": "news_notice_detail",
         "path_prefix": "/news/notices",
     },
     "event": {
         "title": "이벤트",
-        "description": "CLIPS Mock 이벤트 목록입니다. 실제 이벤트 일정이 아닙니다.",
+        "description": "이클립스: 더 어웨이크닝의 이벤트 소식을 확인하세요.",
         "route_name": "news_events",
         "detail_route": "news_event_detail",
         "path_prefix": "/news/events",
     },
     "patch": {
         "title": "패치노트",
-        "description": "CLIPS Mock 패치노트 목록입니다. 실제 업데이트 내용이 아닙니다.",
+        "description": "이클립스: 더 어웨이크닝의 업데이트와 패치노트를 확인하세요.",
         "route_name": "news_patch_notes",
         "detail_route": "news_patch_detail",
         "path_prefix": "/news/patch-notes",

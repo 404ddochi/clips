@@ -15,7 +15,11 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.config import get_settings
 from app.core.constants import MAIN_NAV
 from app.core.logging import configure_logging
-from app.core.middleware import RequestLoggingMiddleware, SecurityHeadersMiddleware
+from app.core.middleware import (
+    ProductionDocsBlockMiddleware,
+    RequestLoggingMiddleware,
+    SecurityHeadersMiddleware,
+)
 from app.core.security import apply_startup_security_checks
 from app.dependencies import get_templates, seo_context
 from app.routers import bosses as bosses_router
@@ -47,15 +51,20 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    docs_enabled = not settings.is_production()
     app = FastAPI(
         title=settings.app_name,
         description="이클립스: 더 어웨이크닝 비공식 정보 플랫폼",
         debug=settings.is_debug_enabled(),
         lifespan=lifespan,
+        docs_url="/docs" if docs_enabled else None,
+        redoc_url="/redoc" if docs_enabled else None,
+        openapi_url="/openapi.json" if docs_enabled else None,
     )
 
     app.add_middleware(SecurityHeadersMiddleware)
     app.add_middleware(RequestLoggingMiddleware)
+    app.add_middleware(ProductionDocsBlockMiddleware)
 
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 

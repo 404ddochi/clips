@@ -36,7 +36,7 @@
     </header>
 
     <div class="coupon-detail__code-panel">
-      <p class="coupon-detail__label">데모 코드</p>
+      <p class="coupon-detail__label">{% if is_mock %}데모 코드{% else %}쿠폰 코드{% endif %}</p>
       <code class="coupon-row__code-value coupon-row__code-value--lg" id="coupon-code-{{ item.slug }}">{{ item.code }}</code>
       {% if item.status == "expired" %}
       <button
@@ -63,7 +63,11 @@
         <span aria-hidden="true">{{ icon("copy", size=16) }}</span>
         <span data-copy-label>코드 복사</span>
       </button>
+      {% if is_mock %}
       <p class="form-help">Mock 데모 코드입니다. 실제 교환 가능 여부는 공식 채널을 확인하세요.</p>
+      {% else %}
+      <p class="form-help">실제 교환 가능 여부는 공식 채널을 확인하세요.</p>
+      {% endif %}
       {% endif %}
     </div>
 
@@ -87,7 +91,7 @@
         <span aria-hidden="true">{{ icon("external", size=14) }}</span>
       </a>
     </div>
-    {% else %}
+    {% elif is_mock %}
     <p class="form-help">원문 URL이 없는 Mock 쿠폰입니다.</p>
     {% endif %}
 
@@ -97,7 +101,7 @@
 
     {% if related_coupons %}
     <section class="article__related" aria-labelledby="related-coupons-heading">
-      <h2 id="related-coupons-heading" class="section-title">다른 샘플 쿠폰</h2>
+      <h2 id="related-coupons-heading" class="section-title">{% if is_mock %}다른 샘플 쿠폰{% else %}다른 쿠폰{% endif %}</h2>
       <ul class="related-list">
         {% for related in related_coupons %}
         <li>

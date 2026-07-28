@@ -15,7 +15,10 @@
     {% include "components/breadcrumb.html" %}
     {% set page_eyebrow = "News" %}
     {% set page_title = "소식" %}
+    {% set page_description = "이클립스: 더 어웨이크닝의 공지, 이벤트, 패치노트를 CLIPS에서 확인하세요." %}
+    {% if allows_demo_content() %}
     {% set page_description = "CLIPS Mock 소식 허브입니다. 공지·이벤트·패치노트 구조를 검증하며 실제 공식 소식이 아닙니다." %}
+    {% endif %}
     {% include "components/page_header.html" %}
     {% include "components/content_tabs.html" %}
   </div>

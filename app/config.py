@@ -73,9 +73,16 @@ class Settings(BaseSettings):
     def is_production(self) -> bool:
         return self.app_env in ("production", "prod")
 
+    def is_staging(self) -> bool:
+        return self.app_env == "staging"
+
     def is_design_system_enabled(self) -> bool:
         """Dev-only CDL showcase: local / development."""
         return self.app_env in ("local", "development")
+
+    def allows_demo_content(self) -> bool:
+        """Mock news/coupons/patches — never on production public surfaces."""
+        return not self.is_production()
 
     def is_debug_enabled(self) -> bool:
         if self.is_production():
@@ -95,13 +102,16 @@ class Settings(BaseSettings):
         return self.absolute_url(path)
 
 
+_LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "0.0.0.0", "::1"})
+
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
 
 
 def validate_settings(settings: Settings) -> None:
-    """Block startup when production uses insecure defaults."""
+    """Block startup when production uses insecure defaults or bad SITE_URL."""
     if not settings.is_production():
         return
     if settings.secret_key == DEFAULT_SECRET_KEY:
@@ -109,4 +119,12 @@ def validate_settings(settings: Settings) -> None:
         raise RuntimeError(msg)
     if settings.app_debug:
         msg = "운영 환경에서는 APP_DEBUG를 true로 설정하지 마세요."
+        raise RuntimeError(msg)
+    parts = urlsplit(settings.site_url)
+    if parts.scheme != "https":
+        msg = "운영 환경 SITE_URL은 https:// 절대 URL이어야 합니다."
+        raise RuntimeError(msg)
+    host = (parts.hostname or "").casefold()
+    if not host or host in _LOCAL_HOSTS or host.endswith(".local"):
+        msg = "운영 환경 SITE_URL에 localhost 또는 루프백 호스트를 사용할 수 없습니다."
         raise RuntimeError(msg)

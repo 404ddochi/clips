@@ -207,10 +207,18 @@ PATCH_NOTES: tuple[PatchNote, ...] = (
 
 
 def list_patch_notes() -> tuple[PatchNote, ...]:
+    from app.services.demo_content import demo_content_enabled
+
+    if not demo_content_enabled():
+        return ()
     return tuple(sorted(PATCH_NOTES, key=lambda item: item.published_at, reverse=True))
 
 
 def get_patch_by_slug(slug: str) -> PatchNote | None:
+    from app.services.demo_content import demo_content_enabled
+
+    if not demo_content_enabled():
+        return None
     for item in PATCH_NOTES:
         if item.slug == slug:
             return item

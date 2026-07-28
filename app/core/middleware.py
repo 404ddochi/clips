@@ -51,3 +51,23 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "geolocation=(), microphone=(), camera=()",
         )
         return response
+
+
+_BLOCKED_DOC_PATHS = frozenset(
+    {"/docs", "/redoc", "/openapi.json", "/docs/oauth2-redirect"},
+)
+
+
+class ProductionDocsBlockMiddleware(BaseHTTPMiddleware):
+    """Hide OpenAPI surfaces when APP_ENV is production (request-time)."""
+
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        from app.config import get_settings
+
+        if get_settings().is_production() and request.url.path in _BLOCKED_DOC_PATHS:
+            return Response(status_code=404, content="Not Found")
+        return await call_next(request)

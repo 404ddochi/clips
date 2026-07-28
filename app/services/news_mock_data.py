@@ -143,6 +143,10 @@ NEWS_ITEMS: tuple[NewsItem, ...] = (
 
 
 def list_news(*, category: NewsCategory | None = None) -> tuple[NewsItem, ...]:
+    from app.services.demo_content import demo_content_enabled
+
+    if not demo_content_enabled():
+        return ()
     items = NEWS_ITEMS
     if category is not None:
         items = tuple(item for item in items if item.category == category)
@@ -150,6 +154,10 @@ def list_news(*, category: NewsCategory | None = None) -> tuple[NewsItem, ...]:
 
 
 def get_news_by_slug(category: NewsCategory, slug: str) -> NewsItem | None:
+    from app.services.demo_content import demo_content_enabled
+
+    if not demo_content_enabled():
+        return None
     for item in NEWS_ITEMS:
         if item.category == category and item.slug == slug:
             return item

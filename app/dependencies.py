@@ -53,6 +53,9 @@ def get_templates() -> Jinja2Templates:
     templates.env.globals["game_title"] = GAME_TITLE
     templates.env.globals["game_title_en"] = GAME_TITLE_EN
     templates.env.globals["footer_disclaimer"] = FOOTER_DISCLAIMER
+    templates.env.globals["allows_demo_content"] = (
+        lambda: get_settings().allows_demo_content()
+    )
     templates.env.filters["tojson"] = _json_script
     return templates
 

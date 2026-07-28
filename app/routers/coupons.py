@@ -26,10 +26,21 @@ _COUPON_PAGE_DESCRIPTION = PAGE_DESCRIPTIONS["coupons"]
 _USAGE_STEPS = (
     "상태 필터로 원하는 쿠폰을 좁힙니다.",
     "코드를 확인한 뒤 「코드 복사」를 누릅니다.",
+    "게임 내 쿠폰 입력처에서 코드를 사용하세요.",
+)
+
+_USAGE_STEPS_DEMO = (
+    "상태 필터로 원하는 쿠폰을 좁힙니다.",
+    "코드를 확인한 뒤 「코드 복사」를 누릅니다.",
     "표시된 코드는 Mock 데모이며 게임에서 교환되지 않을 수 있습니다.",
 )
 
 _WARNINGS = (
+    "쿠폰 유효 기간과 교환 가능 여부는 공식 안내를 기준으로 확인하세요.",
+    "CLIPS는 비공식 정보 플랫폼입니다.",
+)
+
+_WARNINGS_DEMO = (
     "SAMPLE·CLIPS-DEMO 계열 코드는 UI 검증용입니다.",
     "실제 사용 가능한 공식 쿠폰처럼 오해하지 마세요.",
     "CLIPS는 비공식 정보 플랫폼입니다.",
@@ -65,6 +76,7 @@ def coupons_index(request: Request) -> HTMLResponse:
     coupons = filter_coupons(current_status)
     coupon_count = len(coupons)
     status_filters = _status_filters()
+    is_mock = settings.allows_demo_content()
 
     crumbs = (
         {"label": "홈", "route_name": "home", "current": False},
@@ -86,9 +98,9 @@ def coupons_index(request: Request) -> HTMLResponse:
         "coupon_count": coupon_count,
         "current_status": current_status,
         "status_filters": status_filters,
-        "is_mock": True,
-        "usage_steps": _USAGE_STEPS,
-        "warnings": _WARNINGS,
+        "is_mock": is_mock,
+        "usage_steps": _USAGE_STEPS_DEMO if is_mock else _USAGE_STEPS,
+        "warnings": _WARNINGS_DEMO if is_mock else _WARNINGS,
         "expired_copy_policy": _EXPIRED_COPY_POLICY,
         "breadcrumbs": crumbs,
         **seo_context(
@@ -110,6 +122,7 @@ def coupon_detail(request: Request, slug: str) -> HTMLResponse:
         raise HTTPException(status_code=404)
 
     settings = get_settings()
+    is_mock = settings.allows_demo_content()
     page_path = f"/coupons/{slug}"
     page_url = settings.absolute_url(page_path)
     others = [c for c in list_coupons() if c.slug != slug][:3]
@@ -132,8 +145,9 @@ def coupon_detail(request: Request, slug: str) -> HTMLResponse:
         **_layout(request),
         "item": item,
         "related_coupons": others,
-        "usage_steps": _USAGE_STEPS,
-        "warnings": _WARNINGS,
+        "is_mock": is_mock,
+        "usage_steps": _USAGE_STEPS_DEMO if is_mock else _USAGE_STEPS,
+        "warnings": _WARNINGS_DEMO if is_mock else _WARNINGS,
         "breadcrumbs": crumbs,
         **seo_context(
             title=detail_title(item.title),

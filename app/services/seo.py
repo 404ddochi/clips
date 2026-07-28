@@ -43,6 +43,8 @@ def meta_description(
 
 
 def build_robots_txt(settings: Settings) -> str:
+    if settings.is_staging():
+        return "User-agent: *\nDisallow: /\n"
     sitemap_url = settings.canonical_url("/sitemap.xml")
     return (
         "User-agent: *\n"

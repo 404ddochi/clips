@@ -182,7 +182,7 @@ def news_patch_notes(request: Request) -> HTMLResponse:
         "search_query": query,
         "clear_href": clear_href,
         "patch_type_labels": PATCH_TYPE_LABELS,
-        "is_mock": True,
+        "is_mock": settings.allows_demo_content(),
         "breadcrumbs": crumbs,
         **seo_context(
             title=_PATCH_PAGE_TITLE,
