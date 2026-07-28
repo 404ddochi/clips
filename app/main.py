@@ -22,6 +22,7 @@ from app.routers import bosses as bosses_router
 from app.routers import classes as classes_router
 from app.routers import coupons as coupons_router
 from app.routers import dev as dev_router
+from app.routers import guides as guides_router
 from app.routers import health, seo, web
 from app.routers import items as items_router
 from app.routers import maps as maps_router
@@ -64,6 +65,7 @@ def create_app() -> FastAPI:
     app.include_router(bosses_router.router)
     app.include_router(items_router.router)
     app.include_router(maps_router.router)
+    app.include_router(guides_router.router)
     app.include_router(news_router.router)
     app.include_router(coupons_router.router)
     app.include_router(dev_router.router)

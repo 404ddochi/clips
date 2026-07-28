@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/guides.css') }}">
+{% endblock %}
+
+{% block body_class %}page-guides{% endblock %}
+
+{% block content %}
+<section class="section page-intro guides-page">
+  <div class="container">
+    {% include "components/breadcrumb.html" %}
+    {% set page_eyebrow = "GUIDES" %}
+    {% set page_title = "공략" %}
+    {% if catalogue_ready %}
+      {% set page_description = "CLIPS가 직접 정리한 가이드와 공략을 확인하세요." %}
+    {% else %}
+      {% set page_description = "CLIPS가 직접 정리한 가이드와 공략을 준비합니다." %}
+    {% endif %}
+    {% include "components/page_header.html" %}
+
+    {% if catalogue_ready %}
+    <form class="guide-search" method="get" action="{{ url_for('guides') }}" role="search">
+      {% if current_category != "all" %}
+      <input type="hidden" name="category" value="{{ current_category }}">
+      {% endif %}
+      <label class="visually-hidden" for="guide-search-q">공략 검색</label>
+      <div class="guide-search__row">
+        <input
+          id="guide-search-q"
+          class="guide-search__input"
+          type="search"
+          name="q"
+          value="{{ search_query }}"
+          placeholder="제목, 요약, 태그, 본문"
+          autocomplete="off"
+          enterkeyhint="search"
+        >
+        <button class="button button--primary button--sm guide-search__submit" type="submit">검색</button>
+        {% if search_query or current_category != "all" %}
+        <a class="button button--secondary button--sm" href="{{ url_for('guides') }}">초기화</a>
+        {% endif %}
+      </div>
+    </form>
+
+    <div class="guide-toolbar">
+      {% if show_filters %}
+      <nav class="guide-filters" aria-label="공략 분류 필터">
+        <ul class="guide-filters__list" role="list">
+          {% for tab in category_tabs %}
+          <li class="guide-filters__item">
+            <a
+              class="guide-filters__link{% if current_category == tab.key %} is-active{% endif %}"
+              href="{{ tab.href }}"
+              {% if current_category == tab.key %}aria-current="page"{% endif %}
+            >{{ tab.label }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+      {% endif %}
+      <p class="guide-summary" aria-live="polite">
+        <span class="guide-summary__count">공략 {{ guide_count }}개</span>
+        {% if search_query %}
+        <span class="guide-summary__query"> · 「{{ search_query }}」</span>
+        {% endif %}
+      </p>
+    </div>
+
+    {% if featured_guides %}
+    <section class="guide-featured" aria-labelledby="guide-featured-heading">
+      <h2 id="guide-featured-heading" class="guide-featured__title">추천 공략</h2>
+      <ul class="guide-featured__list" role="list">
+        {% for guide in featured_guides %}
+        <li class="guide-featured__item">
+          {% include "components/guide_card.html" %}
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    {% if guides %}
+    <ul class="guide-list" role="list">
+      {% for guide in guides %}
+      <li class="guide-list__item">
+        {% include "components/guide_card.html" %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state empty-state--compact">
+      <h2 class="empty-state__title">조건에 맞는 공략이 없습니다.</h2>
+      <p class="empty-state__message">검색어나 분류를 바꿔 보세요.</p>
+      <a class="button button--secondary button--sm" href="{{ url_for('guides') }}">전체 보기</a>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="guide-desk" aria-labelledby="guide-desk-heading">
+      <div class="guide-desk__sigil" aria-hidden="true">
+        <span class="guide-desk__frame"></span>
+        <span class="guide-desk__symbol">
+          {{ icon("guide-sigil", size=64, class_name="guide-desk__icon") }}
+        </span>
+      </div>
+      <div class="guide-desk__copy">
+        <p class="guide-desk__status">공략 준비 중</p>
+        <h2 id="guide-desk-heading" class="guide-desk__title">CLIPS 공략을 준비하고 있습니다.</h2>
+        <p class="guide-desk__desc">
+          공식 정보와 실제 플레이 내용을 확인한 뒤
+          신뢰할 수 있는 가이드를 순차적으로 등록합니다.
+        </p>
+        <p class="guide-desk__principle">
+          확인되지 않은 공략이나 추측성 정보는 게시하지 않습니다.
+        </p>
+        <ul class="guide-desk__topics" role="list" aria-label="향후 정리 예정 주제">
+          {% for topic in prep_topics %}
+          <li class="guide-prep-chip">{{ topic }}</li>
+          {% endfor %}
+        </ul>
+        <p class="guide-desk__hint">
+          주제 칩은 이미 공개된 공략이 아니라, 앞으로 정리할 수 있는 콘텐츠 영역입니다.
+        </p>
+        <nav class="guide-desk__links" aria-label="다른 CLIPS 메뉴">
+          {% for link in related_links %}
+          <a class="button button--secondary button--sm" href="{{ url_for(link.route_name) }}">{{ link.label }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+    </div>
+    {% endif %}
+
+    {% include "components/source_notice.html" %}
+  </div>
+</section>
+{% endblock %}

@@ -251,6 +251,73 @@ class RegionEntry:
     npc_pending: bool = False
 
 
+# —— Guides (CLIPS editorial content; empty until authored) ——
+GuideStatus = Literal["draft", "published", "archived"]
+GuideReviewStatus = Literal["unreviewed", "verified", "needs_review"]
+GuideAccent = Literal["guide", "desk", "field"]
+GuideSourceType = Literal[
+    "official_home",
+    "official_notice",
+    "official_gm",
+    "official_video",
+    "in_game",
+    "community",
+]
+
+GUIDE_PENDING_LABEL = "공식 정보 공개 후 업데이트 예정"
+GUIDE_UNOFFICIAL_NOTICE = (
+    "이 글은 CLIPS가 정리한 비공식 가이드입니다. "
+    "게임 업데이트에 따라 내용이 변경될 수 있습니다."
+)
+
+
+@dataclass(frozen=True, slots=True)
+class GuideSection:
+    """Structured guide section — rendered via Jinja, never as raw HTML."""
+
+    heading: str
+    body: str = ""
+    bullets: tuple[str, ...] = ()
+    note: str = ""
+    warning: str = ""
+    tip: str = ""
+    related_links: tuple[tuple[str, str], ...] = ()  # (label, href)
+
+
+@dataclass(frozen=True, slots=True)
+class GuideSourceLink:
+    """Reference for a guide; omit from UI when none exist."""
+
+    label: str
+    url: str
+    source_type: GuideSourceType = "official_home"
+    checked_at: datetime | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class GuideEntry:
+    """CLIPS-authored unofficial guide. Do not invent fake published posts."""
+
+    slug: str
+    title: str
+    summary: str
+    category: str
+    category_label: str
+    author_name: str
+    published_at: datetime
+    updated_at: datetime
+    reading_minutes: int
+    sections: tuple[GuideSection, ...] = ()
+    tags: tuple[str, ...] = ()
+    source_links: tuple[GuideSourceLink, ...] = ()
+    symbol: str = "guide-sigil"
+    accent: GuideAccent = "guide"
+    is_featured: bool = False
+    status: GuideStatus = "draft"
+    review_status: GuideReviewStatus = "unreviewed"
+    source_note: str = "CLIPS 비공식 가이드"
+
+
 # —— Patch notes (timeline list) ——
 PatchType = Literal["update", "balance", "bugfix", "system", "event"]
 PatchFilterKey = Literal["all", "update", "balance", "bugfix", "system", "event"]

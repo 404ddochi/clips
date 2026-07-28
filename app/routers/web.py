@@ -81,9 +81,3 @@ def _render_coming_soon(request: Request, section_key: str) -> HTMLResponse:
 @router.get("/contents", response_class=HTMLResponse, name="contents")
 def contents_preparing(request: Request) -> HTMLResponse:
     return _render_coming_soon(request, "contents")
-
-
-
-@router.get("/guides", response_class=HTMLResponse, name="guides")
-def guides_preparing(request: Request) -> HTMLResponse:
-    return _render_coming_soon(request, "guides")

@@ -23,6 +23,7 @@ CDL_ICON_NAMES: tuple[str, ...] = (
     "boss",
     "map",
     "guide",
+    "guide-sigil",
     "update",
     "search",
     "menu",

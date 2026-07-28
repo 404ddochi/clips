@@ -1,0 +1,31 @@
+{% from "components/icons.html" import icon %}
+<article class="guide-card guide-card--{{ guide.accent }}">
+  <div class="guide-card__head">
+    <div class="guide-card__sigil" aria-hidden="true">
+      {{ icon(guide.symbol, size=36, class_name="guide-card__icon") }}
+    </div>
+    <div class="guide-card__meta-top">
+      <p class="guide-card__category">{{ guide.category_label }}</p>
+      <h2 class="guide-card__title">
+        <a class="guide-card__title-link" href="{{ url_for('guide_detail', slug=guide.slug) }}">{{ guide.title }}</a>
+      </h2>
+    </div>
+  </div>
+
+  {% if guide.summary %}
+  <p class="guide-card__summary">{{ guide.summary }}</p>
+  {% endif %}
+
+  <footer class="guide-card__footer">
+    <p class="guide-card__facts">
+      <time datetime="{{ guide.updated_at.date().isoformat() }}">{{ guide.updated_at.strftime('%Y-%m-%d') }}</time>
+      <span aria-hidden="true">·</span>
+      <span>약 {{ guide.reading_minutes }}분</span>
+    </p>
+    <a
+      class="text-link guide-card__detail"
+      href="{{ url_for('guide_detail', slug=guide.slug) }}"
+      aria-label="{{ guide.title }} 자세히 보기"
+    >자세히 보기 <span class="guide-card__detail-arrow" aria-hidden="true">→</span></a>
+  </footer>
+</article>
