@@ -16,13 +16,7 @@ from app.core.constants import (
 )
 from app.dependencies import get_templates, seo_context
 from app.services.coming_soon_data import get_coming_soon_page
-from app.services.home_page_data import (
-    ARCHIVE_TEASERS,
-    PLATFORM_FEATURES,
-    QUICK_LINKS,
-    build_home_info_strip,
-    build_home_news_items,
-)
+from app.services.home_page_data import build_home_page_data
 from app.services.seo_content import build_breadcrumb_json_ld
 from app.services.structured_data import build_home_structured_data
 
@@ -42,11 +36,7 @@ def home(request: Request) -> HTMLResponse:
     settings = get_settings()
     context = {
         **_base_layout_context(request, "home"),
-        "quick_links": QUICK_LINKS,
-        "news_items": build_home_news_items(),
-        "platform_features": PLATFORM_FEATURES,
-        "archive_teasers": ARCHIVE_TEASERS,
-        "info_strip": build_home_info_strip(),
+        "home": build_home_page_data(),
         **seo_context(
             title=DEFAULT_HOME_TITLE,
             description=DEFAULT_HOME_DESCRIPTION,

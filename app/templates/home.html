@@ -26,8 +26,8 @@
         공지·이벤트·클래스·아이템·보스·공략까지 {{ game_title }} 정보를 한곳에서 빠르게 확인합니다.
       </p>
       <div class="hero-actions">
-        <a class="button button--primary" href="{{ url_for('news') }}">최신 소식</a>
-        <a class="button button--secondary" href="{{ url_for('classes') }}">게임 정보</a>
+        <a class="button button--primary" href="{{ url_for('search') }}">정보 검색하기</a>
+        <a class="button button--secondary" href="{{ url_for('news') }}">최신 소식 보기</a>
       </div>
     </div>
     <div class="hero-visual hero-animate hero-animate--delay" aria-hidden="true">
@@ -53,118 +53,218 @@
   </div>
 </section>
 
-{% include "components/info_strip.html" %}
-
-<section class="section section-news" aria-labelledby="latest-news-heading">
+<section class="home-search" aria-label="통합 검색">
   <div class="container">
+    <form class="home-search__form" action="{{ url_for('search') }}" method="get" role="search">
+      <label class="visually-hidden" for="home-search-q">통합 검색어</label>
+      <div class="home-search__row">
+        <span class="home-search__icon" aria-hidden="true">{{ icon("search", size=20) }}</span>
+        <input
+          id="home-search-q"
+          class="home-search__input"
+          type="search"
+          name="q"
+          placeholder="클래스, 아이템, 보스, 지도와 공략을 검색하세요."
+          maxlength="100"
+          autocomplete="off"
+          spellcheck="false"
+          enterkeyhint="search"
+        >
+        <button class="button button--primary home-search__submit" type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="section home-section home-section--menu" aria-labelledby="home-menu-heading">
+  <div class="container">
+    {% set eyebrow = "Explore" %}
+    {% set title = "주요 정보" %}
+    {% set description = "클래스부터 공략까지 자주 찾는 메뉴로 바로 이동합니다." %}
+    {% set title_id = "home-menu-heading" %}
+    {% set more_url = "" %}
+    {% set more_label = "" %}
+    {% include "components/section_header.html" %}
+    <ul class="home-menu-grid">
+      {% for link in home.menu_links %}
+      <li>
+        <a class="card card--interactive home-menu-card" href="{{ url_for(link.route_name) }}">
+          <span class="home-menu-card__icon" aria-hidden="true">{{ icon(link.icon) }}</span>
+          <span class="home-menu-card__title">{{ link.title }}</span>
+          <span class="home-menu-card__desc">{{ link.description }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<div class="container home-hub">
+  <div class="home-feed-grid">
+  <section class="home-section home-section--panel" aria-labelledby="latest-news-heading">
     {% set eyebrow = "News" %}
     {% set title = "최신 소식" %}
-    {% set description = "공지·이벤트·업데이트를 한곳에서 확인합니다." %}
+    {% set description = "공지와 이벤트 소식을 확인하세요." %}
     {% set title_id = "latest-news-heading" %}
     {% set more_url = url_for('news') %}
     {% set more_label = "전체보기" %}
     {% include "components/section_header.html" %}
-    <div class="card-grid card-grid--news">
-      {% for item in news_items %}
-      <article class="card card--featured news-card">
-        <div class="news-card__head">
-          <span class="badge badge--{{ item.badge_variant }}">{{ item.badge }}</span>
-          <span class="content-meta">
-            <span class="content-meta__icon">{{ icon("time", size=14) }}</span>
-            {{ item.status_text }}
-          </span>
+    {% if home.latest_news %}
+    <ul class="home-feed" role="list">
+      {% for item in home.latest_news %}
+      <li class="home-feed__item">
+        <article class="card home-feed-card">
+          <div class="home-feed-card__meta">
+            <span class="badge badge--{{ item.badge_variant }}">{{ item.badge }}</span>
+            <time datetime="{{ item.published_at.isoformat() }}">{{ item.published_at.strftime("%Y.%m.%d") }}</time>
+          </div>
+          <h3 class="home-feed-card__title">
+            <a href="{{ url_for(item.detail_route, slug=item.slug) }}">{{ item.title }}</a>
+          </h3>
+          {% if item.summary %}
+          <p class="home-feed-card__summary">{{ item.summary }}</p>
+          {% endif %}
+        </article>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state empty-state--compact home-empty">
+      <span class="home-empty__icon" aria-hidden="true">{{ icon("notice", size=18) }}</span>
+      <p class="empty-state__title">아직 등록된 소식이 없습니다.</p>
+    </div>
+    {% endif %}
+  </section>
+
+  <section class="home-section home-section--panel" aria-labelledby="latest-patch-heading">
+    {% set eyebrow = "Updates" %}
+    {% set title = "최신 패치노트" %}
+    {% set description = "최근 업데이트와 변경 사항을 확인하세요." %}
+    {% set title_id = "latest-patch-heading" %}
+    {% set more_url = url_for('news_patch_notes') %}
+    {% set more_label = "전체보기" %}
+    {% include "components/section_header.html" %}
+    {% if home.latest_patch_notes %}
+    <ul class="home-feed" role="list">
+      {% for item in home.latest_patch_notes %}
+      <li class="home-feed__item">
+        <article class="card home-feed-card">
+          <div class="home-feed-card__meta">
+            {% if item.version %}
+            <span class="badge badge--update">{{ item.version }}</span>
+            {% endif %}
+            <time datetime="{{ item.published_at.isoformat() }}">{{ item.published_at.strftime("%Y.%m.%d") }}</time>
+          </div>
+          <h3 class="home-feed-card__title">
+            <a href="{{ url_for('news_patch_detail', slug=item.slug) }}">{{ item.title }}</a>
+          </h3>
+          {% if item.summary %}
+          <p class="home-feed-card__summary">{{ item.summary }}</p>
+          {% endif %}
+        </article>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state empty-state--compact home-empty">
+      <span class="home-empty__icon" aria-hidden="true">{{ icon("update", size=18) }}</span>
+      <p class="empty-state__title">아직 등록된 패치노트가 없습니다.</p>
+    </div>
+    {% endif %}
+  </section>
+  </div>
+
+  <section class="home-section home-section--full" aria-labelledby="active-coupons-heading">
+    {% set eyebrow = "Coupons" %}
+    {% set title = "사용 가능한 쿠폰" %}
+    {% set description = "지금 쓸 수 있는 쿠폰과 보상을 확인하세요." %}
+    {% set title_id = "active-coupons-heading" %}
+    {% set more_url = url_for('coupons') %}
+    {% set more_label = "전체보기" %}
+    {% include "components/section_header.html" %}
+    {% if home.active_coupons %}
+    <ul class="home-feed home-feed--coupons" role="list">
+      {% for item in home.active_coupons %}
+      <li class="home-feed__item">
+        <article class="card home-feed-card home-feed-card--coupon">
+          <div class="home-feed-card__meta">
+            <span class="badge">{{ item.status_label }}</span>
+            <time datetime="{{ item.valid_until.isoformat() }}">{{ item.valid_until.strftime("%Y.%m.%d") }}까지</time>
+          </div>
+          <h3 class="home-feed-card__title">
+            <a href="{{ url_for('coupon_detail', slug=item.slug) }}">{{ item.title }}</a>
+          </h3>
+          <p class="home-feed-card__code"><code>{{ item.code }}</code></p>
+          {% if item.reward_summary %}
+          <p class="home-feed-card__summary">{{ item.reward_summary }}</p>
+          {% endif %}
+        </article>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state empty-state--compact home-empty">
+      <span class="home-empty__icon" aria-hidden="true">{{ icon("coupon", size=18) }}</span>
+      <p class="empty-state__title">현재 사용할 수 있는 쿠폰이 없습니다.</p>
+    </div>
+    {% endif %}
+  </section>
+
+  <section class="home-section home-section--full" aria-labelledby="latest-guides-heading">
+    {% set eyebrow = "Guides" %}
+    {% set title = "최근 공략" %}
+    {% set description = "CLIPS가 정리한 최신 플레이 공략입니다." %}
+    {% set title_id = "latest-guides-heading" %}
+    {% set more_url = url_for('guides') %}
+    {% set more_label = "전체보기" %}
+    {% include "components/section_header.html" %}
+    {% if home.latest_guides %}
+    <ul class="home-feed home-feed--guides" role="list">
+      {% for item in home.latest_guides %}
+      <li class="home-feed__item">
+        <article class="card home-feed-card">
+          <div class="home-feed-card__meta">
+            <span class="badge">{{ item.category_label }}</span>
+            <time datetime="{{ item.published_at.isoformat() }}">{{ item.published_at.strftime("%Y.%m.%d") }}</time>
+          </div>
+          <h3 class="home-feed-card__title">
+            <a href="{{ url_for('guide_detail', slug=item.slug) }}">{{ item.title }}</a>
+          </h3>
+          {% if item.summary %}
+          <p class="home-feed-card__summary">{{ item.summary }}</p>
+          {% endif %}
+          {% if item.author_name %}
+          <p class="home-feed-card__author">{{ item.author_name }}</p>
+          {% endif %}
+        </article>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <ul class="home-feed home-feed--guides" role="list">
+      <li class="home-feed__item home-feed__item--empty">
+        <div class="empty-state empty-state--compact home-empty home-empty--guides">
+          <span class="home-empty__icon" aria-hidden="true">{{ icon("guide", size=18) }}</span>
+          <p class="empty-state__title">아직 등록된 공략이 없습니다.</p>
         </div>
-        <h3 class="news-card__title">
-          <a href="{{ url_for(item.detail_route, slug=item.slug) }}">{{ item.title }}</a>
-        </h3>
-        <p class="news-card__summary">{{ item.summary }}</p>
-        <a class="news-card__link" href="{{ url_for(item.detail_route, slug=item.slug) }}">
-          자세히 보기
-          <span aria-hidden="true">{{ icon("arrow", size=14) }}</span>
-        </a>
-      </article>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<section class="section section-muted section-quick" aria-labelledby="quick-menu-heading">
-  <div class="container">
-    {% set eyebrow = "Quick Menu" %}
-    {% set title = "빠른 메뉴" %}
-    {% set description = "자주 찾는 정보로 바로 이동합니다." %}
-    {% set title_id = "quick-menu-heading" %}
-    {% set more_url = "" %}
-    {% set more_label = "" %}
-    {% include "components/section_header.html" %}
-    <ul class="quick-menu-grid">
-      {% for link in quick_links %}
-      <li>
-        <a class="card card--interactive quick-menu-card" href="{{ url_for(link.route_name) }}">
-          <span class="quick-menu-card__icon">{{ icon(link.icon) }}</span>
-          <span class="quick-menu-card__title">{{ link.title }}</span>
-          <span class="quick-menu-card__desc">{{ link.description }}</span>
-        </a>
       </li>
-      {% endfor %}
     </ul>
-  </div>
-</section>
+    {% endif %}
+  </section>
+</div>
 
-<section class="section" aria-labelledby="features-heading">
-  <div class="container">
-    {% set eyebrow = "Platform" %}
-    {% set title = "CLIPS가 제공할 정보" %}
-    {% set description = game_title ~ " 정보를 읽기 쉽게 정리합니다." %}
-    {% set title_id = "features-heading" %}
-    {% set more_url = "" %}
-    {% set more_label = "" %}
-    {% include "components/section_header.html" %}
-    <div class="card-grid card-grid--features">
-      {% for feature in platform_features %}
-      <article class="card card--compact feature-card">
-        <h3 class="feature-card__title">{{ feature.title }}</h3>
-        <p class="feature-card__desc">{{ feature.description }}</p>
-      </article>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<section class="section section-muted" aria-labelledby="archive-heading">
-  <div class="container">
-    {% set eyebrow = "Archive" %}
-    {% set title = "데이터 아카이브" %}
-    {% set description = "향후 제공할 데이터형 콘텐츠입니다." %}
-    {% set title_id = "archive-heading" %}
-    {% set more_url = "" %}
-    {% set more_label = "" %}
-    {% include "components/section_header.html" %}
-    <ul class="archive-grid">
-      {% for teaser in archive_teasers %}
-      <li>
-        <a class="card card--interactive archive-card" href="{{ url_for(teaser.route_name) }}">
-          <h3 class="archive-card__title">{{ teaser.title }}</h3>
-          <p class="archive-card__status">{{ teaser.status_text }}</p>
-        </a>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
-
-<section class="section section-cta" aria-labelledby="cta-heading">
+<section class="section section-cta home-section--note" aria-labelledby="home-note-heading">
   <div class="container">
     <div class="cta-panel">
       <p class="cta-panel__eyebrow">{{ game_title_en }}</p>
-      <h2 id="cta-heading" class="cta-panel__title">이클립스가 시작되면, CLIPS도 함께 깨어납니다</h2>
+      <h2 id="home-note-heading" class="cta-panel__title">CLIPS는 비공식 정보 플랫폼입니다</h2>
       <p class="cta-panel__desc">
-        CLIPS는 {{ game_title }}의 비공식 정보 플랫폼입니다.
-        지금은 기반을 다지는 단계이며, 콘텐츠는 로드맵에 따라 공개됩니다.
+        게임의 상표와 저작권은 각 권리자에게 있습니다.
+        CLIPS는 공개된 정보를 바탕으로 소식과 공략을 읽기 쉽게 정리합니다.
       </p>
       <div class="cta-panel__actions">
-        <a class="button button--primary" href="{{ url_for('news') }}">소식 보기</a>
-        <a class="button button--ghost" href="{{ url_for('guides') }}">공략 준비 현황</a>
+        <a class="button button--primary" href="{{ url_for('search') }}">통합 검색</a>
+        <a class="button button--ghost" href="{{ url_for('news') }}">소식 보기</a>
       </div>
     </div>
   </div>

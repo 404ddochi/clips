@@ -90,36 +90,36 @@ def test_home_hero_hierarchy(client: TestClient) -> None:
 
 
 def test_home_info_strip(client: TestClient) -> None:
+    # Info strip replaced by hub sections; ensure search + news hub remain.
     soup = _soup(client.get("/").text)
-    strip = soup.select_one(".info-strip")
-    assert strip is not None
-    labels = {el.get_text(strip=True) for el in strip.select(".info-strip__label")}
-    assert {"최신 공지", "이벤트", "패치노트", "쿠폰"}.issubset(labels)
+    assert soup.select_one(".info-strip") is None
+    assert soup.select_one(".home-search__form") is not None
+    assert soup.find(id="latest-news-heading") is not None
 
 
 def test_home_section_order(client: TestClient) -> None:
     html = client.get("/").text
     hero = html.find('class="hero"')
-    strip = html.find("info-strip")
+    search = html.find("home-search")
+    menu = html.find("home-menu-heading")
     news = html.find("latest-news-heading")
-    quick = html.find("quick-menu-heading")
-    assert hero != -1 and strip != -1 and news != -1 and quick != -1
-    assert hero < strip < news < quick
+    patch = html.find("latest-patch-heading")
+    coupons = html.find("active-coupons-heading")
+    guides = html.find("latest-guides-heading")
+    assert all(i != -1 for i in (hero, search, menu, news, patch, coupons, guides))
+    assert hero < search < menu < news < patch < coupons < guides
 
 
 def test_home_outline_icons(client: TestClient) -> None:
     soup = _soup(client.get("/").text)
-    icons = soup.select(".quick-menu-card .icon")
-    assert len(icons) >= 8
+    icons = soup.select(".home-menu-card .icon")
+    assert len(icons) == 6
     assert icons[0].get("fill") == "none"
     assert icons[0].attrs.get("viewbox") == "0 0 24 24"
     assert icons[0].get("width") == "20"
     stroked = icons[0].select_one("[stroke]")
     assert stroked is not None
     assert stroked.get("stroke-width") == "1.8"
-    strip_icons = soup.select(".info-strip .icon")
-    assert len(strip_icons) >= 4
-    assert strip_icons[0].select_one("[stroke]").get("stroke-width") == "1.8"
 
 
 def test_home_canonical(client: TestClient) -> None:
