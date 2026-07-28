@@ -153,10 +153,18 @@ def test_home_links_to_info_pages(client: TestClient) -> None:
 
 
 def test_coming_soon_sections_remain(client: TestClient) -> None:
-    for path in ("/contents", "/items", "/maps", "/guides"):
+    for path in ("/contents", "/maps", "/guides"):
         response = client.get(path)
         assert response.status_code == 200
         assert "준비 중" in response.text
+
+
+def test_items_is_waiting_catalogue(client: TestClient) -> None:
+    response = client.get("/items")
+    assert response.status_code == 200
+    assert "공식 아이템 정보를 정리합니다." in response.text
+    assert "공식 아이템 정보 대기 중" in response.text
+    assert "준비 중" not in _soup(response.text).find("h1").get_text()
 
 
 def test_bosses_is_waiting_catalogue(client: TestClient) -> None:

@@ -1,0 +1,45 @@
+{% from "components/icons.html" import icon %}
+<article class="item-card item-card--{{ item.accent }}">
+  <div class="item-card__head">
+    <div class="item-card__sigil" aria-hidden="true">
+      {{ icon(item.symbol, size=40, class_name="item-card__icon") }}
+    </div>
+    <header class="item-card__titles">
+      <h2 class="item-card__title">
+        <a class="item-card__title-link" href="{{ url_for('item_detail', slug=item.slug) }}">{{ item.name }}</a>
+      </h2>
+      {% if item.name_en %}
+      <p class="item-card__en">{{ item.name_en }}</p>
+      {% endif %}
+    </header>
+  </div>
+
+  {% if (item.category and not item.category_pending) or (item.slot_or_purpose and not item.slot_pending) %}
+  <dl class="item-card__facts">
+    {% if item.category and not item.category_pending %}
+    <div class="item-fact">
+      <dt class="item-fact__label">분류</dt>
+      <dd class="item-fact__value">{{ item.category }}</dd>
+    </div>
+    {% endif %}
+    {% if item.slot_or_purpose and not item.slot_pending %}
+    <div class="item-fact">
+      <dt class="item-fact__label">부위·목적</dt>
+      <dd class="item-fact__value">{{ item.slot_or_purpose }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+  {% endif %}
+
+  {% if item.summary and not item.summary_pending %}
+  <p class="item-card__summary">{{ item.summary }}</p>
+  {% endif %}
+
+  <footer class="item-card__footer">
+    <a
+      class="text-link item-card__detail"
+      href="{{ url_for('item_detail', slug=item.slug) }}"
+      aria-label="{{ item.name }} 상세 보기"
+    >상세 보기 <span class="item-card__detail-arrow" aria-hidden="true">→</span></a>
+  </footer>
+</article>

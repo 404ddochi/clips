@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/items.css') }}">
+{% endblock %}
+
+{% block body_class %}page-items{% endblock %}
+
+{% block content %}
+<section class="section page-intro items-page">
+  <div class="container">
+    {% include "components/breadcrumb.html" %}
+    {% set page_eyebrow = "ITEMS" %}
+    {% set page_title = "아이템" %}
+    {% if catalogue_ready %}
+      {% set page_description = "공개된 아이템 정보를 확인해 보세요." %}
+    {% else %}
+      {% set page_description = "공식 아이템 정보를 정리합니다." %}
+    {% endif %}
+    {% include "components/page_header.html" %}
+
+    {% if catalogue_ready %}
+    <form class="item-search" method="get" action="{{ url_for('items') }}" role="search">
+      {% if current_category != "all" %}
+      <input type="hidden" name="category" value="{{ current_category }}">
+      {% endif %}
+      <label class="visually-hidden" for="item-search-q">아이템 검색</label>
+      <div class="item-search__row">
+        <input
+          id="item-search-q"
+          class="item-search__input"
+          type="search"
+          name="q"
+          value="{{ search_query }}"
+          placeholder="아이템명, 영문명, 설명"
+          autocomplete="off"
+          enterkeyhint="search"
+        >
+        <button class="button button--primary button--sm item-search__submit" type="submit">검색</button>
+        {% if search_query or current_category != "all" %}
+        <a class="button button--secondary button--sm item-search__clear" href="{{ url_for('items') }}">초기화</a>
+        {% endif %}
+      </div>
+    </form>
+
+    <div class="item-toolbar">
+      {% if show_filters %}
+      <nav class="item-filters" aria-label="아이템 분류 필터">
+        <ul class="item-filters__list" role="list">
+          {% for tab in category_tabs %}
+          <li class="item-filters__item">
+            <a
+              class="item-filters__link{% if current_category == tab.key %} is-active{% endif %}"
+              href="{{ tab.href }}"
+              {% if current_category == tab.key %}aria-current="page"{% endif %}
+            >{{ tab.label }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+      {% endif %}
+      <p class="item-summary" aria-live="polite">
+        <span class="item-summary__count">아이템 {{ item_count }}개</span>
+        {% if search_query %}
+        <span class="item-summary__query"> · 「{{ search_query }}」</span>
+        {% endif %}
+      </p>
+    </div>
+
+    {% if items %}
+    <ul class="item-grid" role="list">
+      {% for entry in items %}
+      <li class="item-grid__cell">
+        {% set item = entry %}
+        {% include "components/item_card.html" %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state empty-state--compact">
+      <h2 class="empty-state__title">조건에 맞는 아이템이 없습니다.</h2>
+      <p class="empty-state__message">검색어나 분류를 바꿔 보세요.</p>
+      <a class="button button--secondary button--sm" href="{{ url_for('items') }}">전체 보기</a>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="item-waiting" aria-labelledby="item-waiting-heading">
+      <div class="item-waiting__sigil" aria-hidden="true">
+        <span class="item-waiting__frame"></span>
+        <span class="item-waiting__symbol">
+          {{ icon("item-sigil", size=64, class_name="item-waiting__icon") }}
+        </span>
+      </div>
+      <div class="item-waiting__copy">
+        <p class="item-waiting__status">공개 대기</p>
+        <h2 id="item-waiting-heading" class="item-waiting__title">공식 아이템 정보 대기 중</h2>
+        <p class="item-waiting__desc">
+          공식 홈페이지에 아이템 정보가 공개되면 CLIPS 도감에 순차적으로 반영합니다.
+          등급·옵션·획득처 등 미공개 정보는 추측하지 않습니다.
+        </p>
+        <ul class="item-waiting__topics" role="list" aria-label="추후 공개 예정 항목">
+          {% for topic in upcoming_topics %}
+          <li class="item-upcoming-chip">{{ topic }}</li>
+          {% endfor %}
+        </ul>
+        <p class="item-waiting__hint">
+          원문과 공식 안내를 항상 우선 확인해 주세요.
+        </p>
+        <nav class="item-waiting__links" aria-label="다른 CLIPS 메뉴">
+          {% for link in related_links %}
+          <a class="button button--secondary button--sm" href="{{ url_for(link.route_name) }}">{{ link.label }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+    </div>
+    {% endif %}
+
+    {% include "components/source_notice.html" %}
+  </div>
+</section>
+{% endblock %}

@@ -187,6 +187,36 @@ class BossItem:
     summary_pending: bool = False
 
 
+# —— Items (publicly disclosed entries only; empty until official publish) ——
+ItemAccent = Literal["sigil", "gear", "material", "consumable"]
+
+ITEM_PENDING_LABEL = "공식 정보 공개 후 업데이트 예정"
+ITEM_SHORT_PENDING = "공개 예정"
+
+
+@dataclass(frozen=True, slots=True)
+class ItemEntry:
+    """Item catalogue entry from officially disclosed information only.
+
+    Do not invent grade, stats, drops, crafting, or trade data.
+    """
+
+    slug: str
+    name: str
+    name_en: str
+    symbol: str
+    accent: ItemAccent
+    category: str = ""
+    slot_or_purpose: str = ""
+    summary: str = ""
+    acquisition: str = ""
+    source_note: str = "공식 공개 정보 기준 (비공식 정리)"
+    category_pending: bool = False
+    slot_pending: bool = False
+    summary_pending: bool = False
+    acquisition_pending: bool = False
+
+
 # —— Patch notes (timeline list) ——
 PatchType = Literal["update", "balance", "bugfix", "system", "event"]
 PatchFilterKey = Literal["all", "update", "balance", "bugfix", "system", "event"]
