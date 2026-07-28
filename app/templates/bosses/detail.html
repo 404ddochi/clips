@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/bosses.css') }}">
+{% endblock %}
+
+{% block body_class %}page-boss-detail{% endblock %}
+
+{% block content %}
+<article class="section page-intro boss-detail boss-detail--{{ item.accent }}">
+  <div class="container boss-detail__container">
+    {% include "components/breadcrumb.html" %}
+
+    <header class="boss-hero">
+      <div class="boss-hero__panel">
+        <div class="boss-hero__ornament" aria-hidden="true"></div>
+        <div class="boss-hero__symbol" aria-hidden="true">
+          {{ icon(item.symbol, size=72, class_name="boss-hero__icon") }}
+        </div>
+        <div class="boss-hero__copy">
+          {% if item.name_en %}
+          <p class="boss-hero__eyebrow">{{ item.name_en }}</p>
+          {% endif %}
+          <h1 class="boss-hero__title">{{ item.name }}</h1>
+          <ul class="boss-hero__meta" aria-label="공개 분류">
+            {% if item.category and not item.category_pending %}
+            <li><span class="boss-badge">{{ item.category }}</span></li>
+            {% endif %}
+            {% if item.region and not item.region_pending %}
+            <li><span class="boss-badge boss-badge--muted">{{ item.region }}</span></li>
+            {% endif %}
+          </ul>
+          <p class="boss-hero__summary">{{ summary_display }}</p>
+          <p class="boss-hero__source">{{ item.source_note }}</p>
+        </div>
+      </div>
+    </header>
+
+    {% if info_cards %}
+    <section class="boss-detail__basics" aria-label="기본 정보">
+      {% for card in info_cards %}
+      <div class="boss-info-card">
+        <h2 class="boss-info-card__title">{{ card.title }}</h2>
+        <p class="boss-info-card__body">{{ card.body }}</p>
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    <section class="boss-detail__upcoming" aria-labelledby="boss-upcoming-heading">
+      <div class="boss-upcoming-panel">
+        <h2 id="boss-upcoming-heading" class="boss-upcoming-panel__title">추후 공개 예정</h2>
+        <p class="boss-upcoming-panel__desc">공식 정보가 공개되면 순차적으로 업데이트합니다.</p>
+        <ul class="boss-upcoming-panel__topics" role="list">
+          {% for topic in upcoming_topics %}
+          <li class="boss-upcoming-chip">{{ topic }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+
+    {% if related_bosses %}
+    <section class="boss-detail__related" aria-labelledby="boss-related-heading">
+      <h2 id="boss-related-heading" class="boss-detail__section-title">다른 보스</h2>
+      <ul class="boss-related-chips" role="list">
+        {% for related in related_bosses %}
+        <li>
+          <a
+            class="boss-related-chip boss-related-chip--{{ related.accent }}"
+            href="{{ url_for('boss_detail', slug=related.slug) }}"
+          >
+            <span class="boss-related-chip__symbol" aria-hidden="true">
+              {{ icon(related.symbol, size=20) }}
+            </span>
+            <span class="boss-related-chip__label">{{ related.name }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    <p class="boss-detail__back">
+      <a class="button button--secondary button--sm" href="{{ url_for('bosses') }}">보스 목록</a>
+    </p>
+
+    {% include "components/source_notice.html" %}
+  </div>
+</article>
+{% endblock %}

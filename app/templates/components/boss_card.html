@@ -1,0 +1,41 @@
+{% from "components/icons.html" import icon %}
+<article class="boss-card boss-card--{{ item.accent }}">
+  <div class="boss-card__visual" aria-hidden="true">
+    <span class="boss-card__aura"></span>
+    <span class="boss-card__symbol">
+      {{ icon(item.symbol, size=56, class_name="boss-card__icon") }}
+    </span>
+  </div>
+
+  <header class="boss-card__header">
+    <h2 class="boss-card__title">
+      <a class="boss-card__title-link" href="{{ url_for('boss_detail', slug=item.slug) }}">{{ item.name }}</a>
+    </h2>
+    {% if item.name_en %}
+    <p class="boss-card__en">{{ item.name_en }}</p>
+    {% endif %}
+  </header>
+
+  {% if (item.category and not item.category_pending) or (item.region and not item.region_pending) %}
+  <ul class="boss-card__meta" aria-label="공개 정보">
+    {% if item.category and not item.category_pending %}
+    <li><span class="boss-badge">{{ item.category }}</span></li>
+    {% endif %}
+    {% if item.region and not item.region_pending %}
+    <li><span class="boss-badge boss-badge--muted">{{ item.region }}</span></li>
+    {% endif %}
+  </ul>
+  {% endif %}
+
+  {% if item.summary and not item.summary_pending %}
+  <p class="boss-card__summary">{{ item.summary }}</p>
+  {% endif %}
+
+  <footer class="boss-card__footer">
+    <a
+      class="text-link boss-card__detail"
+      href="{{ url_for('boss_detail', slug=item.slug) }}"
+      aria-label="{{ item.name }} 상세 보기"
+    >상세 보기 <span class="boss-card__detail-arrow" aria-hidden="true">→</span></a>
+  </footer>
+</article>

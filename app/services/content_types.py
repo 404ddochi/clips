@@ -159,6 +159,34 @@ class ClassItem:
     summary_pending: bool = False
 
 
+# —— Bosses (publicly disclosed entries only; empty until official publish) ——
+BossAccent = Literal["seal", "field", "world"]
+
+BOSS_PENDING_LABEL = "공식 정보 공개 후 업데이트 예정"
+BOSS_SHORT_PENDING = "공개 예정"
+
+
+@dataclass(frozen=True, slots=True)
+class BossItem:
+    """Boss entry from officially disclosed information only.
+
+    Do not invent spawn times, drops, difficulty, patterns, or coords.
+    """
+
+    slug: str
+    name: str
+    name_en: str
+    symbol: str
+    accent: BossAccent
+    category: str = ""
+    region: str = ""
+    summary: str = ""
+    source_note: str = "공식 공개 정보 기준 (비공식 정리)"
+    category_pending: bool = False
+    region_pending: bool = False
+    summary_pending: bool = False
+
+
 # —— Patch notes (timeline list) ——
 PatchType = Literal["update", "balance", "bugfix", "system", "event"]
 PatchFilterKey = Literal["all", "update", "balance", "bugfix", "system", "event"]

@@ -88,11 +88,6 @@ def items_preparing(request: Request) -> HTMLResponse:
     return _render_coming_soon(request, "items")
 
 
-@router.get("/bosses", response_class=HTMLResponse, name="bosses")
-def bosses_preparing(request: Request) -> HTMLResponse:
-    return _render_coming_soon(request, "bosses")
-
-
 @router.get("/maps", response_class=HTMLResponse, name="maps")
 def maps_preparing(request: Request) -> HTMLResponse:
     return _render_coming_soon(request, "maps")

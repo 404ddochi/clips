@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/bosses.css') }}">
+{% endblock %}
+
+{% block body_class %}page-bosses{% endblock %}
+
+{% block content %}
+<section class="section page-intro bosses-page">
+  <div class="container">
+    {% include "components/breadcrumb.html" %}
+    {% set page_eyebrow = "BOSSES" %}
+    {% set page_title = "보스" %}
+    {% if catalogue_ready %}
+      {% set page_description = "공개된 보스 정보를 확인해 보세요." %}
+    {% else %}
+      {% set page_description = "이클립스의 공식 보스 정보를 정리합니다." %}
+    {% endif %}
+    {% include "components/page_header.html" %}
+
+    {% if catalogue_ready %}
+    <div class="boss-toolbar">
+      <p class="boss-summary" aria-live="polite">
+        <span class="boss-summary__count">보스 {{ boss_count }}개</span>
+      </p>
+    </div>
+
+    <ul class="boss-grid" role="list">
+      {% for item in bosses %}
+      <li class="boss-grid__item">
+        {% include "components/boss_card.html" %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="boss-waiting" aria-labelledby="boss-waiting-heading">
+      <div class="boss-waiting__seal" aria-hidden="true">
+        <span class="boss-waiting__aura"></span>
+        <span class="boss-waiting__symbol">
+          {{ icon("boss-seal", size=72, class_name="boss-waiting__icon") }}
+        </span>
+      </div>
+      <div class="boss-waiting__copy">
+        <p class="boss-waiting__status">공개 대기</p>
+        <h2 id="boss-waiting-heading" class="boss-waiting__title">공식 보스 정보 대기 중</h2>
+        <p class="boss-waiting__desc">
+          공식 홈페이지에 보스 정보가 공개되면 CLIPS 도감에 순차적으로 반영합니다.
+          드랍·등장 시간·난이도 등 미공개 정보는 추측하지 않습니다.
+        </p>
+        <ul class="boss-waiting__topics" role="list" aria-label="추후 공개 예정 항목">
+          {% for topic in upcoming_topics %}
+          <li class="boss-upcoming-chip">{{ topic }}</li>
+          {% endfor %}
+        </ul>
+        <p class="boss-waiting__hint">
+          원문과 공식 안내를 항상 우선 확인해 주세요.
+        </p>
+        <nav class="boss-waiting__links" aria-label="다른 CLIPS 메뉴">
+          {% for link in related_links %}
+          <a class="button button--secondary button--sm" href="{{ url_for(link.route_name) }}">{{ link.label }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+    </div>
+    {% endif %}
+
+    {% include "components/source_notice.html" %}
+  </div>
+</section>
+{% endblock %}
