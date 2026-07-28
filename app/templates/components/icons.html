@@ -81,6 +81,12 @@
   <circle cx="12" cy="12" r="2.35" stroke="currentColor" stroke-width="1.85"/>
   <path d="M12 8.2v1.6M12 14.2v1.6M8.2 12h1.6M14.2 12h1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
   <path d="M9.2 9.2h5.6v5.6H9.2z" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+{%- elif name == "map-sigil" -%}
+  {# Abstract map frame — not a pin or compass #}
+  <rect x="5.4" y="5.4" width="13.2" height="13.2" rx="1.8" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 7.6 15.4 12 12 16.4 8.6 12Z" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M6.9 9.3 10 12" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
+  <path d="M14 12 17.1 14.7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
 {%- elif name == "map" -%}
   <circle cx="12" cy="12" r="7.2" stroke="currentColor" stroke-width="1.8"/>
   <path d="m12 7.2 1.6 4.2L12 16.8l-1.6-5.4L12 7.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>

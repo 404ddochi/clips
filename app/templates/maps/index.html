@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/maps.css') }}">
+{% endblock %}
+
+{% block body_class %}page-maps{% endblock %}
+
+{% block content %}
+<section class="section page-intro maps-page">
+  <div class="container">
+    {% include "components/breadcrumb.html" %}
+    {% set page_eyebrow = "MAP" %}
+    {% set page_title = "지도" %}
+    {% if catalogue_ready %}
+      {% set page_description = "공개된 지역 정보를 탐색해 보세요." %}
+    {% else %}
+      {% set page_description = "공식 지역 정보를 정리합니다." %}
+    {% endif %}
+    {% include "components/page_header.html" %}
+
+    {% if catalogue_ready %}
+    <div class="map-hub" aria-label="지역 탐색 허브">
+      <div class="map-toolbar">
+        <p class="map-summary" aria-live="polite">
+          <span class="map-summary__count">지역 {{ region_count }}개</span>
+        </p>
+      </div>
+
+      <ul class="map-grid" role="list">
+        {% for region in regions %}
+        <li class="map-grid__cell">
+          {% include "components/region_card.html" %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% else %}
+    <div class="map-waiting" aria-labelledby="map-waiting-heading">
+      <div class="map-waiting__sigil" aria-hidden="true">
+        <span class="map-waiting__frame"></span>
+        <span class="map-waiting__symbol">
+          {{ icon("map-sigil", size=64, class_name="map-waiting__icon") }}
+        </span>
+      </div>
+      <div class="map-waiting__copy">
+        <p class="map-waiting__status">공개 대기</p>
+        <h2 id="map-waiting-heading" class="map-waiting__title">공개 지역 정보 대기 중</h2>
+        <p class="map-waiting__desc">
+          공식 홈페이지에 공개되는 지역 정보를 CLIPS에 순차적으로 반영합니다.
+          미공개 지역은 추측하지 않습니다.
+        </p>
+        <ul class="map-waiting__topics" role="list" aria-label="추후 공개 예정 항목">
+          {% for topic in upcoming_topics %}
+          <li class="map-upcoming-chip">{{ topic }}</li>
+          {% endfor %}
+        </ul>
+        <p class="map-waiting__hint">
+          원문과 공식 안내를 항상 우선 확인해 주세요.
+        </p>
+        <nav class="map-waiting__links" aria-label="다른 CLIPS 메뉴">
+          {% for link in related_links %}
+          <a class="button button--secondary button--sm" href="{{ url_for(link.route_name) }}">{{ link.label }}</a>
+          {% endfor %}
+        </nav>
+      </div>
+    </div>
+    {% endif %}
+
+    {% include "components/source_notice.html" %}
+  </div>
+</section>
+{% endblock %}

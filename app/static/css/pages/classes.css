@@ -29,10 +29,6 @@
   margin-bottom: var(--space-3);
 }
 
-.page-classes .page-header__title {
-  font-size: clamp(1.45rem, 2.2vw, 1.75rem);
-}
-
 /* Toolbar */
 .class-toolbar {
   display: flex;

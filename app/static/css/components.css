@@ -1023,8 +1023,9 @@ button:hover .icon,
 
 .page-header__title {
   margin: 0 0 var(--space-2);
-  font-size: var(--font-size-3xl);
-  line-height: var(--line-height-heading);
+  font-size: clamp(1.75rem, 3vw, 2rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
   word-break: keep-all;
   text-wrap: balance;
 }

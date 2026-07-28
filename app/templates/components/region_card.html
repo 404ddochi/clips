@@ -1,0 +1,45 @@
+{% from "components/icons.html" import icon %}
+<article class="map-card map-card--{{ region.accent }}">
+  <div class="map-card__head">
+    <div class="map-card__sigil" aria-hidden="true">
+      {{ icon(region.symbol, size=40, class_name="map-card__icon") }}
+    </div>
+    <header class="map-card__titles">
+      <h2 class="map-card__title">
+        <a class="map-card__title-link" href="{{ url_for('map_detail', slug=region.slug) }}">{{ region.name }}</a>
+      </h2>
+      {% if region.name_en %}
+      <p class="map-card__en">{{ region.name_en }}</p>
+      {% endif %}
+    </header>
+  </div>
+
+  {% if (region.region_kind and not region.region_kind_pending) or (region.world_label and not region.world_label_pending) %}
+  <dl class="map-card__facts">
+    {% if region.region_kind and not region.region_kind_pending %}
+    <div class="map-fact">
+      <dt class="map-fact__label">유형</dt>
+      <dd class="map-fact__value">{{ region.region_kind }}</dd>
+    </div>
+    {% endif %}
+    {% if region.world_label and not region.world_label_pending %}
+    <div class="map-fact">
+      <dt class="map-fact__label">월드</dt>
+      <dd class="map-fact__value">{{ region.world_label }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+  {% endif %}
+
+  {% if region.summary and not region.summary_pending %}
+  <p class="map-card__summary">{{ region.summary }}</p>
+  {% endif %}
+
+  <footer class="map-card__footer">
+    <a
+      class="text-link map-card__explore"
+      href="{{ url_for('map_detail', slug=region.slug) }}"
+      aria-label="{{ region.name }} 지역 탐색"
+    >지역 탐색 <span class="map-card__explore-arrow" aria-hidden="true">→</span></a>
+  </footer>
+</article>

@@ -29,10 +29,6 @@
   margin-bottom: var(--space-4);
 }
 
-.page-bosses .page-header__title {
-  font-size: clamp(1.45rem, 2.2vw, 1.75rem);
-}
-
 /* Accents */
 .boss-card--seal,
 .boss-detail--seal,
@@ -79,8 +75,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 6.5rem;
-  height: 6.5rem;
+  width: var(--waiting-sigil-box-size);
+  height: var(--waiting-sigil-box-size);
 }
 
 .boss-waiting__aura {
@@ -106,8 +102,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 5rem;
-  height: 5rem;
+  width: var(--waiting-sigil-symbol-size);
+  height: var(--waiting-sigil-symbol-size);
   border-radius: 50%;
   border: var(--border-width-strong) solid color-mix(in srgb, #c6a15b 50%, transparent);
   background: color-mix(in srgb, var(--color-surface) 78%, color-mix(in srgb, #c6a15b 12%, transparent));
@@ -117,6 +113,9 @@
 
 .boss-waiting__icon {
   display: block;
+  width: var(--waiting-sigil-icon-size);
+  height: var(--waiting-sigil-icon-size);
+  transform: scale(0.96);
 }
 
 .boss-waiting__copy {
@@ -716,16 +715,6 @@ html[data-theme="light"] .page-boss-detail::before {
     margin-left: 0;
     margin-right: 0;
     padding: var(--space-4) var(--space-3) var(--space-4) 1.75rem;
-  }
-
-  .boss-waiting__seal {
-    width: 5.5rem;
-    height: 5.5rem;
-  }
-
-  .boss-waiting__symbol {
-    width: 4.35rem;
-    height: 4.35rem;
   }
 
   .boss-waiting__topics {

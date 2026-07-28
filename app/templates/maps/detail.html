@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/maps.css') }}">
+{% endblock %}
+
+{% block body_class %}page-map-detail{% endblock %}
+
+{% block content %}
+<article class="section page-intro map-detail map-detail--{{ region.accent }}">
+  <div class="container map-detail__container">
+    {% include "components/breadcrumb.html" %}
+
+    <header class="map-hero">
+      <div class="map-hero__panel">
+        <div class="map-hero__ornament" aria-hidden="true"></div>
+        <div class="map-hero__sigil" aria-hidden="true">
+          {{ icon(region.symbol, size=64, class_name="map-hero__icon") }}
+        </div>
+        <div class="map-hero__copy">
+          {% if region.name_en %}
+          <p class="map-hero__eyebrow">{{ region.name_en }}</p>
+          {% endif %}
+          <h1 class="map-hero__title">{{ region.name }}</h1>
+          <ul class="map-hero__meta" aria-label="공개 분류">
+            {% if region.region_kind and not region.region_kind_pending %}
+            <li><span class="map-badge">{{ region.region_kind }}</span></li>
+            {% endif %}
+            {% if region.world_label and not region.world_label_pending %}
+            <li><span class="map-badge map-badge--muted">{{ region.world_label }}</span></li>
+            {% endif %}
+          </ul>
+          <p class="map-hero__summary">{{ summary_display }}</p>
+          <p class="map-hero__source">{{ region.source_note }}</p>
+        </div>
+      </div>
+    </header>
+
+    {% if show_map_image %}
+    <section class="map-detail__canvas" aria-label="공식 지도 이미지">
+      <figure class="map-official-frame">
+        <img
+          class="map-official-frame__image"
+          src="{{ region.map_image_url }}"
+          alt="{{ region.name }} 공식 지도"
+          loading="lazy"
+          decoding="async"
+        >
+      </figure>
+    </section>
+    {% endif %}
+
+    {% if info_cards %}
+    <section class="map-detail__basics" aria-label="기본 정보">
+      {% for card in info_cards %}
+      <div class="map-info-card">
+        <h2 class="map-info-card__title">{{ card.title }}</h2>
+        <p class="map-info-card__body">{{ card.body }}</p>
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if npc_display %}
+    <section class="map-detail__npc" aria-labelledby="map-npc-heading">
+      <h2 id="map-npc-heading" class="map-detail__section-title">공개 NPC</h2>
+      <ul class="map-npc-chips" role="list">
+        {% for label in npc_display %}
+        <li class="map-npc-chip">{{ label }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    {% if related_bosses or related_items %}
+    <section class="map-detail__linked" aria-labelledby="map-linked-heading">
+      <h2 id="map-linked-heading" class="map-detail__section-title">관련 컨텐츠</h2>
+      {% if related_bosses %}
+      <h3 class="map-detail__linked-label">보스</h3>
+      <ul class="map-linked-chips" role="list">
+        {% for boss in related_bosses %}
+        <li>
+          <a class="map-linked-chip map-linked-chip--boss" href="{{ url_for('boss_detail', slug=boss.slug) }}">
+            <span class="map-linked-chip__sigil" aria-hidden="true">{{ icon(boss.symbol, size=18) }}</span>
+            <span class="map-linked-chip__label">{{ boss.name }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if related_items %}
+      <h3 class="map-detail__linked-label">아이템</h3>
+      <ul class="map-linked-chips" role="list">
+        {% for item in related_items %}
+        <li>
+          <a class="map-linked-chip map-linked-chip--item" href="{{ url_for('item_detail', slug=item.slug) }}">
+            <span class="map-linked-chip__sigil" aria-hidden="true">{{ icon(item.symbol, size=18) }}</span>
+            <span class="map-linked-chip__label">{{ item.name }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    <section class="map-detail__upcoming" aria-labelledby="map-upcoming-heading">
+      <div class="map-upcoming-panel">
+        <h2 id="map-upcoming-heading" class="map-upcoming-panel__title">추후 공개 예정</h2>
+        <p class="map-upcoming-panel__desc">공식 정보가 공개되면 순차적으로 업데이트합니다.</p>
+        <ul class="map-upcoming-panel__topics" role="list">
+          {% for topic in upcoming_topics %}
+          <li class="map-upcoming-chip">{{ topic }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+
+    {% if related_regions %}
+    <section class="map-detail__related" aria-labelledby="map-related-heading">
+      <h2 id="map-related-heading" class="map-detail__section-title">다른 지역</h2>
+      <ul class="map-related-chips" role="list">
+        {% for related in related_regions %}
+        <li>
+          <a
+            class="map-related-chip map-related-chip--{{ related.accent }}"
+            href="{{ url_for('map_detail', slug=related.slug) }}"
+          >
+            <span class="map-related-chip__sigil" aria-hidden="true">
+              {{ icon(related.symbol, size=18) }}
+            </span>
+            <span class="map-related-chip__label">{{ related.name }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    <p class="map-detail__back">
+      <a class="button button--secondary button--sm" href="{{ url_for('maps') }}">지도 허브</a>
+    </p>
+
+    {% include "components/source_notice.html" %}
+  </div>
+</article>
+{% endblock %}

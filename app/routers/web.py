@@ -83,10 +83,6 @@ def contents_preparing(request: Request) -> HTMLResponse:
     return _render_coming_soon(request, "contents")
 
 
-@router.get("/maps", response_class=HTMLResponse, name="maps")
-def maps_preparing(request: Request) -> HTMLResponse:
-    return _render_coming_soon(request, "maps")
-
 
 @router.get("/guides", response_class=HTMLResponse, name="guides")
 def guides_preparing(request: Request) -> HTMLResponse:

@@ -217,6 +217,40 @@ class ItemEntry:
     acquisition_pending: bool = False
 
 
+# —— Maps / regions (publicly disclosed entries only; empty until official publish) ——
+MapAccent = Literal["world", "field", "sanctuary", "hub"]
+
+MAP_PENDING_LABEL = "공식 정보 공개 후 업데이트 예정"
+MAP_SHORT_PENDING = "공개 예정"
+
+
+@dataclass(frozen=True, slots=True)
+class RegionEntry:
+    """Playable region / field entry from officially disclosed information only.
+
+    Do not invent field names, coords, NPC lists, or world map tiles.
+    """
+
+    slug: str
+    name: str
+    name_en: str
+    symbol: str
+    accent: MapAccent
+    region_kind: str = ""
+    world_label: str = ""
+    summary: str = ""
+    map_image_url: str = ""
+    source_note: str = "공식 공개 정보 기준 (비공식 정리)"
+    related_boss_slugs: tuple[str, ...] = ()
+    related_item_slugs: tuple[str, ...] = ()
+    npc_labels: tuple[str, ...] = ()
+    region_kind_pending: bool = False
+    world_label_pending: bool = False
+    summary_pending: bool = False
+    map_image_pending: bool = False
+    npc_pending: bool = False
+
+
 # —— Patch notes (timeline list) ——
 PatchType = Literal["update", "balance", "bugfix", "system", "event"]
 PatchFilterKey = Literal["all", "update", "balance", "bugfix", "system", "event"]

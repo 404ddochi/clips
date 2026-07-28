@@ -55,6 +55,11 @@
   --control-height-lg: 3rem;
   --touch-target-min: 2.75rem;
 
+  /* Waiting-panel representative mark (items / bosses / maps) */
+  --waiting-sigil-box-size: 5.75rem;
+  --waiting-sigil-symbol-size: 4.25rem;
+  --waiting-sigil-icon-size: 4rem;
+
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 12px;
