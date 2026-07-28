@@ -8,12 +8,7 @@ from datetime import date
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from app.config import Settings
-from app.core.constants import (
-    DEFAULT_HOME_DESCRIPTION,
-    DEFAULT_HOME_TITLE,
-    SERVICE_NAME,
-    SITEMAP_PUBLIC_PATHS,
-)
+from app.core.constants import SITEMAP_PUBLIC_PATHS
 from app.services.boss_data import list_bosses
 from app.services.class_data import list_classes
 from app.services.coupon_mock_data import list_coupons
@@ -121,41 +116,18 @@ def build_sitemap_xml(settings: Settings) -> str:
 
 
 def build_website_json_ld(settings: Settings) -> dict[str, object]:
-    return {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": SERVICE_NAME,
-        "alternateName": ["클립스", "CLIPS", "Eclipse: The Awakening Info"],
-        "url": settings.site_url,
-        "description": DEFAULT_HOME_DESCRIPTION,
-        "inLanguage": settings.default_locale,
-        "about": {
-            "@type": "VideoGame",
-            "name": "이클립스: 더 어웨이크닝",
-            "alternateName": "Eclipse: The Awakening",
-        },
-    }
+    """Backward-compatible alias for home WebSite schema."""
+    from app.services.structured_data import build_website_schema
+
+    return build_website_schema(settings)
 
 
 def build_home_json_ld(settings: Settings) -> dict[str, object]:
-    return {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": DEFAULT_HOME_TITLE,
-        "description": DEFAULT_HOME_DESCRIPTION,
-        "url": settings.canonical_url("/"),
-        "isPartOf": {
-            "@type": "WebSite",
-            "url": settings.site_url,
-            "name": "CLIPS",
-        },
-        "about": {
-            "@type": "VideoGame",
-            "name": "이클립스: 더 어웨이크닝",
-            "alternateName": "Eclipse: The Awakening",
-        },
-    }
+    """Deprecated WebPage payload — prefer ``build_home_structured_data``."""
+    from app.services.structured_data import build_organization_schema
+
+    return build_organization_schema(settings)
 
 
 def json_ld_script(data: dict[str, object]) -> str:
-    return json.dumps(data, ensure_ascii=False)
+    return json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")

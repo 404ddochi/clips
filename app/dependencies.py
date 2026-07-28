@@ -20,6 +20,7 @@ from app.core.constants import (
     GAME_TITLE_EN,
     PUBLIC_ROBOTS,
 )
+from app.services.structured_data import collect_json_ld_items
 
 APP_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = APP_DIR / "templates"
@@ -28,7 +29,9 @@ TEMPLATES_DIR = APP_DIR / "templates"
 def _json_script(value: object) -> Markup:
     import json
 
-    return Markup(json.dumps(value, ensure_ascii=False))
+    # Escape "<" so embedded JSON cannot break out of </script>.
+    payload = json.dumps(value, ensure_ascii=False).replace("<", "\\u003c")
+    return Markup(payload)
 
 
 def current_year_kst() -> int:
@@ -88,6 +91,7 @@ def seo_context(
     resolved_og_url = (og_url or resolved_canonical).strip()
     resolved_og_image = (og_image or "").strip() or None
     resolved_twitter_image = (twitter_image or resolved_og_image or "").strip() or None
+    json_ld_items = collect_json_ld_items(*(structured_data or []))
 
     return {
         "seo_title": resolved_title,
@@ -103,5 +107,6 @@ def seo_context(
         "seo_twitter_title": resolved_twitter_title,
         "seo_twitter_description": resolved_twitter_description,
         "seo_twitter_image": resolved_twitter_image,
-        "seo_structured_data": structured_data or [],
+        "seo_structured_data": json_ld_items,
+        "json_ld_items": json_ld_items,
     }

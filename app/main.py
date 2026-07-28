@@ -27,6 +27,7 @@ from app.routers import health, seo, web
 from app.routers import items as items_router
 from app.routers import maps as maps_router
 from app.routers import news as news_router
+from app.routers import search as search_router
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +62,7 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(seo.router)
     app.include_router(web.router)
+    app.include_router(search_router.router)
     app.include_router(classes_router.router)
     app.include_router(bosses_router.router)
     app.include_router(items_router.router)

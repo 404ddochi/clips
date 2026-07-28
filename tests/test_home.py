@@ -62,12 +62,12 @@ def test_home_json_ld_site_and_game_names(client: TestClient) -> None:
     scripts = soup.find_all("script", attrs={"type": "application/ld+json"})
     payloads = [json.loads(script.string or "") for script in scripts]
     website = next(item for item in payloads if item.get("@type") == "WebSite")
+    organization = next(item for item in payloads if item.get("@type") == "Organization")
     assert website["name"] == "CLIPS"
-    assert website["about"]["name"] == "이클립스: 더 어웨이크닝"
-    assert website["about"]["alternateName"] == "Eclipse: The Awakening"
-    webpage = next(item for item in payloads if item.get("@type") == "WebPage")
-    assert webpage["isPartOf"]["name"] == "CLIPS"
-    assert webpage["about"]["name"] == "이클립스: 더 어웨이크닝"
+    assert website["alternateName"] == "클립스"
+    assert website["publisher"]["@id"] == organization["@id"]
+    assert organization["name"] == "CLIPS"
+    assert "WebPage" not in {item.get("@type") for item in payloads}
 
 
 def test_home_hero_hierarchy(client: TestClient) -> None:

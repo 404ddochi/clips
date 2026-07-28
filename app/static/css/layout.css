@@ -49,6 +49,26 @@
   justify-self: end;
 }
 
+.header-search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.header-search:hover {
+  color: var(--color-text-primary);
+}
+
+.header-search:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
 .logo {
   display: inline-flex;
   align-items: center;
@@ -233,6 +253,10 @@ body.is-nav-open .nav-backdrop:not([hidden]) {
     flex-wrap: wrap;
     justify-content: flex-end;
     gap: var(--space-1) var(--space-2);
+  }
+
+  .nav-list__search {
+    display: none;
   }
 
   .nav-link {

@@ -22,6 +22,10 @@ from app.services.guide_data import (
 )
 from app.services.seo import meta_description
 from app.services.seo_content import build_breadcrumb_json_ld
+from app.services.structured_data import (
+    build_guide_article_schema,
+    collect_json_ld_items,
+)
 
 router = APIRouter(tags=["guides"])
 
@@ -124,7 +128,8 @@ def guide_detail(request: Request, slug: str) -> HTMLResponse:
         {"label": "공략", "route_name": "guides", "current": False},
         {"label": guide.title, "href": page_path, "current": True},
     )
-    structured = [
+    description = meta_description(guide.summary, fallback=_GUIDE_PAGE_DESCRIPTION)
+    structured = collect_json_ld_items(
         build_breadcrumb_json_ld(
             settings,
             [
@@ -133,7 +138,13 @@ def guide_detail(request: Request, slug: str) -> HTMLResponse:
                 (guide.title, page_url),
             ],
         ),
-    ]
+        build_guide_article_schema(
+            settings,
+            guide=guide,
+            page_url=page_url,
+            description=description,
+        ),
+    )
 
     toc = [
         {
@@ -155,9 +166,10 @@ def guide_detail(request: Request, slug: str) -> HTMLResponse:
         "breadcrumbs": crumbs,
         **seo_context(
             title=detail_title(guide.title),
-            description=meta_description(guide.summary, fallback=_GUIDE_PAGE_DESCRIPTION),
+            description=description,
             canonical_url=page_url,
             robots=MOCK_ROBOTS,
+            og_type="article",
             structured_data=structured,
         ),
     }

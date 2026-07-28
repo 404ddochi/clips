@@ -1,0 +1,5 @@
+{% for item in json_ld_items %}
+{% if item %}
+<script type="application/ld+json">{{ item | tojson }}</script>
+{% endif %}
+{% endfor %}

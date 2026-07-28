@@ -23,7 +23,8 @@ from app.services.home_page_data import (
     build_home_info_strip,
     build_home_news_items,
 )
-from app.services.seo import build_home_json_ld, build_website_json_ld
+from app.services.seo_content import build_breadcrumb_json_ld
+from app.services.structured_data import build_home_structured_data
 
 router = APIRouter(tags=["web"])
 
@@ -39,10 +40,6 @@ def _base_layout_context(request: Request, active_menu: str) -> dict[str, object
 @router.get("/", response_class=HTMLResponse, name="home")
 def home(request: Request) -> HTMLResponse:
     settings = get_settings()
-    structured = [
-        build_website_json_ld(settings),
-        build_home_json_ld(settings),
-    ]
     context = {
         **_base_layout_context(request, "home"),
         "quick_links": QUICK_LINKS,
@@ -54,7 +51,7 @@ def home(request: Request) -> HTMLResponse:
             title=DEFAULT_HOME_TITLE,
             description=DEFAULT_HOME_DESCRIPTION,
             canonical_url=settings.canonical_url("/"),
-            structured_data=structured,
+            structured_data=build_home_structured_data(settings),
         ),
     }
     return get_templates().TemplateResponse(request, "home.html", context)
@@ -70,12 +67,22 @@ def _render_coming_soon(request: Request, section_key: str) -> HTMLResponse:
         seo_title = page_title("콘텐츠")
         seo_description = PAGE_DESCRIPTIONS["contents"]
         robots = "index, follow"
+        structured = [
+            build_breadcrumb_json_ld(
+                settings,
+                [
+                    ("홈", settings.canonical_url("/")),
+                    ("콘텐츠", settings.canonical_url("/contents")),
+                ],
+            ),
+        ]
     else:
         seo_title = page_title(page.page_title)
         seo_description = (
             f"CLIPS {page.label} 페이지는 준비 중입니다. {page.page_description}"
         )
         robots = NOINDEX_ROBOTS
+        structured = []
     context = {
         **_base_layout_context(request, section_key),
         "page": page,
@@ -88,6 +95,7 @@ def _render_coming_soon(request: Request, section_key: str) -> HTMLResponse:
             description=seo_description,
             canonical_url=settings.canonical_url(f"/{section_key}"),
             robots=robots,
+            structured_data=structured,
         ),
     }
     return get_templates().TemplateResponse(request, "coming_soon.html", context)

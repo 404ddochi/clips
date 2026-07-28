@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/search.css') }}">
+{% endblock %}
+
+{% block body_class %}page-search{% endblock %}
+
+{% block content %}
+<section class="container search-page" aria-labelledby="search-heading">
+  <header class="page-header search-page__header">
+    <h1 id="search-heading">통합 검색</h1>
+    <p class="page-header__lead">
+      소식, 클래스, 아이템, 보스, 지도와 공략을 한 번에 검색할 수 있습니다.
+    </p>
+  </header>
+
+  <form class="search-form" action="{{ url_for('search') }}" method="get" role="search">
+    {% if type_filter and type_filter != "all" %}
+    <input type="hidden" name="type" value="{{ type_filter }}">
+    {% endif %}
+    <label class="visually-hidden" for="unified-search-q">통합 검색어</label>
+    <div class="search-form__row">
+      <span class="search-form__icon" aria-hidden="true">{{ icon("search", size=20) }}</span>
+      <input
+        id="unified-search-q"
+        class="search-form__input"
+        type="search"
+        name="q"
+        value="{{ search_query }}"
+        placeholder="찾고 싶은 정보를 검색하세요."
+        maxlength="{{ max_query_length }}"
+        autocomplete="off"
+        spellcheck="false"
+        enterkeyhint="search"
+      >
+      <button class="button button--primary search-form__submit" type="submit">검색</button>
+    </div>
+    {% if validation_error %}
+    <p class="search-form__error" role="alert">{{ validation_error }}</p>
+    {% endif %}
+  </form>
+
+  <nav class="search-filters" aria-label="검색 유형 필터">
+    <ul class="search-filters__list" role="list">
+      {% for tab in filter_tabs %}
+      <li>
+        <a
+          class="search-filters__link{% if tab.key == type_filter %} is-active{% endif %}"
+          href="{{ tab.href }}"
+          {% if tab.current == "true" %}aria-current="page"{% endif %}
+        >{{ tab.label }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+
+  {% if has_active_search %}
+  <p class="search-summary" aria-live="polite">
+    ‘{{ search_query }}’ 검색 결과 {{ search_response.total_count }}건
+  </p>
+
+  {% if search_response.groups %}
+  <div class="search-groups">
+    {% for group in search_response.groups %}
+    <section class="search-group" aria-labelledby="search-group-{{ group.content_type }}">
+      <h2 id="search-group-{{ group.content_type }}" class="search-group__title">
+        <span class="search-group__label">{{ group.label }}</span>
+        <span class="search-group__count">{{ group.total_count }}</span>
+      </h2>
+      <ul class="search-results" role="list">
+        {% for item in group.results %}
+        <li class="search-result">
+          <a class="search-result__link" href="{{ item.url }}">
+            <div class="search-result__meta">
+              {% if item.badge %}
+              <span class="badge">{{ item.badge }}</span>
+              {% else %}
+              <span class="badge">{{ item.content_type_label }}</span>
+              {% endif %}
+              {% if item.published_at %}
+              <time datetime="{{ item.published_at.isoformat() }}">
+                {{ item.published_at.strftime("%Y.%m.%d") }}
+              </time>
+              {% endif %}
+              {% if item.source_name %}
+              <span class="search-result__source">{{ item.source_name }}</span>
+              {% endif %}
+            </div>
+            <h3 class="search-result__title">{{ item.title }}</h3>
+            {% if item.summary %}
+            <p class="search-result__summary">{{ item.summary }}</p>
+            {% endif %}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% if group.displayed_count < group.total_count %}
+      <p class="search-group__more">
+        {{ group.label }} {{ group.total_count }}건 중 {{ group.displayed_count }}건 표시
+      </p>
+      {% endif %}
+    </section>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state empty-state--compact search-empty">
+    <h2 class="empty-state__title">‘{{ search_query }}’에 대한 검색 결과가 없습니다.</h2>
+    <p class="empty-state__message">검색어의 띄어쓰기나 철자를 확인해 주세요.</p>
+  </div>
+  {% endif %}
+
+  {% elif not validation_error %}
+  <div class="empty-state empty-state--compact search-empty">
+    <h2 class="empty-state__title">검색어를 입력해 주세요.</h2>
+    <p class="empty-state__message">
+      소식, 클래스, 아이템, 보스, 지도와 공략을 한 번에 검색할 수 있습니다.
+    </p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

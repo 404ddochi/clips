@@ -222,6 +222,10 @@ def _render_detail(
         {"label": meta["title"], "route_name": meta["route_name"], "current": False},
         {"label": item.title, "href": page_path, "current": True},
     )
+    fallback_desc = (
+        _PATCH_PAGE_DESCRIPTION if category == "patch" else _NEWS_PAGE_DESCRIPTION
+    )
+    description = meta_description(item.summary, fallback=fallback_desc)
     structured = [
         build_breadcrumb_json_ld(
             settings,
@@ -232,11 +236,13 @@ def _render_detail(
                 (item.title, page_url),
             ],
         ),
-        build_article_json_ld(settings, item=item, page_url=page_url),
+        build_article_json_ld(
+            settings,
+            item=item,
+            page_url=page_url,
+            description=description,
+        ),
     ]
-    fallback_desc = (
-        _PATCH_PAGE_DESCRIPTION if category == "patch" else _NEWS_PAGE_DESCRIPTION
-    )
     context = {
         **_layout(request),
         "item": item,
@@ -249,10 +255,7 @@ def _render_detail(
         "breadcrumbs": crumbs,
         **seo_context(
             title=_detail_page_title(item.title),
-            description=meta_description(
-                item.summary,
-                fallback=fallback_desc,
-            ),
+            description=description,
             canonical_url=page_url,
             robots=MOCK_ROBOTS,
             og_type="article",

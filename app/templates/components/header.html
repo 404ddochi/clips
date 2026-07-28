@@ -19,9 +19,24 @@
           >{{ item.label }}</a>
         </li>
         {% endfor %}
+        <li class="nav-list__search">
+          <a
+            class="nav-link{% if request.url.path == '/search' %} is-active{% endif %}"
+            href="{{ url_for('search') }}"
+            {% if request.url.path == '/search' %}aria-current="page"{% endif %}
+          >통합 검색</a>
+        </li>
       </ul>
     </nav>
     <div class="header-tools">
+      <a
+        class="header-search"
+        href="{{ url_for('search') }}"
+        aria-label="통합 검색"
+      >
+        <span class="visually-hidden">통합 검색</span>
+        <span aria-hidden="true">{{ icon("search", size=20) }}</span>
+      </a>
       <div class="theme-control" data-theme-control>
         <button
           type="button"
