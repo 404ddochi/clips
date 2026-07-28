@@ -54,7 +54,7 @@ def test_news_titles(client: TestClient) -> None:
         "/news": "소식 | CLIPS - 이클립스: 더 어웨이크닝",
         "/news/notices": "공지 | CLIPS - 이클립스: 더 어웨이크닝",
         "/news/events": "이벤트 | CLIPS - 이클립스: 더 어웨이크닝",
-        "/news/patch-notes": "패치노트 | CLIPS - 이클립스: 더 어웨이크닝",
+        "/news/patch-notes": "패치노트 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트",
         "/coupons": "쿠폰 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트",
     }
     for path, expected in cases.items():
@@ -137,6 +137,7 @@ def test_info_page_css(client: TestClient) -> None:
         "/static/css/pages/news.css",
         "/static/css/pages/article.css",
         "/static/css/pages/coupons.css",
+        "/static/css/pages/patch_notes.css",
     ):
         assert client.get(path).status_code == 200
 
@@ -152,7 +153,7 @@ def test_home_links_to_info_pages(client: TestClient) -> None:
 
 
 def test_coming_soon_sections_remain(client: TestClient) -> None:
-    for path in ("/classes", "/contents", "/items", "/bosses", "/maps", "/guides"):
+    for path in ("/contents", "/items", "/bosses", "/maps", "/guides"):
         response = client.get(path)
         assert response.status_code == 200
         assert "준비 중" in response.text

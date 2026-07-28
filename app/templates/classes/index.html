@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/classes.css') }}">
+{% endblock %}
+
+{% block body_class %}page-classes{% endblock %}
+
+{% block content %}
+<section class="section page-intro classes-page">
+  <div class="container">
+    {% include "components/breadcrumb.html" %}
+    {% set page_eyebrow = "CLASSES" %}
+    {% set page_title = "클래스" %}
+    {% set page_description = "나에게 맞는 클래스를 찾아보세요." %}
+    {% include "components/page_header.html" %}
+
+    <div class="class-toolbar">
+      <nav class="class-filters" aria-label="전투 스타일 필터">
+        <ul class="class-filters__list" role="list">
+          {% for tab in style_filters %}
+          <li class="class-filters__item">
+            <a
+              class="class-filters__link{% if current_style == tab.key %} is-active{% endif %}"
+              href="{{ tab.href }}"
+              {% if current_style == tab.key %}aria-current="page"{% endif %}
+            >{{ tab.label }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+      <p class="class-summary" aria-live="polite">
+        <span class="class-summary__count">클래스 {{ class_count }}개</span>
+      </p>
+    </div>
+
+    {% if classes %}
+    <ul class="class-grid" role="list">
+      {% for item in classes %}
+      <li class="class-grid__item">
+        {% include "components/class_card.html" %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state empty-state--compact">
+      <h2 class="empty-state__title">조건에 맞는 클래스가 없습니다.</h2>
+      <p class="empty-state__message">다른 전투 스타일을 선택해 주세요.</p>
+      <a class="button button--secondary button--sm" href="{{ url_for('classes') }}">전체 보기</a>
+    </div>
+    {% endif %}
+
+    {% include "components/source_notice.html" %}
+  </div>
+</section>
+{% endblock %}

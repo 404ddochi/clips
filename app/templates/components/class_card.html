@@ -1,0 +1,61 @@
+{# Class Card — expects `item`, `style_labels`, `short_pending` #}
+<article class="class-card class-card--{{ item.accent }}">
+  <div class="class-card__visual" aria-hidden="true">
+    <span class="class-card__aura"></span>
+    <span class="class-card__symbol">
+      {{ icon(item.symbol, size=64, class_name="class-card__icon") }}
+    </span>
+  </div>
+
+  <header class="class-card__header">
+    <h2 class="class-card__title">
+      <a class="class-card__title-link" href="{{ url_for('class_detail', slug=item.slug) }}">{{ item.name }}</a>
+    </h2>
+    <p class="class-card__en">{{ item.name_en }}</p>
+  </header>
+
+  <ul class="class-card__styles" aria-label="역할">
+    {% for style in item.styles %}
+    <li><span class="class-style-badge class-style-badge--{{ style }}">{{ style_labels[style] }}</span></li>
+    {% endfor %}
+  </ul>
+
+  <div class="class-card__facts">
+    <div class="class-fact">
+      <p class="class-fact__label">무기</p>
+      <p class="class-fact__value">
+        {% if item.weapons_pending or not item.weapons %}
+        <span class="class-card__pending">{{ short_pending }}</span>
+        {% else %}
+        {{ item.weapons|join(' · ') }}
+        {% endif %}
+      </p>
+    </div>
+    <div class="class-fact">
+      <p class="class-fact__label">전투 스타일</p>
+      <p class="class-fact__value">
+        {% if item.combat_styles_pending or not item.combat_styles %}
+        <span class="class-card__pending">{{ short_pending }}</span>
+        {% else %}
+        {{ item.combat_styles|join(' · ') }}
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <p class="class-card__summary">
+    {% if item.summary_pending or not item.summary %}
+    {{ short_pending }}
+    {% else %}
+    {{ item.summary }}
+    {% endif %}
+  </p>
+
+  <footer class="class-card__footer">
+    <a
+      class="text-link class-card__detail"
+      href="{{ url_for('class_detail', slug=item.slug) }}"
+      aria-label="{{ item.name }} 상세 보기"
+    >상세 보기 <span class="class-card__detail-arrow" aria-hidden="true">→</span></a>
+  </footer>
+</article>

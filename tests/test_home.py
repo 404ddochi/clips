@@ -149,12 +149,13 @@ def test_home_unofficial_disclaimer(client: TestClient) -> None:
     assert "공식 홈페이지" not in html
 
 
-def test_classes_coming_soon(client: TestClient) -> None:
+def test_classes_page_live(client: TestClient) -> None:
     response = client.get("/classes")
     assert response.status_code == 200
     soup = _soup(response.text)
     assert len(soup.find_all("h1")) == 1
     assert "클래스" in soup.find("h1").get_text()
+    assert "파이터" in response.text
     robots = soup.find("meta", attrs={"name": "robots"})
     assert robots is not None
     assert "noindex" in robots.get("content", "")

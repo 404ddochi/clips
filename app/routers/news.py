@@ -13,6 +13,7 @@ from app.services.content_types import (
     MOCK_ROBOTS,
     NEWS_CATEGORY_TABS,
     PAGE_TITLE_SUFFIX,
+    PATCH_TYPE_LABELS,
     NewsCategory,
 )
 from app.services.news_mock_data import (
@@ -24,9 +25,21 @@ from app.services.news_mock_data import (
     news_neighbors,
     related_news,
 )
+from app.services.patch_mock_data import (
+    build_patch_list_query,
+    filter_patch_notes,
+    parse_patch_filter,
+    patch_filter_tabs,
+)
 from app.services.seo_content import build_article_json_ld, build_breadcrumb_json_ld
 
 router = APIRouter(tags=["news"])
+
+_PATCH_PAGE_TITLE = "패치노트 - CLIPS | 이클립스: 더 어웨이크닝 정보 사이트"
+_PATCH_PAGE_DESCRIPTION = (
+    "이클립스: 더 어웨이크닝 패치노트를 버전별로 확인하고 "
+    "업데이트, 밸런스, 버그 수정 내용을 빠르게 찾아보세요."
+)
 
 
 def _layout(request: Request) -> dict[str, object]:
@@ -139,7 +152,56 @@ def news_events(request: Request) -> HTMLResponse:
 
 @router.get("/news/patch-notes", response_class=HTMLResponse, name="news_patch_notes")
 def news_patch_notes(request: Request) -> HTMLResponse:
-    return _render_category_list(request, "patch")
+    settings = get_settings()
+    raw_type = request.query_params.get("type")
+    current_type = parse_patch_filter(raw_type)
+    query = (request.query_params.get("q") or "").strip()
+    patches = filter_patch_notes(type_key=current_type, query=query)
+    patch_count = len(patches)
+    type_filters = patch_filter_tabs(query=query)
+    clear_href = build_patch_list_query(type_key="all", query="")
+    path = "/news/patch-notes"
+
+    crumbs = (
+        {"label": "홈", "route_name": "home", "current": False},
+        {"label": "소식", "route_name": "news", "current": False},
+        {"label": "패치노트", "route_name": "news_patch_notes", "current": True},
+    )
+    structured = [
+        build_breadcrumb_json_ld(
+            settings,
+            [
+                ("홈", settings.absolute_url("/")),
+                ("소식", settings.absolute_url("/news")),
+                ("패치노트", settings.absolute_url(path)),
+            ],
+        ),
+    ]
+    context = {
+        **_layout(request),
+        "active_tab": "patch",
+        "patches": patches,
+        "patch_count": patch_count,
+        "current_type": current_type,
+        "type_filters": type_filters,
+        "search_query": query,
+        "clear_href": clear_href,
+        "patch_type_labels": PATCH_TYPE_LABELS,
+        "is_mock": True,
+        "breadcrumbs": crumbs,
+        **seo_context(
+            title=_PATCH_PAGE_TITLE,
+            description=_PATCH_PAGE_DESCRIPTION,
+            canonical_url=settings.absolute_url(path),
+            robots=MOCK_ROBOTS,
+            structured_data=structured,
+        ),
+    }
+    return get_templates().TemplateResponse(
+        request,
+        "news/patch_notes.html",
+        context,
+    )
 
 
 def _render_detail(

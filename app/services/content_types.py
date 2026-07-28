@@ -116,3 +116,93 @@ CATEGORY_LIST_META: dict[NewsCategory, dict[str, str]] = {
 
 PAGE_TITLE_SUFFIX = "CLIPS - 이클립스: 더 어웨이크닝"
 MOCK_ROBOTS = "noindex, follow"
+
+# —— Classes ——
+ClassStyle = Literal["melee", "ranged", "magic", "support"]
+ClassFilterKey = Literal["all", "melee", "ranged", "magic", "support"]
+ClassAccent = Literal["melee", "ranged", "magic", "support"]
+
+CLASS_STYLE_LABELS: dict[ClassStyle, str] = {
+    "melee": "근거리",
+    "ranged": "원거리",
+    "magic": "마법",
+    "support": "지원",
+}
+
+CLASS_STYLE_FILTERS: tuple[tuple[ClassFilterKey, str], ...] = (
+    ("all", "전체"),
+    ("melee", "근거리"),
+    ("ranged", "원거리"),
+    ("magic", "마법"),
+    ("support", "지원"),
+)
+
+CLASS_PENDING_LABEL = "공식 정보 공개 후 업데이트 예정"
+
+
+@dataclass(frozen=True, slots=True)
+class ClassItem:
+    """Playable class entry from publicly disclosed information only."""
+
+    slug: str
+    name: str
+    name_en: str
+    symbol: str
+    accent: ClassAccent
+    styles: tuple[ClassStyle, ...]
+    weapons: tuple[str, ...]
+    combat_styles: tuple[str, ...]
+    summary: str
+    source_note: str
+    weapons_pending: bool = False
+    combat_styles_pending: bool = False
+    summary_pending: bool = False
+
+
+# —— Patch notes (timeline list) ——
+PatchType = Literal["update", "balance", "bugfix", "system", "event"]
+PatchFilterKey = Literal["all", "update", "balance", "bugfix", "system", "event"]
+
+PATCH_TYPE_LABELS: dict[PatchType, str] = {
+    "update": "업데이트",
+    "balance": "밸런스",
+    "bugfix": "버그 수정",
+    "system": "시스템",
+    "event": "이벤트",
+}
+
+PATCH_TYPE_FILTERS: tuple[tuple[PatchFilterKey, str], ...] = (
+    ("all", "전체"),
+    ("update", "업데이트"),
+    ("balance", "밸런스"),
+    ("bugfix", "버그 수정"),
+    ("system", "시스템"),
+    ("event", "이벤트"),
+)
+
+
+@dataclass(frozen=True, slots=True)
+class PatchChangeItem:
+    """A single change bullet on a mock patch note."""
+
+    title: str
+    summary: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class PatchNote:
+    """Mock patch note for Patch Timeline (not official game content)."""
+
+    slug: str
+    version: str
+    title: str
+    summary: str
+    published_at: datetime
+    patch_types: tuple[PatchType, ...]
+    changes: tuple[PatchChangeItem, ...]
+    keywords: tuple[str, ...] = ()
+    body: tuple[ArticleBlock, ...] = ()
+    source_name: str = "CLIPS Mock"
+    source_url: str | None = None
+    is_featured: bool = False
+    status_label: str = "샘플"

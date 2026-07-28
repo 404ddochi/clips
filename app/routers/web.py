@@ -78,11 +78,6 @@ def _render_coming_soon(request: Request, section_key: str) -> HTMLResponse:
     return get_templates().TemplateResponse(request, "coming_soon.html", context)
 
 
-@router.get("/classes", response_class=HTMLResponse, name="classes")
-def classes_preparing(request: Request) -> HTMLResponse:
-    return _render_coming_soon(request, "classes")
-
-
 @router.get("/contents", response_class=HTMLResponse, name="contents")
 def contents_preparing(request: Request) -> HTMLResponse:
     return _render_coming_soon(request, "contents")

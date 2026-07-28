@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/patch_notes.css') }}">
+{% endblock %}
+
+{% block body_class %}page-patch-notes{% endblock %}
+
+{% block content %}
+<section class="section page-intro patch-notes-page">
+  <div class="container">
+    {% include "components/breadcrumb.html" %}
+    {% set page_eyebrow = "PATCH NOTES" %}
+    {% set page_title = "패치노트" %}
+    {% set page_description = "버전별 업데이트와 주요 변경점을 빠르게 확인하세요." %}
+    {% include "components/page_header.html" %}
+    {% include "components/content_tabs.html" %}
+
+    <form class="patch-search" method="get" action="{{ url_for('news_patch_notes') }}" role="search">
+      {% if current_type != "all" %}
+      <input type="hidden" name="type" value="{{ current_type }}">
+      {% endif %}
+      <label class="visually-hidden" for="patch-search-q">패치노트 검색</label>
+      <div class="patch-search__row">
+        <input
+          id="patch-search-q"
+          class="patch-search__input"
+          type="search"
+          name="q"
+          value="{{ search_query }}"
+          placeholder="버전, 제목, 변경점, 키워드"
+          autocomplete="off"
+          enterkeyhint="search"
+        >
+        <button class="button button--primary button--sm patch-search__submit" type="submit">검색</button>
+        {% if search_query or current_type != "all" %}
+        <a class="button button--secondary button--sm patch-search__clear" href="{{ clear_href }}">초기화</a>
+        {% endif %}
+      </div>
+    </form>
+
+    <div class="patch-toolbar">
+      <nav class="patch-filters" aria-label="패치 유형 필터">
+        <ul class="patch-filters__list" role="list">
+          {% for tab in type_filters %}
+          <li class="patch-filters__item">
+            <a
+              class="patch-filters__link{% if current_type == tab.key %} is-active{% endif %}"
+              href="{{ tab.href }}"
+              {% if current_type == tab.key %}aria-current="page"{% endif %}
+            >{{ tab.label }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+
+      <p class="patch-summary" aria-live="polite">
+        <span class="patch-summary__count">{{ patch_count }}개</span>
+        {% if search_query %}
+        <span class="patch-summary__query">· 「{{ search_query }}」 검색</span>
+        {% endif %}
+        {% if is_mock %}
+        <span class="patch-summary__note">· Mock 데이터</span>
+        {% endif %}
+      </p>
+    </div>
+
+    {% if patches %}
+    <ol class="patch-timeline" aria-label="패치노트 타임라인">
+      {% for patch in patches %}
+      <li class="patch-timeline__item">
+        {% include "components/patch_timeline_item.html" %}
+      </li>
+      {% endfor %}
+    </ol>
+    {% else %}
+    <div class="empty-state empty-state--compact">
+      <h2 class="empty-state__title">조건에 맞는 패치노트가 없습니다.</h2>
+      <p class="empty-state__message">검색어를 변경하거나 다른 유형을 선택해 주세요.</p>
+      <a class="button button--secondary button--sm" href="{{ clear_href }}">전체 보기</a>
+    </div>
+    {% endif %}
+
+    {% include "components/source_notice.html" %}
+  </div>
+</section>
+{% endblock %}

@@ -10,9 +10,8 @@ from app.services.content_types import (
     NewsCategory,
     NewsItem,
 )
+from app.services.patch_mock_data import patch_notes_as_news_items
 
-_D = datetime(2026, 7, 10, 9, 0, tzinfo=UTC)
-_D2 = datetime(2026, 7, 12, 11, 0, tzinfo=UTC)
 _D3 = datetime(2026, 7, 14, 15, 30, tzinfo=UTC)
 _D4 = datetime(2026, 7, 16, 10, 0, tzinfo=UTC)
 _D5 = datetime(2026, 7, 18, 13, 0, tzinfo=UTC)
@@ -138,48 +137,8 @@ NEWS_ITEMS: tuple[NewsItem, ...] = (
             _note("Mock 전용 콘텐츠입니다."),
         ),
     ),
-    NewsItem(
-        slug="sample-patch-summary-structure",
-        category="patch",
-        title="패치노트 요약 구조 샘플",
-        summary="패치노트 목록과 상세 Article 본문 스타일을 검증하는 Mock입니다.",
-        published_at=_D2,
-        updated_at=_D2,
-        source_name="CLIPS Mock",
-        source_url=None,
-        is_featured=True,
-        status_label="샘플",
-        badge_label="패치노트",
-        badge_variant="update",
-        body=(
-            _p("변경점 목록은 예시 문구만 사용합니다."),
-            _h2("예시 변경점"),
-            _ul("UI 샘플 A 항목", "UI 샘플 B 항목", "문서 구조 검증용 항목"),
-            _callout("실제 패치 내용과 무관합니다."),
-        ),
-    ),
-    NewsItem(
-        slug="sample-patch-readability-check",
-        category="patch",
-        title="가독성 점검용 패치 샘플",
-        summary="긴 제목·본문 줄바꿈과 관련 글 영역을 확인하기 위한 예시입니다.",
-        published_at=_D,
-        updated_at=None,
-        source_name="CLIPS Mock",
-        source_url=None,
-        is_featured=False,
-        status_label="샘플",
-        badge_label="패치노트",
-        badge_variant="update",
-        body=(
-            _p("본 문서는 타이포·간격·다크/라이트 대비를 확인하기 위한 샘플입니다."),
-            _h2("본문 계층"),
-            _h3("소제목 예시"),
-            _p("단락과 목록이 자연스럽게 이어지는지 확인합니다."),
-            _ul("항목 하나", "항목 둘"),
-            _note("공식 업데이트 노트가 아닙니다."),
-        ),
-    ),
+    # Patch notes live in patch_mock_data (Patch Timeline source of truth).
+    *patch_notes_as_news_items(),
 )
 
 

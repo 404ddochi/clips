@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from "components/icons.html" import icon %}
+
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/classes.css') }}">
+{% endblock %}
+
+{% block body_class %}page-class-detail{% endblock %}
+
+{% block content %}
+<article class="section page-intro class-detail class-detail--{{ item.accent }}">
+  <div class="container class-detail__container">
+    {% include "components/breadcrumb.html" %}
+
+    <header class="class-hero">
+      <div class="class-hero__panel">
+        <div class="class-hero__ornament" aria-hidden="true"></div>
+        <div class="class-hero__symbol" aria-hidden="true">
+          {{ icon(item.symbol, size=72, class_name="class-hero__icon") }}
+        </div>
+        <div class="class-hero__copy">
+          <p class="class-hero__eyebrow">{{ item.name_en }}</p>
+          <h1 class="class-hero__title">{{ item.name }}</h1>
+          <ul class="class-hero__styles" aria-label="역할">
+            {% for style in item.styles %}
+            <li>
+              <span class="class-style-badge class-style-badge--{{ style }}">{{ style_labels[loop.index0] }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          <p class="class-hero__summary">{{ summary_display }}</p>
+          <p class="class-hero__source">{{ item.source_note }}</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="class-detail__basics" aria-label="기본 정보">
+      <div class="class-info-card">
+        <h2 class="class-info-card__title">무기</h2>
+        <p class="class-info-card__body">
+          {% if item.weapons_pending or not item.weapons %}
+          {{ short_pending }}
+          {% else %}
+          {{ item.weapons|join(' · ') }}
+          {% endif %}
+        </p>
+      </div>
+      <div class="class-info-card">
+        <h2 class="class-info-card__title">전투 스타일</h2>
+        <p class="class-info-card__body">
+          {% if item.combat_styles_pending or not item.combat_styles %}
+          {{ short_pending }}
+          {% else %}
+          {{ item.combat_styles|join(' · ') }}
+          {% endif %}
+        </p>
+      </div>
+    </section>
+
+    <section class="class-detail__upcoming" aria-labelledby="class-upcoming-heading">
+      <div class="class-upcoming-panel">
+        <h2 id="class-upcoming-heading" class="class-upcoming-panel__title">추후 공개 예정</h2>
+        <p class="class-upcoming-panel__desc">공식 정보가 공개되면 순차적으로 업데이트합니다.</p>
+        <ul class="class-upcoming-panel__topics" role="list">
+          {% for topic in upcoming_topics %}
+          <li class="class-upcoming-chip">{{ topic }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+
+    {% if related_classes %}
+    <section class="class-detail__related" aria-labelledby="class-related-heading">
+      <h2 id="class-related-heading" class="class-detail__section-title">다른 클래스</h2>
+      <ul class="class-related-chips" role="list">
+        {% for related in related_classes %}
+        <li>
+          <a
+            class="class-related-chip class-related-chip--{{ related.accent }}"
+            href="{{ url_for('class_detail', slug=related.slug) }}"
+          >
+            <span class="class-related-chip__symbol" aria-hidden="true">
+              {{ icon(related.symbol, size=20) }}
+            </span>
+            <span class="class-related-chip__label">{{ related.name }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    <p class="class-detail__back">
+      <a class="button button--secondary button--sm" href="{{ url_for('classes') }}">클래스 목록</a>
+    </p>
+
+    {% include "components/source_notice.html" %}
+  </div>
+</article>
+{% endblock %}

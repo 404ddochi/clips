@@ -1,0 +1,44 @@
+{# Patch Timeline row — expects `patch`, `patch_type_labels` #}
+<article class="patch-row">
+  <div class="patch-row__rail" aria-hidden="true">
+    <span class="patch-row__dot"></span>
+  </div>
+
+  <div class="patch-row__content">
+    <p class="patch-row__version">
+      <span class="visually-hidden">버전 </span>{{ patch.version }}
+    </p>
+
+    <time class="patch-row__date" datetime="{{ patch.published_at.strftime('%Y-%m-%d') }}">
+      {{ patch.published_at.strftime('%Y.%m.%d') }}
+    </time>
+
+    <ul class="patch-row__types" aria-label="패치 유형">
+      {% for ptype in patch.patch_types %}
+      <li>
+        <span class="patch-badge patch-badge--{{ ptype }}">{{ patch_type_labels[ptype] }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <h2 class="patch-row__title">
+      <a
+        class="patch-row__title-link"
+        href="{{ url_for('news_patch_detail', slug=patch.slug) }}"
+      >{{ patch.title }}</a>
+    </h2>
+
+    <p class="patch-row__summary">{{ patch.summary }}</p>
+
+    <footer class="patch-row__footer">
+      <p class="patch-row__meta">
+        주요 변경 {{ patch.changes|length }}건
+      </p>
+      <a
+        class="text-link patch-row__detail"
+        href="{{ url_for('news_patch_detail', slug=patch.slug) }}"
+        aria-label="{{ patch.version }} {{ patch.title }} 변경점 보기"
+      >변경점 보기 <span class="patch-row__detail-arrow" aria-hidden="true">→</span></a>
+    </footer>
+  </div>
+</article>
