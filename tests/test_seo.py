@@ -50,13 +50,16 @@ def test_robots_txt(client: TestClient) -> None:
     response = client.get("/robots.txt")
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/plain")
+    assert "charset=utf-8" in response.headers["content-type"]
     body = response.text
     assert "User-agent: *" in body
     assert "Allow: /" in body
-    assert "Disallow: /admin" in body
     assert "Disallow: /dev" in body
-    assert "Disallow: /api" in body
+    assert "Disallow: /admin" not in body
+    assert "Disallow: /api" not in body
     assert "Sitemap: http://testserver/sitemap.xml" in body
+    assert "127.0.0.1" not in body
+    assert "localhost" not in body
     assert "Disallow: /\n" not in body
 
 
@@ -176,3 +179,10 @@ def test_build_robots_txt_uses_site_url() -> None:
     settings = Settings(SITE_URL="https://clips.example.com")
     body = build_robots_txt(settings)
     assert "Sitemap: https://clips.example.com/sitemap.xml" in body
+
+
+def test_build_robots_txt_avoids_localhost_sitemap() -> None:
+    body = build_robots_txt(Settings(SITE_URL="http://127.0.0.1:8001"))
+    assert "127.0.0.1" not in body
+    assert "Sitemap: https://playclips.kr/sitemap.xml" in body
+    assert "Disallow: /dev" in body

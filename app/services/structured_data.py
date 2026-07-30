@@ -16,6 +16,7 @@ from zoneinfo import ZoneInfo
 from app.config import Settings
 from app.core.constants import (
     DEFAULT_HOME_DESCRIPTION,
+    DEFAULT_HOME_TITLE,
     SERVICE_NAME,
     SERVICE_NAME_KO,
 )
@@ -116,7 +117,7 @@ def clips_organization_author(settings: Settings) -> dict[str, str]:
 
 
 def build_organization_schema(settings: Settings) -> dict[str, Any]:
-    """Home Organization — no invented logo/sameAs/contact."""
+    """Home Organization — unofficial info platform; no invented sameAs/contact."""
     return {
         "@context": SCHEMA_CONTEXT,
         "@type": "Organization",
@@ -125,11 +126,12 @@ def build_organization_schema(settings: Settings) -> dict[str, Any]:
         "alternateName": SERVICE_NAME_KO,
         "url": settings.canonical_url("/"),
         "description": ORG_DESCRIPTION,
+        "logo": settings.absolute_url("/static/icons/android-chrome-512x512.png"),
     }
 
 
 def build_website_schema(settings: Settings) -> dict[str, Any]:
-    """Home WebSite including SearchAction for `/search?q=`."""
+    """Home WebSite including SearchAction for `/search?q=` (real search route)."""
     search_template = f"{settings.site_url}/search?q={{search_term_string}}"
     return {
         "@context": SCHEMA_CONTEXT,
@@ -137,7 +139,7 @@ def build_website_schema(settings: Settings) -> dict[str, Any]:
         "@id": website_id(settings),
         "url": settings.canonical_url("/"),
         "name": SERVICE_NAME,
-        "alternateName": SERVICE_NAME_KO,
+        "alternateName": DEFAULT_HOME_TITLE,
         "description": DEFAULT_HOME_DESCRIPTION,
         "inLanguage": "ko-KR",
         "publisher": clips_organization_ref(settings),

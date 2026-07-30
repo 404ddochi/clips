@@ -64,9 +64,12 @@ def test_home_json_ld_site_and_game_names(client: TestClient) -> None:
     website = next(item for item in payloads if item.get("@type") == "WebSite")
     organization = next(item for item in payloads if item.get("@type") == "Organization")
     assert website["name"] == "CLIPS"
-    assert website["alternateName"] == "클립스"
+    assert website["alternateName"] == (
+        "CLIPS - 이클립스: 더 어웨이크닝 정보 플랫폼"
+    )
     assert website["publisher"]["@id"] == organization["@id"]
     assert organization["name"] == "CLIPS"
+    assert organization["logo"].endswith("/static/icons/android-chrome-512x512.png")
     assert "WebPage" not in {item.get("@type") for item in payloads}
 
 
@@ -181,9 +184,9 @@ def test_robots_txt(client: TestClient) -> None:
     body = response.text
     assert "User-agent: *" in body
     assert "Allow: /" in body
-    assert "Disallow: /admin" in body
     assert "Disallow: /dev" in body
-    assert "Disallow: /api" in body
+    assert "Disallow: /admin" not in body
+    assert "Disallow: /api" not in body
     assert "Sitemap: http://testserver/sitemap.xml" in body
 
 

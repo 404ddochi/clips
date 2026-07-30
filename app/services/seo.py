@@ -5,10 +5,11 @@ from __future__ import annotations
 import json
 import re
 from datetime import date
+from urllib.parse import urlsplit
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from app.config import Settings
-from app.core.constants import SITEMAP_PUBLIC_PATHS
+from app.core.constants import DEFAULT_PRODUCTION_SITE_URL, SITEMAP_PUBLIC_PATHS
 from app.services.boss_data import list_bosses
 from app.services.class_data import list_classes
 from app.services.coupon_mock_data import list_coupons
@@ -43,15 +44,23 @@ def meta_description(
 
 
 def build_robots_txt(settings: Settings) -> str:
+    """Build robots.txt. Staging is fully closed; production/local allow crawl."""
     if settings.is_staging():
         return "User-agent: *\nDisallow: /\n"
-    sitemap_url = settings.canonical_url("/sitemap.xml")
+
+    # Prefer the configured site origin; never advertise loopback to crawlers.
+    sitemap_origin = settings.site_url
+    host = (urlsplit(sitemap_origin).hostname or "").casefold()
+    if host in {"localhost", "127.0.0.1", "0.0.0.0", "::1"} or host.endswith(".local"):
+        sitemap_origin = DEFAULT_PRODUCTION_SITE_URL
+    sitemap_url = f"{sitemap_origin.rstrip('/')}/sitemap.xml"
+
+    # Only Disallow paths that exist (or are reserved and gated) in this app.
+    # /dev is served and noindexed; /admin and /api are not mounted yet.
     return (
         "User-agent: *\n"
         "Allow: /\n"
-        "Disallow: /admin\n"
         "Disallow: /dev\n"
-        "Disallow: /api\n"
         f"Sitemap: {sitemap_url}\n"
     )
 

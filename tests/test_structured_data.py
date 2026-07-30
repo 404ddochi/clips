@@ -6,7 +6,7 @@ import json
 from datetime import UTC, datetime
 
 from app.config import Settings, get_settings
-from app.core.constants import DEFAULT_HOME_DESCRIPTION
+from app.core.constants import DEFAULT_HOME_DESCRIPTION, DEFAULT_HOME_TITLE
 from app.services.content_types import ArticleBlock, GuideEntry, NewsItem
 from app.services.news_mock_data import list_news
 from app.services.structured_data import (
@@ -59,7 +59,7 @@ def test_home_website_and_organization_builders() -> None:
     assert website["@id"] == "https://clips.example.com/#website"
     assert website["url"] == "https://clips.example.com/"
     assert website["name"] == "CLIPS"
-    assert website["alternateName"] == "클립스"
+    assert website["alternateName"] == DEFAULT_HOME_TITLE
     assert website["description"] == DEFAULT_HOME_DESCRIPTION
     assert website["inLanguage"] == "ko-KR"
     assert website["publisher"] == {"@id": organization_id(settings)}
@@ -70,7 +70,9 @@ def test_home_website_and_organization_builders() -> None:
     )
     assert action["query-input"] == "required name=search_term_string"
     assert "sameAs" not in organization
-    assert "logo" not in organization
+    assert organization["logo"] == (
+        "https://clips.example.com/static/icons/android-chrome-512x512.png"
+    )
     assert organization["description"].startswith("이클립스")
 
 
@@ -85,13 +87,14 @@ def test_home_page_json_ld(client: TestClient) -> None:
     organization = _by_type(payloads, "Organization")
     assert website["name"] == "CLIPS"
     assert website["url"] == "http://testserver/"
+    assert website["alternateName"] == DEFAULT_HOME_TITLE
     assert website["publisher"]["@id"] == organization["@id"]
     action = website["potentialAction"]
     assert action["@type"] == "SearchAction"
     assert "{search_term_string}" in action["target"]["urlTemplate"]
     assert "/search?q=" in action["target"]["urlTemplate"]
     assert "sameAs" not in organization
-    assert "logo" not in organization
+    assert organization["logo"].endswith("/static/icons/android-chrome-512x512.png")
 
 
 def test_public_list_breadcrumb_only(client: TestClient) -> None:
