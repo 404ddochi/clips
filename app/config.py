@@ -60,11 +60,19 @@ class Settings(BaseSettings):
     database_url: str = Field(default="sqlite:///./clips.db", alias="DATABASE_URL")
     default_locale: str = Field(default="ko", alias="DEFAULT_LOCALE")
     timezone: str = Field(default="Asia/Seoul", alias="TIMEZONE")
+    google_analytics_id: str = Field(default="", alias="GOOGLE_ANALYTICS_ID")
 
     @field_validator("app_base_url")
     @classmethod
     def normalize_base_url(cls, value: str) -> str:
         return normalize_site_url(value)
+
+    @field_validator("google_analytics_id", mode="before")
+    @classmethod
+    def normalize_google_analytics_id(cls, value: object) -> str:
+        if value is None:
+            return ""
+        return str(value).strip()
 
     @property
     def site_url(self) -> str:

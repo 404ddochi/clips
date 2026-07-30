@@ -32,9 +32,24 @@ APP_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = APP_DIR / "templates"
 
 
+class _LazyGoogleAnalyticsId:
+    """Resolve GOOGLE_ANALYTICS_ID at render time (survives settings cache clears)."""
+
+    def __bool__(self) -> bool:
+        return bool(get_settings().google_analytics_id)
+
+    def __str__(self) -> str:
+        return get_settings().google_analytics_id
+
+    def __html__(self) -> str:
+        return str(self)
+
+
 def _json_script(value: object) -> Markup:
     import json
 
+    if isinstance(value, _LazyGoogleAnalyticsId):
+        value = str(value)
     # Escape "<" so embedded JSON cannot break out of </script>.
     payload = json.dumps(value, ensure_ascii=False).replace("<", "\\u003c")
     return Markup(payload)
@@ -62,6 +77,7 @@ def get_templates() -> Jinja2Templates:
     templates.env.globals["allows_demo_content"] = (
         lambda: get_settings().allows_demo_content()
     )
+    templates.env.globals["google_analytics_id"] = _LazyGoogleAnalyticsId()
     templates.env.filters["tojson"] = _json_script
     return templates
 

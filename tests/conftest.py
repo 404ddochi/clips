@@ -13,6 +13,7 @@ os.environ.setdefault("APP_DEBUG", "true")
 os.environ.setdefault("APP_BASE_URL", "http://testserver")
 os.environ.setdefault("SECRET_KEY", "test-secret-key")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
+os.environ.setdefault("GOOGLE_ANALYTICS_ID", "")
 
 
 @pytest.fixture
