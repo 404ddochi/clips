@@ -13,3 +13,4 @@ htmlcov/
 .vscode/
 logs/
 uploads/
+.local-backups/

@@ -143,8 +143,59 @@ clips/
 | [design-philosophy.md](docs/design-philosophy.md) | CLIPS Design Philosophy |
 | [06-seo-strategy.md](docs/06-seo-strategy.md) | SEO 전략 |
 | [12-development-roadmap.md](docs/12-development-roadmap.md) | 로드맵 |
+| [backup-restore.md](docs/backup-restore.md) | **운영 백업·복구** |
 
 전체 목록은 `docs/` 디렉터리를 참고하세요.
+
+## 운영 백업 (요약)
+
+운영 서버에서는 `scripts/backup.sh`로 `clips.db` · `uploads/` · `.env`를  
+`/backup/clips/YYYY-MM-DD_HHMMSS.tar.gz`에 보관하고, 30일 지난 파일을 삭제합니다.
+
+```bash
+# 운영 수동 백업 (기본 경로)
+sudo /var/www/clips/scripts/backup.sh
+
+# 운영 복구
+sudo /var/www/clips/scripts/restore.sh /backup/clips/2026-07-30_040001.tar.gz
+```
+
+### 로컬 백업 테스트
+
+프로젝트 루트에서 (`.local-backups/`는 gitignore됨):
+
+```bash
+APP_ROOT="$PWD" \
+BACKUP_DIR="$PWD/.local-backups" \
+LOG_FILE="$PWD/.local-backups/backup.log" \
+RETENTION_DAYS=30 \
+./scripts/backup.sh
+```
+
+### 로컬 복구 테스트 (주의)
+
+복구는 `APP_ROOT`의 `clips.db` / `.env` / `uploads`를 **덮어씁니다.**  
+**실제 프로젝트 디렉터리에서 복구하지 마세요.** 반드시 별도 임시 디렉터리에서 검증하세요.
+
+```bash
+# 1) 위에서 만든 아카이브 경로 확인
+ls -la .local-backups/*.tar.gz
+
+# 2) 임시 대상에만 복구
+RESTORE_ROOT="$(mktemp -d /tmp/clips-restore-XXXXXX)"
+mkdir -p "$RESTORE_ROOT"
+# 대상이 비어 있어도 APP_ROOT 디렉터리는 존재해야 함
+APP_ROOT="$RESTORE_ROOT" \
+BACKUP_SKIP_SERVICE_CONTROL=true \
+LOG_FILE="$PWD/.local-backups/restore.log" \
+./scripts/restore.sh "$PWD/.local-backups/백업파일명.tar.gz"
+
+# 3) 확인 후 임시 디렉터리 삭제
+ls -la "$RESTORE_ROOT"
+rm -rf "$RESTORE_ROOT"
+```
+
+cron(매일 04:00) 예시와 상세 절차는 [docs/backup-restore.md](docs/backup-restore.md)를 참고하세요.
 
 ## Git 초기화
 
