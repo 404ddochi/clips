@@ -126,7 +126,7 @@ def test_static_assets_ok(client: TestClient) -> None:
         "/static/css/base.css",
         "/static/css/pages/home.css",
         "/static/js/theme.js",
-        "/static/favicon/favicon.svg",
+        "/static/icons/favicon.svg",
     ):
         response = client.get(path)
         assert response.status_code == 200, path

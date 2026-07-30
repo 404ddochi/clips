@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import mimetypes
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -37,6 +38,10 @@ logger = logging.getLogger(__name__)
 
 APP_DIR = Path(__file__).resolve().parent
 STATIC_DIR = APP_DIR / "static"
+
+# Ensure StaticFiles serves PWA / favicon types correctly on all platforms.
+mimetypes.add_type("application/manifest+json", ".webmanifest")
+mimetypes.add_type("image/x-icon", ".ico")
 
 
 @asynccontextmanager
