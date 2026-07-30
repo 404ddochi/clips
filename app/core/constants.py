@@ -16,6 +16,15 @@ DEFAULT_HOME_DESCRIPTION = (
     "쿠폰 정보를 확인할 수 있는 비공식 정보 플랫폼입니다."
 )
 
+# Open Graph / Twitter share image (served from StaticFiles).
+DEFAULT_OG_IMAGE_PATH = "/static/images/og/clips-og.png"
+DEFAULT_OG_IMAGE_TYPE = "image/png"
+DEFAULT_OG_IMAGE_WIDTH = 1200
+DEFAULT_OG_IMAGE_HEIGHT = 630
+DEFAULT_OG_IMAGE_ALT = DEFAULT_HOME_TITLE
+DEFAULT_OG_LOCALE = "ko_KR"
+DEFAULT_PRODUCTION_SITE_URL = "https://playclips.kr"
+
 # Public HTML robots (indexable catalogue / editorial pages).
 PUBLIC_ROBOTS = "index, follow"
 # Backward-compatible alias — public pages are indexable in SEO foundation.

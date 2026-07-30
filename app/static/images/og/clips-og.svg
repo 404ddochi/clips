@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1200"
+  height="630"
+  viewBox="0 0 1200 630"
+  role="img"
+>
+  <title>CLIPS - 이클립스: 더 어웨이크닝 정보 플랫폼</title>
+  <desc>
+    CLIPS 공유 미리보기 이미지. 다크 이클립스 테마 배경과 원형 Disc/Ring 그래픽,
+    브랜드명 CLIPS와 게임 안내 문구를 포함합니다.
+  </desc>
+
+  <defs>
+    <linearGradient id="bg-base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#080b12"/>
+      <stop offset="45%" stop-color="#0c111a"/>
+      <stop offset="100%" stop-color="#10151f"/>
+    </linearGradient>
+
+    <radialGradient id="glow-gold" cx="78%" cy="48%" r="42%">
+      <stop offset="0%" stop-color="#c6a15b" stop-opacity="0.22"/>
+      <stop offset="45%" stop-color="#c6a15b" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#c6a15b" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="glow-blue" cx="22%" cy="18%" r="48%">
+      <stop offset="0%" stop-color="#466eb4" stop-opacity="0.16"/>
+      <stop offset="55%" stop-color="#466eb4" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#466eb4" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="disc-fill" cx="35%" cy="32%" r="70%">
+      <stop offset="0%" stop-color="#141a28"/>
+      <stop offset="55%" stop-color="#090c14"/>
+      <stop offset="100%" stop-color="#0c1018"/>
+    </radialGradient>
+
+    <radialGradient id="disc-shadow" cx="18%" cy="50%" r="72%">
+      <stop offset="0%" stop-color="#05070d" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#05070d" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="brand-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff8ea"/>
+      <stop offset="100%" stop-color="#dfbd73"/>
+    </linearGradient>
+
+    <pattern id="grid-soft" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path
+        d="M28 0H0V28"
+        fill="none"
+        stroke="#ffffff"
+        stroke-opacity="0.035"
+        stroke-width="1"
+      />
+    </pattern>
+
+    <filter id="soft-blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg-base)"/>
+  <rect width="1200" height="630" fill="url(#glow-blue)"/>
+  <rect width="1200" height="630" fill="url(#glow-gold)"/>
+  <rect width="1200" height="630" fill="url(#grid-soft)" opacity="0.55"/>
+  <rect x="0" y="0" width="720" height="630" fill="#080b12" opacity="0.28"/>
+
+  <g id="eclipse" transform="translate(840 315)" opacity="0.92">
+    <circle r="210" fill="#c6a15b" opacity="0.08" filter="url(#soft-blur)"/>
+    <circle r="236" fill="none" stroke="#c6a15b" stroke-opacity="0.55" stroke-width="1.5"/>
+    <circle r="214" fill="none" stroke="#c6a15b" stroke-opacity="0.28" stroke-width="1"/>
+    <circle r="192" fill="none" stroke="#c6a15b" stroke-opacity="0.34" stroke-width="1" stroke-dasharray="3 11"/>
+    <ellipse rx="248" ry="92" fill="none" stroke="#c6a15b" stroke-opacity="0.18" stroke-width="1" transform="rotate(-18)"/>
+    <ellipse rx="248" ry="92" fill="none" stroke="#c6a15b" stroke-opacity="0.12" stroke-width="1" transform="rotate(28)"/>
+    <circle r="148" fill="url(#disc-fill)" stroke="#c6a15b" stroke-opacity="0.35" stroke-width="1.25"/>
+    <circle r="148" fill="url(#disc-shadow)"/>
+    <circle r="56" fill="#c6a15b" opacity="0.1"/>
+    <circle r="22" fill="#dfbd73" opacity="0.35"/>
+    <path d="M-96 -40 A106 106 0 0 1 40 -96" fill="none" stroke="#c6a15b" stroke-opacity="0.55" stroke-width="2" stroke-linecap="round"/>
+    <path d="M72 -70 A106 106 0 0 1 108 36" fill="none" stroke="#c6a15b" stroke-opacity="0.35" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M-20 108 A106 106 0 0 1 -108 18" fill="none" stroke="#dfbd73" stroke-opacity="0.28" stroke-width="1.25" stroke-linecap="round"/>
+    <line x1="-132" y1="0" x2="132" y2="0" stroke="#c6a15b" stroke-opacity="0.16" stroke-width="1"/>
+    <line x1="0" y1="-132" x2="0" y2="132" stroke="#c6a15b" stroke-opacity="0.12" stroke-width="1"/>
+    <circle cx="118" cy="-126" r="3.2" fill="#dfbd73" opacity="0.85"/>
+    <circle cx="-146" cy="-48" r="2.4" fill="#dfbd73" opacity="0.55"/>
+    <circle cx="156" cy="72" r="2.8" fill="#c6a15b" opacity="0.7"/>
+    <circle cx="-98" cy="138" r="2.2" fill="#dfbd73" opacity="0.45"/>
+    <circle cx="48" cy="-168" r="1.8" fill="#fff8ea" opacity="0.55"/>
+  </g>
+
+  <g id="copy" font-family="Apple SD Gothic Neo, Noto Sans KR, Pretendard, sans-serif">
+    <text x="80" y="126" fill="#c6a15b" font-size="22" font-weight="600" letter-spacing="0.18em">ECLIPSE: THE AWAKENING</text>
+    <text x="80" y="230" fill="url(#brand-fill)" font-size="108" font-weight="700" letter-spacing="0.12em">CLIPS</text>
+    <text x="80" y="300" fill="#f4f1e8" font-size="40" font-weight="700" letter-spacing="-0.01em">이클립스: 더 어웨이크닝</text>
+    <text x="80" y="352" fill="#a9adba" font-size="30" font-weight="600">정보 플랫폼</text>
+    <text x="80" y="430" fill="#a9adba" font-size="24" font-weight="400">
+      <tspan x="80" dy="0">소식, 클래스, 아이템, 보스, 지도와</tspan>
+      <tspan x="80" dy="36">게임에 필요한 정보를 한곳에서 확인하세요.</tspan>
+    </text>
+    <text x="80" y="546" fill="#c6a15b" font-size="22" font-weight="600" letter-spacing="0.04em">playclips.kr</text>
+  </g>
+</svg>

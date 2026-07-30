@@ -50,8 +50,9 @@ class Settings(BaseSettings):
     app_host: str = Field(default="127.0.0.1", alias="APP_HOST")
     app_port: int = Field(default=8001, alias="APP_PORT")
     # Prefer SITE_URL; APP_BASE_URL remains supported for compatibility.
+    # Production fallback origin when env is unset (local .env should override).
     app_base_url: str = Field(
-        default="http://127.0.0.1:8001",
+        default="https://playclips.kr",
         validation_alias=AliasChoices("SITE_URL", "APP_BASE_URL"),
         serialization_alias="SITE_URL",
     )

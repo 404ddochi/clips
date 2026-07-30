@@ -138,8 +138,23 @@ def test_public_page_meta(client: TestClient) -> None:
         assert soup.find("meta", attrs={"name": "twitter:card"})["content"] == (
             "summary_large_image"
         )
-        assert soup.find("meta", attrs={"property": "og:image"}) is None
-        assert soup.find("meta", attrs={"name": "twitter:image"}) is None
+        og_image = soup.find("meta", attrs={"property": "og:image"})
+        assert og_image is not None
+        assert og_image.get("content") == (
+            "http://testserver/static/images/og/clips-og.png"
+        )
+        assert soup.find("meta", attrs={"property": "og:image:width"})["content"] == (
+            "1200"
+        )
+        assert soup.find("meta", attrs={"property": "og:image:height"})["content"] == (
+            "630"
+        )
+        assert soup.find("meta", attrs={"property": "og:image:type"})["content"] == (
+            "image/png"
+        )
+        assert soup.find("meta", attrs={"name": "twitter:image"})["content"] == (
+            "http://testserver/static/images/og/clips-og.png"
+        )
 
 
 def test_filtered_list_canonical_strips_query(client: TestClient) -> None:
