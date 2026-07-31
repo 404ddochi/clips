@@ -67,7 +67,10 @@ class ProductionDocsBlockMiddleware(BaseHTTPMiddleware):
         call_next: Callable[[Request], Awaitable[Response]],
     ) -> Response:
         from app.config import get_settings
+        from app.core.error_pages import not_found_response
 
         if get_settings().is_production() and request.url.path in _BLOCKED_DOC_PATHS:
-            return Response(status_code=404, content="Not Found")
+            # Shared branded/plain 404 (same as exception handler); avoid raising
+            # inside BaseHTTPMiddleware which may bypass exception handlers.
+            return not_found_response(request)
         return await call_next(request)

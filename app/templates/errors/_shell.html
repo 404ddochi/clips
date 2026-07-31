@@ -1,0 +1,54 @@
+{# Shared error-page shell (404 / 500). Caller sets page_styles / body_class. #}
+{% from "components/icons.html" import icon %}
+
+<section class="section not-found" aria-labelledby="{{ heading_id }}">
+  <div class="container not-found__container">
+    <header class="not-found-hero">
+      <div class="not-found-hero__panel">
+        <div class="not-found-hero__sigil" aria-hidden="true">
+          <span class="not-found-hero__frame"></span>
+          <span class="not-found-hero__symbol">
+            {{ icon(sigil_icon, size=64, class_name="not-found-hero__icon") }}
+          </span>
+        </div>
+        <div class="not-found-hero__copy">
+          <p class="not-found-hero__code" aria-hidden="true">{{ status_code }}</p>
+          <h1 id="{{ heading_id }}" class="not-found-hero__title">{{ heading }}</h1>
+          <p class="not-found-hero__desc">{{ description }}</p>
+        </div>
+      </div>
+    </header>
+
+    {% if show_recovery_actions %}
+    <div class="not-found-actions">
+      <a class="button button--primary not-found-actions__home" href="{{ url_for('home') }}">홈으로</a>
+      <button
+        type="button"
+        class="button button--secondary not-found-actions__back"
+        data-error-back
+      >
+        이전 페이지
+      </button>
+    </div>
+    {% endif %}
+
+    <nav class="not-found-links" aria-label="주요 메뉴 바로가기">
+      <ul class="not-found-links__grid" role="list">
+        {% for link in shortcut_links %}
+        <li class="not-found-links__item">
+          <a class="button button--secondary not-found-links__button" href="{{ url_for(link.route_name) }}">
+            <span class="not-found-links__icon" aria-hidden="true">
+              {{ icon(link.icon, size=18) }}
+            </span>
+            <span class="not-found-links__label">{{ link.label }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <p class="not-found__footnote">
+      CLIPS는 이클립스: 더 어웨이크닝의 비공식 정보 플랫폼입니다.
+    </p>
+  </div>
+</section>

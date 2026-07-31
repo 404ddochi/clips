@@ -1,15 +1,37 @@
 {% extends "base.html" %}
 
+{% block page_styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/pages/errors.css') }}">
+{% endblock %}
+
+{% block body_class %}page-error page-server-error{% endblock %}
+
 {% block content %}
-<section class="section">
-  <div class="container">
-    {% from "components/icons.html" import icon as clips_icon %}
-    {% set icon = clips_icon("update") %}
-    {% set title = "일시적인 오류가 발생했습니다" %}
-    {% set message = "잠시 후 다시 시도해 주세요. 문제가 계속되면 관리자에게 알려주세요." %}
-    {% set action_url = url_for('home') %}
-    {% set action_label = "홈으로" %}
-    {% include "components/empty_state.html" %}
-  </div>
-</section>
+{% with
+  heading_id="server-error-heading",
+  status_code=500,
+  heading="일시적인 오류가 발생했습니다.",
+  description="요청을 처리하는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+  sigil_icon="warning",
+  show_recovery_actions=true
+%}
+  {% include "errors/_shell.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var btn = document.querySelector("[data-error-back]");
+    if (!btn) return;
+    var homeUrl = {{ url_for("home")|string|tojson }};
+    btn.addEventListener("click", function () {
+      if (window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+      window.location.href = homeUrl;
+    });
+  })();
+</script>
 {% endblock %}
