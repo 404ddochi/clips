@@ -78,8 +78,12 @@ CLIPS는 **비공식 팬 정보 사이트**이지만, 유저가 검색으로 필
 ```
 User-agent: *
 Allow: /
-Sitemap: {APP_BASE_URL}/sitemap.xml
+Disallow: /dev
+Disallow: /health
+Sitemap: {SITE_URL}/sitemap.xml
 ```
+
+**확정**: `/health`는 프로브 전용 — sitemap 미포함, robots Disallow.
 
 **향후 확장 (필요 시만)**
 

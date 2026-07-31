@@ -155,7 +155,10 @@ curl -sf http://127.0.0.1:8000/health
 
 ```cron
 0 4 * * * /var/www/clips/scripts/backup.sh >>/var/log/clips-backup.log 2>&1
+30 5 * * * /var/www/clips/scripts/check_backup_freshness.sh >>/var/log/clips-backup-check.log 2>&1
 ```
+
+백업 최신성 점검 상세: [ops-monitoring.md](ops-monitoring.md).
 
 또는 `/etc/cron.d/clips-backup`:
 

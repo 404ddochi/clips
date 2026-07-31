@@ -83,10 +83,10 @@ CLIPS는 FastAPI + Jinja SSR + (향후) DB·크롤·관리자를 **pytest** 중�
 
 | 라우트 | 검증 |
 |--------|------|
-| `GET /health` | 200, status ok, service CLIPS |
+| `GET /health` | 200 + `status=ok` + `service=CLIPS`; `environment` 미노출; `Cache-Control=no-store`; DB 실패 시 503 `degraded` (예외 미노출) |
 | `GET /` | 200, H1×1, title, meta description |
-| `GET /robots.txt` | 200, Sitemap uses APP_BASE_URL |
-| `GET /sitemap.xml` | 200, valid urlset, `/` only (초기) |
+| `GET /robots.txt` | 200, `Disallow: /health`, Sitemap uses site URL |
+| `GET /sitemap.xml` | 200, valid urlset; `/health` 미포함 |
 | `GET /unknown` | 404 HTML |
 
 - `httpx.AsyncClient` 또는 Starlette `TestClient`

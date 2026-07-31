@@ -145,18 +145,35 @@ CLIPS는 공개 SSR 사이트와 **관리자 영역**을 동시에 운영한다.
 
 ## 10. 보안 HTTP 헤더
 
-### 확정 (Nginx 또는 middleware)
+### 현재 적용 (앱 `SecurityHeadersMiddleware`)
 
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY` (또는 `SAMEORIGIN`)
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Permissions-Policy` — camera/mic/geolocation deny
-- HSTS: **HTTPS 적용 후** `max-age=31536000; includeSubDomains`
+| 헤더 | 값 | 비고 |
+|------|-----|------|
+| `X-Content-Type-Options` | `nosniff` | MIME sniffing 방지 |
+| `X-Frame-Options` | `DENY` | iframe 임베드 없음 → 클릭재킹 차단 |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | |
+| `Permissions-Policy` | geolocation/microphone/camera/payment/usb/accelerometer/gyroscope/magnetometer/interest-cohort 전부 `()` | **clipboard·fullscreen은 차단하지 않음** (쿠폰 코드 복사) |
+| `Content-Security-Policy-Report-Only` | 자체 오리진 + GA4(gtag) 허용, `'unsafe-inline'` 포함 | **enforce 아님** |
+
+`X-Frame-Options: DENY` 이유: 공개 페이지를 iframe으로 넣는 기능이 없고, `SAMEORIGIN`보다 클릭재킹 완화에 유리하다.
+
+### CSP 단계
+
+1. **현재**: Report-Only만 적용. 브라우저가 위반을 콘솔에 보고하지만 리소스를 막지 않는다.
+2. GA4(`googletagmanager.com`)와 `base.html` 테마/gtag **인라인 script** 때문에 `script-src`에 `'unsafe-inline'`이 있다.
+3. **향후**: script에 nonce 또는 hash를 도입한 뒤 `Content-Security-Policy` **enforce**로 전환하고 Report-Only를 축소한다.
+4. `report-uri` / `report-to` 엔드포인트는 아직 없음.
+
+### HSTS / COOP·COEP·CORP
+
+- **HSTS**: 앱 middleware에 넣지 않는다. HTTPS가 Nginx에서 안정화된 뒤 **운영 Nginx**에서 `Strict-Transport-Security`를 적용한다 (`includeSubDomains`·preload는 서브도메인 점검 후).
+- COOP / COEP / CORP: **향후 결정** (당장 미적용).
 
 ### 향후 결정
 
-- CSP enforce
-- COOP/COEP
+- CSP enforce + nonce/hash
+- CSP reporting endpoint
+- Nginx `server_tokens off` 및 정적 경로 헤더 정렬
 
 ---
 

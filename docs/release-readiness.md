@@ -46,7 +46,7 @@
 - robots Disallow `/admin` `/dev` `/api` · staging `Disallow: /`
 - sitemap 절대 URL · search/admin/dev 제외 · draft guide 제외
 - JSON-LD WebSite / Organization / SearchAction / Breadcrumb / Article 규칙
-- Security headers: nosniff, SAMEORIGIN, Referrer-Policy, Permissions-Policy
+- Security headers (앱): nosniff, `X-Frame-Options: DENY`, Referrer-Policy, 확장 Permissions-Policy, CSP **Report-Only** (enforce 아님). HSTS는 Nginx 확인 후.
 - `.env` gitignore · SECRET_KEY/APP_DEBUG production fail-fast
 - 클래스 공개명 외 아이템·보스·지도·공략 가짜 상세 없음
 - skip link · `lang="ko"` · main landmark · theme toggle
@@ -121,7 +121,22 @@ Rollback:
 - systemd unit · workers · restart policy
 - PostgreSQL backup · log rotation
 - deploy user · filesystem permission
-- health check 모니터링
+
+## 6.1 모니터링 1차 (구현됨)
+
+- `/health`: DB `SELECT 1`, 200 ok / 503 degraded, 내부 상세 미노출
+- `scripts/check_host.sh` · `scripts/check_backup_freshness.sh`
+- 문서: [ops-monitoring.md](ops-monitoring.md)
+- **미구현:** Discord / 이메일 / UptimeRobot / Sentry 등 외부 알림
+
+배포 후 추가 확인:
+
+```bash
+curl -sf http://127.0.0.1:8000/health
+# → {"status":"ok","service":"CLIPS"}
+/var/www/clips/scripts/check_host.sh
+/var/www/clips/scripts/check_backup_freshness.sh
+```
 
 ---
 

@@ -55,6 +55,7 @@ def test_robots_txt(client: TestClient) -> None:
     assert "User-agent: *" in body
     assert "Allow: /" in body
     assert "Disallow: /dev" in body
+    assert "Disallow: /health" in body
     assert "Disallow: /admin" not in body
     assert "Disallow: /api" not in body
     assert "Sitemap: http://testserver/sitemap.xml" in body
@@ -186,3 +187,4 @@ def test_build_robots_txt_avoids_localhost_sitemap() -> None:
     assert "127.0.0.1" not in body
     assert "Sitemap: https://playclips.kr/sitemap.xml" in body
     assert "Disallow: /dev" in body
+    assert "Disallow: /health" in body

@@ -144,11 +144,14 @@ curl -sf http://127.0.0.1:8000/health
 
 - **Let's Encrypt** certbot + nginx plugin
 - auto renew cron/systemd timer
-- HSTS after stable HTTPS ([09-security-strategy.md](09-security-strategy.md))
+- **HSTS는 Nginx에서 적용** (앱 middleware에는 넣지 않음). HTTPS 안정화 후  
+  `Strict-Transport-Security: max-age=31536000` (± `includeSubDomains`는 서브도메인 점검 후).  
+  상세: [09-security-strategy.md](09-security-strategy.md) §10
 
 ### 향후 결정
 
 - wildcard cert
+- HSTS preload
 
 ---
 
@@ -237,13 +240,59 @@ curl -sf http://127.0.0.1:8000/health
 
 ## 15. 모니터링
 
-### 확정
+### 확정 (1차 — 로컬 점검)
 
-- external uptime: `/health` every 1–5 min
-- disk space alert
+**`/health`**
+
+| HTTP | JSON | 의미 |
+|------|------|------|
+| 200 | `{"status":"ok","service":"CLIPS"}` | 프로세스 응답 + DB `SELECT 1` 성공 |
+| 503 | `{"status":"degraded","service":"CLIPS"}` | DB 읽기 실패 (상세·경로·traceback 미노출) |
+
+- 캐시 방지: `Cache-Control: no-store`, `X-Robots-Tag: noindex, nofollow`
+- `environment` / 버전 / DB 경로 / 예외 메시지는 **응답에 넣지 않음** (정보 노출 최소화). 원인은 서버 로그만.
+- `robots.txt`에 `Disallow: /health` — sitemap에도 `/health` 미포함
+- Discord webhook, 이메일, UptimeRobot, Sentry 등 **외부 알림은 아직 미구현**
+
+**호스트 점검** — `scripts/check_host.sh`
+
+```bash
+# 기본값: SERVICE_NAME=clips, HEALTH_URL=http://127.0.0.1:8000/health
+/var/www/clips/scripts/check_host.sh
+```
+
+| exit | 의미 |
+|------|------|
+| 0 | OK 또는 WARN (디스크/inode가 warn 이상·critical 미만) |
+| 1 | 서비스 inactive, health 실패, status≠ok, disk/inode critical |
+
+환경변수: `SERVICE_NAME`, `HEALTH_URL`, `DISK_PATH`, `DISK_WARN_PERCENT`, `DISK_CRITICAL_PERCENT`, `INODE_WARN_PERCENT`, `INODE_CRITICAL_PERCENT`
+
+**백업 최신성** — `scripts/check_backup_freshness.sh`
+
+```bash
+/var/www/clips/scripts/check_backup_freshness.sh
+```
+
+환경변수: `BACKUP_DIR` (기본 `/backup/clips`), `MAX_AGE_HOURS` (26), `MIN_SIZE_BYTES` (1024), `BACKUP_LOG_FILE` (`/var/log/clips-backup.log`)
+
+| exit | 의미 |
+|------|------|
+| 0 | 최신 `*.tar.gz` 신선·크기·gzip OK (로그 없으면 WARN만) |
+| 1 | 디렉터리/파일 없음, 오래됨, 너무 작음, gzip 손상, 로그 실패 흔적 |
+
+상세 runbook: [ops-monitoring.md](ops-monitoring.md)
+
+**cron 예시 (문서만 — 서버 등록은 운영자가 수행)**
+
+```cron
+*/5 * * * * /var/www/clips/scripts/check_host.sh >> /var/log/clips-health.log 2>&1
+30 5 * * * /var/www/clips/scripts/check_backup_freshness.sh >> /var/log/clips-backup-check.log 2>&1
+```
 
 ### 향후 결정
 
+- 외부 uptime (UptimeRobot 등), Discord/이메일 알림
 - Sentry, Prometheus node_exporter
 
 ---

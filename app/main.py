@@ -66,9 +66,11 @@ def create_app() -> FastAPI:
         openapi_url="/openapi.json" if docs_enabled else None,
     )
 
-    app.add_middleware(SecurityHeadersMiddleware)
+    # Last added runs outermost. Security headers must wrap all sends
+    # (including ExceptionMiddleware error responses).
     app.add_middleware(RequestLoggingMiddleware)
     app.add_middleware(ProductionDocsBlockMiddleware)
+    app.add_middleware(SecurityHeadersMiddleware)
 
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 

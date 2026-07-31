@@ -43,6 +43,7 @@ def test_robots_and_sitemap_production_shape(production_client: TestClient) -> N
     assert "User-agent: *" in body
     assert "Allow: /" in body
     assert "Disallow: /dev" in body
+    assert "Disallow: /health" in body
     assert "Sitemap: https://example.com/sitemap.xml" in body
     assert "localhost" not in body
     assert "127.0.0.1" not in body
@@ -104,6 +105,7 @@ def test_playclips_robots_builder_defaults() -> None:
         "User-agent: *\n"
         "Allow: /\n"
         "Disallow: /dev\n"
+        "Disallow: /health\n"
         "Sitemap: https://playclips.kr/sitemap.xml\n"
     )
     xml = build_sitemap_xml(Settings(SITE_URL="https://playclips.kr"))

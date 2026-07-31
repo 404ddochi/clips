@@ -6,6 +6,7 @@ from fastapi import Request
 from fastapi.responses import HTMLResponse
 
 from app.core.constants import MAIN_NAV
+from app.core.middleware import apply_security_headers
 from app.dependencies import get_templates, seo_context
 
 ERROR_PAGE_SHORTCUTS: tuple[dict[str, str], ...] = (
@@ -28,7 +29,7 @@ def wants_html(request: Request) -> bool:
 def not_found_response(request: Request) -> HTMLResponse:
     """Branded 404 for HTML clients; plain Not Found otherwise."""
     if wants_html(request):
-        return get_templates().TemplateResponse(
+        response: HTMLResponse = get_templates().TemplateResponse(
             request,
             "errors/404.html",
             {
@@ -49,13 +50,15 @@ def not_found_response(request: Request) -> HTMLResponse:
             },
             status_code=404,
         )
-    return HTMLResponse(content="Not Found", status_code=404)
+    else:
+        response = HTMLResponse(content="Not Found", status_code=404)
+    return apply_security_headers(response)
 
 
 def server_error_response(request: Request) -> HTMLResponse:
     """Branded 500 for HTML clients; plain Internal Server Error otherwise."""
     if wants_html(request):
-        return get_templates().TemplateResponse(
+        response: HTMLResponse = get_templates().TemplateResponse(
             request,
             "errors/500.html",
             {
@@ -75,4 +78,6 @@ def server_error_response(request: Request) -> HTMLResponse:
             },
             status_code=500,
         )
-    return HTMLResponse(content="Internal Server Error", status_code=500)
+    else:
+        response = HTMLResponse(content="Internal Server Error", status_code=500)
+    return apply_security_headers(response)

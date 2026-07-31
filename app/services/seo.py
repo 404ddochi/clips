@@ -56,11 +56,12 @@ def build_robots_txt(settings: Settings) -> str:
     sitemap_url = f"{sitemap_origin.rstrip('/')}/sitemap.xml"
 
     # Only Disallow paths that exist (or are reserved and gated) in this app.
-    # /dev is served and noindexed; /admin and /api are not mounted yet.
+    # /dev is served and noindexed; /health is a probe (not for crawlers).
     return (
         "User-agent: *\n"
         "Allow: /\n"
         "Disallow: /dev\n"
+        "Disallow: /health\n"
         f"Sitemap: {sitemap_url}\n"
     )
 

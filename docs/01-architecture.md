@@ -133,7 +133,7 @@ Scheduler/Worker → Crawler API → fetch official → parse
 ### 보안 기본선
 
 - 운영 startup: `apply_startup_security_checks` — weak `SECRET_KEY`, debug 금지
-- 응답 헤더: nosniff, SAMEORIGIN frame, Referrer-Policy, Permissions-Policy
+- 응답 헤더: nosniff, `X-Frame-Options: DENY`, Referrer-Policy, Permissions-Policy, CSP Report-Only
 
 ---
 

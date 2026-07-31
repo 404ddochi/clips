@@ -135,8 +135,11 @@ def test_static_assets_ok(client: TestClient) -> None:
 def test_security_headers_present(client: TestClient) -> None:
     response = client.get("/")
     assert response.headers.get("X-Content-Type-Options") == "nosniff"
-    assert response.headers.get("X-Frame-Options") == "SAMEORIGIN"
-    assert "Referrer-Policy" in response.headers
+    assert response.headers.get("X-Frame-Options") == "DENY"
+    assert response.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
+    assert "Permissions-Policy" in response.headers
+    assert "Content-Security-Policy-Report-Only" in response.headers
+    assert "Content-Security-Policy" not in response.headers
 
 
 def test_production_hides_demo_catalogues(production_client: TestClient) -> None:

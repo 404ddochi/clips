@@ -185,6 +185,7 @@ def test_robots_txt(client: TestClient) -> None:
     assert "User-agent: *" in body
     assert "Allow: /" in body
     assert "Disallow: /dev" in body
+    assert "Disallow: /health" in body
     assert "Disallow: /admin" not in body
     assert "Disallow: /api" not in body
     assert "Sitemap: http://testserver/sitemap.xml" in body
