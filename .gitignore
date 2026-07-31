@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 .env
+clips-monitor.env
+**/clips-monitor.env
 *.db
 .pytest_cache/
 .mypy_cache/

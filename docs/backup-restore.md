@@ -154,11 +154,11 @@ curl -sf http://127.0.0.1:8000/health
 ## 6. cron (매일 04:00)
 
 ```cron
-0 4 * * * /var/www/clips/scripts/backup.sh >>/var/log/clips-backup.log 2>&1
-30 5 * * * /var/www/clips/scripts/check_backup_freshness.sh >>/var/log/clips-backup-check.log 2>&1
+0 4 * * * /var/www/clips/scripts/backup.sh >>/var/log/clips-backup-cron.log 2>&1
+30 5 * * * /var/www/clips/scripts/run_backup_monitor.sh >>/var/log/clips-backup-check.log 2>&1
 ```
 
-백업 최신성 점검 상세: [ops-monitoring.md](ops-monitoring.md).
+백업 최신성 + Discord: [ops-monitoring.md](ops-monitoring.md).
 
 또는 `/etc/cron.d/clips-backup`:
 

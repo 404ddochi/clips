@@ -250,9 +250,10 @@ curl -sf http://127.0.0.1:8000/health
 | 503 | `{"status":"degraded","service":"CLIPS"}` | DB 읽기 실패 (상세·경로·traceback 미노출) |
 
 - 캐시 방지: `Cache-Control: no-store`, `X-Robots-Tag: noindex, nofollow`
+- Discord webhook 실패/복구 알림 (`run_host_monitor.sh` / `run_backup_monitor.sh`)
 - `environment` / 버전 / DB 경로 / 예외 메시지는 **응답에 넣지 않음** (정보 노출 최소화). 원인은 서버 로그만.
 - `robots.txt`에 `Disallow: /health` — sitemap에도 `/health` 미포함
-- Discord webhook, 이메일, UptimeRobot, Sentry 등 **외부 알림은 아직 미구현**
+- 이메일, UptimeRobot, Sentry 등 **그 외 외부 알림은 아직 미구현**
 
 **호스트 점검** — `scripts/check_host.sh`
 
@@ -286,13 +287,16 @@ curl -sf http://127.0.0.1:8000/health
 **cron 예시 (문서만 — 서버 등록은 운영자가 수행)**
 
 ```cron
-*/5 * * * * /var/www/clips/scripts/check_host.sh >> /var/log/clips-health.log 2>&1
-30 5 * * * /var/www/clips/scripts/check_backup_freshness.sh >> /var/log/clips-backup-check.log 2>&1
+*/5 * * * * /var/www/clips/scripts/run_host_monitor.sh >> /var/log/clips-health.log 2>&1
+0 4 * * * /var/www/clips/scripts/backup.sh >> /var/log/clips-backup-cron.log 2>&1
+30 5 * * * /var/www/clips/scripts/run_backup_monitor.sh >> /var/log/clips-backup-check.log 2>&1
 ```
+
+Discord webhook·상태 파일·cooldown: [ops-monitoring.md](ops-monitoring.md)
 
 ### 향후 결정
 
-- 외부 uptime (UptimeRobot 등), Discord/이메일 알림
+- 이메일 / UptimeRobot
 - Sentry, Prometheus node_exporter
 
 ---

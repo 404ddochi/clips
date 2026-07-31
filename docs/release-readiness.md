@@ -126,16 +126,18 @@ Rollback:
 
 - `/health`: DB `SELECT 1`, 200 ok / 503 degraded, 내부 상세 미노출
 - `scripts/check_host.sh` · `scripts/check_backup_freshness.sh`
+- Discord: `notify_discord.sh` · `run_monitor_check.sh` · `run_host_monitor.sh` · `run_backup_monitor.sh`
 - 문서: [ops-monitoring.md](ops-monitoring.md)
-- **미구현:** Discord / 이메일 / UptimeRobot / Sentry 등 외부 알림
+- **미구현:** 이메일 / UptimeRobot / Sentry
 
 배포 후 추가 확인:
 
 ```bash
 curl -sf http://127.0.0.1:8000/health
 # → {"status":"ok","service":"CLIPS"}
-/var/www/clips/scripts/check_host.sh
-/var/www/clips/scripts/check_backup_freshness.sh
+# Discord env (/etc/clips-monitor.env mode 600) 설정 후:
+/var/www/clips/scripts/run_host_monitor.sh
+/var/www/clips/scripts/run_backup_monitor.sh
 ```
 
 ---
