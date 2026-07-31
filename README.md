@@ -150,25 +150,57 @@ clips/
 ## 운영 백업 (요약)
 
 운영 서버에서는 `scripts/backup.sh`로 `clips.db` · `uploads/` · `.env`를  
-`/backup/clips/YYYY-MM-DD_HHMMSS.tar.gz`에 보관하고, 30일 지난 파일을 삭제합니다.
+`/backup/clips/YYYY-MM-DD_HHMMSS.tar.gz`에 보관한 뒤, rclone으로 Google Drive
+(`gdrive:CLIPS-Backup`)에 **copy** 업로드하고, 로컬·원격 모두 30일 지난 `*.tar.gz`를 정리합니다.
 
 ```bash
-# 운영 수동 백업 (기본 경로)
+# 운영 수동 백업 (로컬 + Google Drive)
 sudo /var/www/clips/scripts/backup.sh
 
-# 운영 복구
+# 운영 복구 (로컬 아카이브 기준; restore.sh 변경 없음)
 sudo /var/www/clips/scripts/restore.sh /backup/clips/2026-07-30_040001.tar.gz
+```
+
+### Google Drive 자동 업로드
+
+| 환경변수 | 기본값 | 설명 |
+|----------|--------|------|
+| `RCLONE_ENABLED` | `true` | `false`면 업로드 건너뜀 |
+| `RCLONE_REMOTE` | `gdrive` | rclone remote 이름 |
+| `RCLONE_DESTINATION` | `CLIPS-Backup` | Drive 폴더 |
+| `RCLONE_DRY_RUN` | `false` | `true`면 rclone에 `--dry-run` |
+
+**주의:** rclone 설정이 들어 있는 계정과 cron/수동 실행 계정이 **같아야** 합니다.  
+root crontab이면 root의 `~/.config/rclone/rclone.conf`를 사용합니다.
+
+```bash
+# 업로드만 끄고 로컬 백업만
+sudo RCLONE_ENABLED=false /var/www/clips/scripts/backup.sh
+
+# 실제 전송 없이 rclone dry-run
+sudo RCLONE_DRY_RUN=true /var/www/clips/scripts/backup.sh
+
+# 원격 확인
+sudo rclone lsf gdrive:CLIPS-Backup
+```
+
+### 운영 cron 예시 (매일 04:00, root)
+
+```cron
+0 4 * * * /var/www/clips/scripts/backup.sh >>/var/log/clips-backup.log 2>&1
 ```
 
 ### 로컬 백업 테스트
 
-프로젝트 루트에서 (`.local-backups/`는 gitignore됨):
+프로젝트 루트에서 (`.local-backups/`는 gitignore됨).  
+로컬에 rclone remote가 없으면 업로드를 끕니다:
 
 ```bash
 APP_ROOT="$PWD" \
 BACKUP_DIR="$PWD/.local-backups" \
 LOG_FILE="$PWD/.local-backups/backup.log" \
 RETENTION_DAYS=30 \
+RCLONE_ENABLED=false \
 ./scripts/backup.sh
 ```
 
@@ -195,7 +227,7 @@ ls -la "$RESTORE_ROOT"
 rm -rf "$RESTORE_ROOT"
 ```
 
-cron(매일 04:00) 예시와 상세 절차는 [docs/backup-restore.md](docs/backup-restore.md)를 참고하세요.
+cron·rclone 상세는 [docs/backup-restore.md](docs/backup-restore.md)를 참고하세요.
 
 ## Git 초기화
 

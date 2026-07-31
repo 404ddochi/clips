@@ -170,16 +170,24 @@ curl -sf http://127.0.0.1:8000/health
 
 ## 11. 백업
 
-### 확정
+### 확정 (SQLite 운영 경로)
 
-- DB: daily `pg_dump` (custom format) → encrypted off-site
-- retention: **14일** minimum (**향후** 30)
-- `.env` **별도** secret backup (password manager)
-- uploads/ periodic rsync (**배너 도입 후**)
+- 스크립트: `scripts/backup.sh`, `scripts/restore.sh`
+- 대상: `clips.db`, `uploads/`, `.env`
+- 위치: `/backup/clips/YYYY-MM-DD_HHMMSS.tar.gz`
+- 사전: `sqlite3 … "PRAGMA integrity_check;"` → `ok`일 때만 진행
+- 보관: **30일** (`RETENTION_DAYS`, 기본 30)
+- 로그: `/var/log/clips-backup.log` (`LOG_FILE`, 로컬에서 덮어쓰기 가능)
+- 오프사이트: rclone `copy` → `gdrive:CLIPS-Backup` (`RCLONE_*` 환경변수)
+- 로컬 테스트: `APP_ROOT` / `BACKUP_DIR` / `LOG_FILE` / `RCLONE_ENABLED=false`
+- 복구 시 `BACKUP_SKIP_SERVICE_CONTROL=true`
+- 문서: [backup-restore.md](backup-restore.md)
 
 ### 향후 결정
 
-- restore runbook automation
+- PostgreSQL 전환 시 `pg_dump` + 오프사이트 암호화 백업
+- `.env` 별도 secret manager 보관
+- 복구 리허설 분기 1회
 
 ---
 
@@ -262,7 +270,7 @@ curl -sf http://127.0.0.1:8000/health
 /var/www/clips/          # app root, owner clips
 /var/www/clips/.venv/
 /var/www/clips/.env      # 600
-/var/backups/clips/      # pg dumps
+/backup/clips/           # tar.gz backups (clips.db + uploads + .env)
 ```
 
 **실제 IP·호스트명은 문서에 기록하지 않는다.**

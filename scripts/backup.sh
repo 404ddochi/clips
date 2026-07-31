@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # CLIPS backup — clips.db, uploads/ (optional), .env
-# Production defaults; override APP_ROOT / BACKUP_DIR / LOG_FILE for local tests.
+# Optional rclone copy to Google Drive after a successful local archive.
 set -Eeuo pipefail
 
 SCRIPT_NAME="$(basename "$0")"
@@ -13,7 +13,13 @@ LOG_FILE="${LOG_FILE:-${CLIPS_BACKUP_LOG:-/var/log/clips-backup.log}}"
 RETENTION_DAYS="${RETENTION_DAYS:-${CLIPS_BACKUP_RETENTION_DAYS:-30}}"
 DB_NAME="${DB_NAME:-${CLIPS_DB_NAME:-clips.db}}"
 
+RCLONE_ENABLED="${RCLONE_ENABLED:-true}"
+RCLONE_REMOTE="${RCLONE_REMOTE:-gdrive}"
+RCLONE_DESTINATION="${RCLONE_DESTINATION:-CLIPS-Backup}"
+RCLONE_DRY_RUN="${RCLONE_DRY_RUN:-false}"
+
 readonly APP_ROOT BACKUP_DIR LOG_FILE RETENTION_DAYS DB_NAME
+readonly RCLONE_REMOTE RCLONE_DESTINATION
 
 STAGING_DIR=""
 LOG_CAN_WRITE=0
@@ -70,6 +76,13 @@ on_error() {
 trap 'on_error $LINENO' ERR
 trap cleanup EXIT
 
+is_true() {
+  case "${1:-}" in
+    1|true|TRUE|yes|YES|on|ON) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 require_cmd() {
   local cmd="$1"
   if ! command -v "${cmd}" >/dev/null 2>&1; then
@@ -105,6 +118,104 @@ purge_old_backups() {
     rm -f "${old}"
     log "INFO" "Deleted expired backup: ${old}"
   done < <(find "${BACKUP_DIR}" -type f -name '*.tar.gz' -mtime "+${RETENTION_DAYS}" 2>/dev/null || true)
+}
+
+rclone_remote_path() {
+  printf '%s:%s' "${RCLONE_REMOTE}" "${RCLONE_DESTINATION}"
+}
+
+verify_rclone_remote() {
+  local remotes
+  if ! remotes="$(rclone listremotes 2>&1)"; then
+    log "ERROR" "Failed to list rclone remotes: ${remotes}"
+    exit 1
+  fi
+  if ! printf '%s\n' "${remotes}" | grep -Fxq "${RCLONE_REMOTE}:"; then
+    log "ERROR" "rclone remote not found: ${RCLONE_REMOTE} (expected '${RCLONE_REMOTE}:' in listremotes)"
+    exit 1
+  fi
+}
+
+upload_backup_to_remote() {
+  local backup_file="$1"
+  local archive_name="$2"
+  local bytes="$3"
+  local size_h="$4"
+  local remote_path copy_rc delete_rc rclone_out
+
+  remote_path="$(rclone_remote_path)"
+
+  if ! is_true "${RCLONE_ENABLED}"; then
+    log "INFO" "RCLONE_ENABLED=false — skipping Google Drive upload"
+    return 0
+  fi
+
+  require_cmd rclone
+  verify_rclone_remote
+
+  if [[ ! -f "${backup_file}" ]]; then
+    log "ERROR" "Backup file missing before rclone upload: ${backup_file}"
+    exit 1
+  fi
+
+  if is_true "${RCLONE_DRY_RUN}"; then
+    log "INFO" "Uploading backup via rclone copy → ${remote_path} (dry-run)"
+  else
+    log "INFO" "Uploading backup via rclone copy → ${remote_path}"
+  fi
+
+  # Disable ERR/errtrace around rclone so a non-zero exit is handled explicitly
+  # (and so local backup is never removed by the error trap path).
+  trap - ERR
+  set +e
+  # Intentionally use copy only (never sync / move / purge).
+  if is_true "${RCLONE_DRY_RUN}"; then
+    rclone_out="$(rclone copy "${backup_file}" "${remote_path}" --dry-run 2>&1)"
+  else
+    rclone_out="$(rclone copy "${backup_file}" "${remote_path}" 2>&1)"
+  fi
+  copy_rc=$?
+  set -e
+  trap 'on_error $LINENO' ERR
+
+  if [[ "${copy_rc}" -ne 0 ]]; then
+    log "ERROR" "rclone copy failed (exit=${copy_rc}) remote=${remote_path} file=${backup_file}"
+    if [[ -n "${rclone_out}" ]]; then
+      log "ERROR" "rclone output: ${rclone_out}"
+    fi
+    log "ERROR" "Local backup retained: ${backup_file}"
+    exit "${copy_rc}"
+  fi
+
+  log "INFO" "rclone upload success time=$(date '+%Y-%m-%d %H:%M:%S') file=${archive_name} size=${size_h} (${bytes} bytes) remote=${remote_path}/${archive_name}"
+
+  # Delete only aged *.tar.gz objects; never purge the destination folder.
+  log "INFO" "Pruning remote backups older than ${RETENTION_DAYS}d at ${remote_path}"
+  trap - ERR
+  set +e
+  if is_true "${RCLONE_DRY_RUN}"; then
+    rclone_out="$(rclone delete "${remote_path}" \
+      --min-age "${RETENTION_DAYS}d" \
+      --include "*.tar.gz" \
+      --dry-run 2>&1)"
+  else
+    rclone_out="$(rclone delete "${remote_path}" \
+      --min-age "${RETENTION_DAYS}d" \
+      --include "*.tar.gz" 2>&1)"
+  fi
+  delete_rc=$?
+  set -e
+  trap 'on_error $LINENO' ERR
+
+  if [[ "${delete_rc}" -ne 0 ]]; then
+    log "ERROR" "rclone remote retention delete failed (exit=${delete_rc}) remote=${remote_path}"
+    if [[ -n "${rclone_out}" ]]; then
+      log "ERROR" "rclone output: ${rclone_out}"
+    fi
+    log "ERROR" "Local backup retained: ${backup_file}"
+    exit "${delete_rc}"
+  fi
+  log "INFO" "Remote retention prune complete remote=${remote_path} retention_days=${RETENTION_DAYS}"
 }
 
 main() {
@@ -202,6 +313,9 @@ main() {
   size_h="$(human_size "${bytes}")"
 
   log "INFO" "Backup success time=$(date '+%Y-%m-%d %H:%M:%S') file=${archive_name} size=${size_h} (${bytes} bytes) path=${archive_path}"
+
+  # Upload after local archive exists; failure must not delete the local file.
+  upload_backup_to_remote "${archive_path}" "${archive_name}" "${bytes}" "${size_h}"
 
   purge_old_backups
 
